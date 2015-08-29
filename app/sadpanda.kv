@@ -18,6 +18,9 @@ SadpandaRoot:
             ActionButton:
                 text: "To Front"
                 on_press: app.root.next_screen("front_screen")
+            ActionButton:
+                text: "Search"
+                on_press: app.root.search_popup()
             ActionOverflow:
                 ActionButton:
                     text: "Account Settings"
@@ -84,9 +87,10 @@ SadpandaRoot:
 <FrontScreen>:
     GridLayout:
         id: main_layout
-        padding: root.width * .2, root.height * .2
+        padding: root.width * .02, root.height * .02
         spacing: min(root.width, root.height) * .02
         cols: 3
+        rows: 3
 
 <GalleryScreen>:
     BoxLayout:
@@ -106,3 +110,17 @@ SadpandaRoot:
                 text: "->"
                 on_release: gallery_carousel.load_next()
 
+<SearchPopup>:
+    title: "Input Search Here"
+    BoxLayout:
+        orientation: "vertical"
+        padding: root.width * .2, root.height * .2
+        spacing: min(root.width, root.height) * .02
+        WrappedLabel:
+            text: "Search for your sadpanda here"
+        TextInput:
+            id: searchstring
+            size_hint_y: None
+        Button:
+            text: "Start Searching"
+            on_release: root.savesearch()
