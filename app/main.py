@@ -4,7 +4,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.image import AsyncImage as Image
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.popup import Popup
-from kivy.properties import StringProperty, ListProperty
+from kivy.properties import StringProperty, ListProperty, NumericProperty
 from kivy.storage.jsonstore import JsonStore
 from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
@@ -25,6 +25,7 @@ class ThumbButton(ButtonBehavior, Image):
 
     gallery_id = StringProperty("")
     gallery_token = StringProperty("")
+    pagecount = NumericProperty(0)
 
 
 class FrontScreen(Screen):
@@ -34,8 +35,11 @@ class FrontScreen(Screen):
     pb = ProgressBar(max=4500)
     gallery_thumbs = ListProperty([])
     gidlist = ListProperty([])
-    # proxyip = "186.211.65.59"
-    proxyip = "223.19.196.232"
+    # Because I am a n00b at using API's like these, I keep getting hour-bans
+    # because of too many requests, as they do not like web scraping/api-usage
+    proxyip = "104.197.107.186:3128"
+    # works at 23:00proxyip = "209.66.193.244:8080"
+    # works at 23:17proxyip = "168.62.191.144:3128"
     searchword = StringProperty("")
 
     def on_enter(self):
@@ -44,7 +48,7 @@ class FrontScreen(Screen):
         if searchstore.exists("searchstring"):
             self.searchword = searchstore["searchstring"]["searchphrase"]
         else:
-            self.searchword = "touhou"
+            self.searchword = ""
 
         for galleries in self.gallery_thumbs:
             self.ids.main_layout.remove_widget(galleries)
@@ -66,7 +70,7 @@ class FrontScreen(Screen):
 
     def enter_gallery(self, state):
         gallery_store = JsonStore(join(data_dir, 'gallerystore.json'))
-        galleryinfo = [state.gallery_id, state.gallery_token]
+        galleryinfo = [state.gallery_id, state.gallery_token, state.pagecount]
         gallery_store.put("current_gallery", galleryinfo=galleryinfo)
         self.manager.current = "gallery_screen"
 
@@ -121,12 +125,29 @@ class FrontScreen(Screen):
         print(type(requestdump))
         requestjson = json.loads(requestdump)
         print(type(requestjson))
+        i = 0
         for gallery in requestjson["gmetadata"]:
-            gallerybutton = ThumbButton(
-                source=gallery["thumb"], gallery_id=str(gallery["gid"]),
-                gallery_token=str(gallery["token"]), allow_stretch=True)
-            gallerybutton.bind(on_press=self.enter_gallery)
-            self.ids.main_layout.add_widget(gallerybutton)
+            i += 10
+            Clock.schedule_once(partial(self.add_button, gallery), i)
+
+    def add_button(self, gallery, *largs):
+        if not os.path.isfile("img/"+str(gallery["gid"])+".jpg"):
+            proxies = {
+                "http": self.proxyip
+                }
+            rthumb = requests.get(gallery["thumb"], proxies=proxies,
+                                  stream=True)
+            print(rthumb.content)
+            with open("img/"+str(gallery["gid"])+".jpg", 'wb') as out_file:
+                for chunk in rthumb:
+                    out_file.write(chunk)
+        gallerybutton = ThumbButton(
+            source="img/"+str(gallery["gid"])+".jpg",
+            gallery_id=str(gallery["gid"]),
+            gallery_token=str(gallery["token"]),
+            pagecount=gallery["filecount"], allow_stretch=True)
+        gallerybutton.bind(on_press=self.enter_gallery)
+        self.ids.main_layout.add_widget(gallerybutton)
         """
         placeholderbutton = ThumbButton(
                 source="img/sadpanda.jpeg", gallery_id="gid",
@@ -143,6 +164,9 @@ class GalleryScreen(Screen):
 
     gallery_id = StringProperty("")
     gallery_token = StringProperty("")
+    pagecount = NumericProperty(0)
+
+    pb = ProgressBar(max=1500)
 
     global data_dir
 
@@ -152,16 +176,20 @@ class GalleryScreen(Screen):
             galleryinfo = gallery_store.get("current_gallery")
             self.gallery_id = galleryinfo["galleryinfo"][0]
             self.gallery_token = galleryinfo["galleryinfo"][1]
+            self.pagecount = galleryinfo["galleryinfo"][2]
+            print("galleryinfo: ", galleryinfo["galleryinfo"][2])
+            print("pagecount: ", self.pagecount)
         self.populate_gallery()
 
     def populate_gallery(self):
         # change placehold.it with
-        src = "http://placehold.it/480x270.png&text=slide-1&png"
-        image = Image(source=src, allow_stretch=True)
-        self.ids.gallery_carousel.add_widget(image)
+        self.ids.gallery_carousel.add_widget(self.pb)
 
-        for i in range(13):
+        for i in range(self.pagecount):
             i += 1
+            self.pb.value += 100
+            if self.pb.value == 1500:
+                self.ids.gallery_carousel.remove_widget(self.pb)
             Clock.schedule_once(partial(self.grab_image, i), 15*i)
 
     def grab_image(self, i, *largs):
@@ -181,7 +209,6 @@ class SearchPopup(Popup):
         searchquery = self.ids.searchstring.text
         searchstore.put("searchstring", searchphrase=searchquery)
         self.dismiss()
-
 
 
 class SadpandaRoot(BoxLayout):
