@@ -10,7 +10,7 @@ from kivy.uix.progressbar import ProgressBar
 
 from os.path import join
 from functools import partial
-from bs4 import BeautifulSoup as BS
+#from bs4 import BeautifulSoup as BS
 
 import requests
 import json
@@ -94,7 +94,7 @@ class FrontScreen(Screen):
             }
 
 
-        Clock.schedule_once(partial(self.grabthumbs, headers, payload), 15)
+        Clock.schedule_once(partial(self.grabthumbs, headers, payload), 5)
 
     def grabthumbs(self, headers, payload, *largs):
         """
