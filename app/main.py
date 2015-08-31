@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
@@ -11,12 +12,14 @@ from kivy.uix.progressbar import ProgressBar
 
 from os.path import join
 import os
+#import sys
 from functools import partial
-from bs4 import BeautifulSoup as BS
+from BeautifulSoup import BeautifulSoup as BS
 
 import requests
 import json
-
+#reload(sys)
+#sys.setdefaultencoding('UTF8')
 
 data_dir = ""
 
@@ -37,8 +40,8 @@ class FrontScreen(Screen):
     gidlist = ListProperty([])
     # Because I am a n00b at using API's like these, I keep getting hour-bans
     # because of too many requests, as they do not like web scraping/api-usage
-    proxyip = "104.197.107.186:3128"
-    # works at 23:00proxyip = "209.66.193.244:8080"
+    # proxyip = "104.197.107.186:3128"
+    # proxyip = "209.66.193.244:8080"
     # works at 23:17proxyip = "168.62.191.144:3128"
     searchword = StringProperty("")
 
@@ -50,7 +53,7 @@ class FrontScreen(Screen):
         else:
             self.searchword = ""
 
-        for galleries in self.gallery_thumbs:
+        for galleries in self.ids.main_layout.children:
             self.ids.main_layout.remove_widget(galleries)
 
         self.pb.value = 0
@@ -76,20 +79,17 @@ class FrontScreen(Screen):
 
     def populate_front(self, state):
         # ehentai link
-        proxies = {
-            "http": self.proxyip
-            }
-        r = requests.get("http://g.e-hentai.org/?f_doujinshi=0&f_manga=0&f_artistcg=0&f_gamecg=0&f_western=0&f_non-h=1&f_imageset=0&f_cosplay=0&f_asianporn=0&f_misc=0&f_search="+self.searchword+"&f_apply=Apply+Filter", proxies=proxies)
+        headers = {'User-agent': 'Mozilla/5.0'}
+        r = requests.get("http://g.e-hentai.org/?f_doujinshi=0&f_manga=0&f_artistcg=0&f_gamecg=0&f_western=0&f_non-h=1&f_imageset=0&f_cosplay=0&f_asianporn=0&f_misc=0&f_search="+self.searchword+"&f_apply=Apply+Filter", headers=headers)
         # pure html of ehentai link
         data = r.text
 
-        soup = BS(data)
+        soup = BS(data, fromEncoding='utf8')
         gallerylinks = []
-        print(soup.prettify())
 
         # grabs all the divs with class it5 which denotes the gallery on the
         # page
-        for link in soup.find_all('div', {'class': 'it5'}):
+        for link in soup.findAll('div', {'class': 'it5'}):
             # grabs all the links, should only be gallery links as of 29th of
             # august 2015
             gallerylinks.append(link.find('a')["href"])
@@ -103,7 +103,8 @@ class FrontScreen(Screen):
             self.gidlist.append([gid, gtoken])
             print(self.gidlist)
 
-        headers = {"Content-type": "application/json", "Accept": "text/plain"}
+        headers = {"Content-type": "application/json", "Accept": "text/plain",
+                   'User-agent': 'Mozilla/5.0'}
         payload = {
             "method": "gdata",
             "gidlist": self.gidlist[:9]
@@ -112,19 +113,11 @@ class FrontScreen(Screen):
         Clock.schedule_once(partial(self.grabthumbs, headers, payload), 30)
 
     def grabthumbs(self, headers, payload, *largs):
-        proxies = {
-            "http": self.proxyip
-            }
         r = requests.post("http://g.e-hentai.org/api.php",
-                          data=json.dumps(payload), headers=headers,
-                          proxies=proxies)
-        print(r.content)
+                          data=json.dumps(payload), headers=headers)
         requestdump = r.text
         requestdump.rstrip(os.linesep)
-        print(requestdump)
-        print(type(requestdump))
         requestjson = json.loads(requestdump)
-        print(type(requestjson))
         i = 0
         for gallery in requestjson["gmetadata"]:
             i += 10
@@ -132,12 +125,9 @@ class FrontScreen(Screen):
 
     def add_button(self, gallery, *largs):
         if not os.path.isfile("img/"+str(gallery["gid"])+".jpg"):
-            proxies = {
-                "http": self.proxyip
-                }
-            rthumb = requests.get(gallery["thumb"], proxies=proxies,
-                                  stream=True)
-            print(rthumb.content)
+            headers = {'User-agent': 'Mozilla/5.0'}
+            rthumb = requests.get(gallery["thumb"], stream=True,
+                                  headers=headers)
             with open("img/"+str(gallery["gid"])+".jpg", 'wb') as out_file:
                 for chunk in rthumb:
                     out_file.write(chunk)
@@ -145,7 +135,7 @@ class FrontScreen(Screen):
             source="img/"+str(gallery["gid"])+".jpg",
             gallery_id=str(gallery["gid"]),
             gallery_token=str(gallery["token"]),
-            pagecount=gallery["filecount"], allow_stretch=True)
+            pagecount=int(gallery["filecount"]), allow_stretch=True)
         gallerybutton.bind(on_press=self.enter_gallery)
         self.ids.main_layout.add_widget(gallerybutton)
         """
