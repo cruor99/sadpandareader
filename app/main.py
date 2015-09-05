@@ -125,7 +125,6 @@ class FrontScreen(Screen):
         requestdump = r.text
         requestdump.rstrip(os.linesep)
         requestjson = json.loads(requestdump)
-        print requestjson
         i = 0
         for gallery in requestjson["gmetadata"]:
             self.add_button(gallery)
@@ -174,6 +173,11 @@ class GalleryScreen(Screen):
     def on_leave(self):
         self.ids.gallery_carousel.clear_widgets()
         print self.ids.gallery_carousel.slides
+        self.gallery_id = ""
+        self.gallery_token = ""
+        self.pagelinks = []
+        self.pagecount = 0
+        self.gallery_name = ""
 
     def populate_gallery(self):
         # change placehold.it with
