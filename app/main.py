@@ -83,10 +83,27 @@ class FrontScreen(Screen):
         App.get_running_app().root.next_screen("gallery_screen")
 
     def populate_front(self, *largs):
+        #filter store
+        filterstore = JsonStore(join(data_dir, "filterstore.json"))
+        filters = filterstore.get("filters")
+        filtertemp = filters["filters"]
+        print filtertemp
         # ehentai link
         self.gidlist = []
         headers = {'User-agent': 'Mozilla/5.0'}
-        r = requests.get("http://g.e-hentai.org/?page="+str(self.searchpage)+"f_doujinshi=0&f_manga=0&f_artistcg=0&f_gamecg=0&f_western=0&f_non-h=1&f_imageset=0&f_cosplay=0&f_asianporn=0&f_misc=0&f_search="+self.searchword+"&f_apply=Apply+Filter", headers=headers)
+        r = requests.get("http://g.e-hentai.org/?page="+str(self.searchpage)+
+                "f_doujinshi="+str(filtertemp["doujinshi"])+
+                "&f_manga="+str(filtertemp["manga"])+
+                "&f_artistcg="+str(filtertemp["artistcg"])+
+                "&f_gamecg="+str(filtertemp["gamecg"])+
+                "&f_western="+str(filtertemp["western"])+
+                "&f_non-h="+str(filtertemp["nonh"])+
+                "&f_imageset="+str(filtertemp["imageset"])+
+                "&f_cosplay="+str(filtertemp["cosplay"])+
+                "&f_asianporn="+str(filtertemp["asianporn"])+
+                "&f_misc="+str(filtertemp["misc"])+
+                "&f_search="+self.searchword+"&f_apply=Apply+Filter",
+                headers=headers)
         self.searchpage += 1
         # pure html of ehentai link
         data = r.text
@@ -269,6 +286,100 @@ class SadpandaRoot(BoxLayout):
         #no more screens to go back to, close app
         return False
 
+    def show_filters(self):
+        fpop = FilterPopup()
+        fpop.bind(on_dismiss = self.set_filters)
+        fpop.open()
+
+    def set_filters(self, instance):
+        filters = {
+                "doujinshi": 0,
+                "manga": 0,
+                "artistcg": 0,
+                "gamecg": 0,
+                "western": 0,
+                "nonh": 0,
+                "imageset": 0,
+                "cosplay": 0,
+                "asianporn": 0,
+                "misc": 0}
+        if instance.ids.doujinshi.state == "down":
+            filters["doujinshi"] = 1
+        if instance.ids.manga.state == "down":
+            filters["manga"] = 1
+        if instance.ids.artistcg.state == "down":
+            filters["artistcg"] = 1
+        if instance.ids.gamecg.state == "down":
+            filters["gamecg"] = 1
+        if instance.ids.western.state == "down":
+            filters["western"] = 1
+        if instance.ids.nonh.state == "down":
+            filters["nonh"] = 1
+        if instance.ids.imageset.state == "down":
+            filters["imageset"] = 1
+        if instance.ids.cosplay.state == "down":
+            filters["cosplay"] = 1
+        if instance.ids.asianporn.state == "down":
+            filters["asianporn"] = 1
+        if instance.ids.misc.state == "down":
+            filters["misc"] = 1
+
+        filterstore = JsonStore(join(data_dir, "filterstore.json"))
+        filterstore.put("filters", filters=filters)
+
+
+class FilterPopup(Popup):
+    doujinshi = NumericProperty(0)
+    manga = NumericProperty(0)
+    artistcg = NumericProperty(0)
+    gamecg = NumericProperty(0)
+    western = NumericProperty(0)
+    nonh = NumericProperty(0)
+    imageset = NumericProperty(0)
+    cosplay = NumericProperty(0)
+    asianporn = NumericProperty(0)
+    misc = NumericProperty(0)
+
+    global data_dir
+
+    def __init__(self, **kwargs):
+        super(FilterPopup, self).__init__(**kwargs)
+        filterjson = JsonStore(join(data_dir, "filterstore.json"))
+        if filterjson.exists("filters"):
+            self.doujinshi = filterjson["filters"]["filters"]["doujinshi"]
+            self.manga = filterjson["filters"]["filters"]["manga"]
+            self.artistcg = filterjson["filters"]["filters"]["artistcg"]
+            self.gamecg = filterjson["filters"]["filters"]["gamecg"]
+            self.western = filterjson["filters"]["filters"]["western"]
+            self.nonh = filterjson["filters"]["filters"]["nonh"]
+            self.image_set = filterjson["filters"]["filters"]["imageset"]
+            self.cosplay = filterjson["filters"]["filters"]["cosplay"]
+            self.asianporn = filterjson["filters"]["filters"]["asianporn"]
+            self.misc = filterjson["filters"]["filters"]["misc"]
+        if self.doujinshi == 1:
+            self.ids.doujinshi.state = "down"
+        if self.manga == 1:
+            self.ids.manga.state = "down"
+        if self.artistcg == 1:
+            self.ids.artistcg.state = "down"
+        if self.gamecg == 1:
+            self.ids.gamecg.state = "down"
+        if self.western == 1:
+            self.ids.western.state = "down"
+        if self.nonh == 1:
+            self.ids.nonh.state = "down"
+        if self.imageset == 1:
+            self.ids.imageset.state = "down"
+        if self.cosplay == 1:
+            self.ids.cosplay.state = "down"
+        if self.asianporn == 1:
+            self.ids.asianporn.state = "down"
+        if self.misc == 1:
+            self.ids.misc.state = "down"
+
+    def changeState(self, state, id):
+        print state, id
+
 
 class SadpandaApp(App):
 
@@ -277,6 +388,20 @@ class SadpandaApp(App):
         global data_dir
         data_dir = getattr(self, 'user_data_dir')
         Window.bind(on_keyboard=self.onBackBtn)
+        filterstore = JsonStore(join(data_dir, "filterstore.json"))
+        filters = {
+                "doujinshi": 1,
+                "manga": 1,
+                "artistcg": 1,
+                "gamecg": 1,
+                "western": 1,
+                "nonh": 1,
+                "imageset": 1,
+                "cosplay": 1,
+                "asianporn": 1,
+                "misc": 1
+                }
+        filterstore.put("filters", filters=filters)
 
     def onBackBtn(self, window, key, *args):
         # user presses back button
