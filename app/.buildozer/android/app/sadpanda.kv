@@ -33,6 +33,9 @@ SadpandaRoot:
                 on_press: app.root.search_popup()
             ActionOverflow:
                 ActionButton:
+                    text: "Filters"
+                    on_release: app.root.show_filters()
+                ActionButton:
                     text: "Account Settings"
 
     ScreenManager:
@@ -113,6 +116,7 @@ SadpandaRoot:
         size_hint_y: None
         height: "60dp"
         text: "Load More"
+        on_release: root.populate_front()
 
 <GalleryImage>:
     size: root.width, root.height
@@ -127,6 +131,45 @@ SadpandaRoot:
             size_hint_y: 1.7
             direction: "right"
             min_move: 0.05
+
+<FilterPopup>:
+    title: "Set your filters here"
+    BoxLayout:
+        orientation: "vertical"
+        GridLayout:
+            cols: 5
+            rows: 2
+            ToggleButton:
+                id: nonh
+                text: "Non-H"
+            ToggleButton:
+                id: doujinshi
+                text: "Doujinshi"
+            ToggleButton:
+                id: western
+                text: "Western"
+            ToggleButton:
+                id: artistcg
+                text: "Artist CG"
+            ToggleButton:
+                id: gamecg
+                text: "Game CG"
+            ToggleButton:
+                id: manga
+                text: "Manga"
+            ToggleButton:
+                id: cosplay
+                text: "Cosplay"
+            ToggleButton:
+                id: asianporn
+                text: "Asian Porn"
+            ToggleButton:
+                id: imageset
+                text: "Image Set"
+            ToggleButton:
+                id: misc
+                text: "Misc"
+
 
 <SearchPopup>:
     title: "Input Search Here"

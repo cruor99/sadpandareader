@@ -50,9 +50,9 @@ class FrontScreen(Screen):
 
     def on_enter(self):
 
-        searchstore = JsonStore("searchstore.json")
-        if searchstore.exists("searchstring"):
-            self.searchword = searchstore["searchstring"]["searchphrase"]
+        search_store = JsonStore(join(data_dir, 'search_store.json'))
+        if search_store.exists("searchstring"):
+            self.searchword = search_store["searchstring"]["searchphrase"]
         else:
             self.searchword = ""
 
@@ -244,9 +244,9 @@ class SearchPopup(Popup):
 
     def savesearch(self):
         print(self.ids.searchstring.text)
-        searchstore = JsonStore('searchstore.json')
+        search_store = JsonStore(join(data_dir, 'search_store.json'))
         searchquery = self.ids.searchstring.text
-        searchstore.put("searchstring", searchphrase=searchquery)
+        search_store.put("searchstring", searchphrase=searchquery)
         self.dismiss()
 
 
