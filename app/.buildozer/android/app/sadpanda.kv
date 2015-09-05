@@ -1,5 +1,15 @@
 SadpandaRoot:
 
+<ThumbButton>:
+    size_hint_y: 1.7
+
+<ScrollableTitle>:
+    Label:
+        text: root.titletext
+        font_size: "20dp"
+        text_size: self.width, None
+        size_hint_y: None
+        height: self.texture_size[1]
 
 <WrappedLabel@Label>:
     size_hint_y: None
@@ -18,6 +28,9 @@ SadpandaRoot:
             ActionButton:
                 text: "To Front"
                 on_press: app.root.next_screen("front_screen")
+            ActionButton:
+                text: "Search"
+                on_press: app.root.search_popup()
             ActionOverflow:
                 ActionButton:
                     text: "Account Settings"
@@ -82,27 +95,50 @@ SadpandaRoot:
 
 
 <FrontScreen>:
-    GridLayout:
-        id: main_layout
-        padding: root.width * .2, root.height * .2
-        spacing: min(root.width, root.height) * .02
-        cols: 3
+    ScrollView:
+        size:  self.size
+        height: self.parent.height
+        width: self.parent.width-20
+        size_hint: None, None
+        GridLayout:
+            id: main_layout
+            cols: 1
+            padding: root.width * .02, root.height * .02
+            spacing: "70dp"
+            height: self.minimum_height
+            size_hint_y: None
+            row_default_height: '90dp'
+            row_force_default: True
+    Button:
+        size_hint_y: None
+        height: "60dp"
+        text: "Load More"
+
+<GalleryImage>:
+    size: root.width, root.height
 
 <GalleryScreen>:
     BoxLayout:
         orientation: "vertical"
         WrappedLabel:
-            text: root.gallery_id
+            text: root.gallery_name
         Carousel:
             id: gallery_carousel
+            size_hint_y: 1.7
             direction: "right"
-        BoxLayout:
-            Button:
-                size_hint_y: None
-                text: "<-"
-                on_release: gallery_carousel.load_previous()
-            Button:
-                size_hint_y: None
-                text: "->"
-                on_release: gallery_carousel.load_next()
+            min_move: 0.05
 
+<SearchPopup>:
+    title: "Input Search Here"
+    BoxLayout:
+        orientation: "vertical"
+        padding: root.width * .2, root.height * .2
+        spacing: min(root.width, root.height) * .02
+        WrappedLabel:
+            text: "Search for your sadpanda here"
+        TextInput:
+            id: searchstring
+            size_hint_y: None
+        Button:
+            text: "Start Searching"
+            on_release: root.savesearch()
