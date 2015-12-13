@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
@@ -39,11 +39,6 @@ class FrontScreen(Screen):
     pb = ProgressBar(max=4500)
     gallery_thumbs = ListProperty([])
     gidlist = ListProperty([])
-    # Because I am a n00b at using API's like these, I keep getting hour-bans
-    # because of too many requests, as they do not like web scraping/api-usage
-    # proxyip = "104.197.107.186:3128"
-    # proxyip = "209.66.193.244:8080"
-    # works at 23:17proxyip = "168.62.191.144:3128"
     searchword = StringProperty("")
     searchpage = NumericProperty(0)
 
@@ -352,7 +347,7 @@ class FilterPopup(Popup):
             self.gamecg = filterjson["filters"]["filters"]["gamecg"]
             self.western = filterjson["filters"]["filters"]["western"]
             self.nonh = filterjson["filters"]["filters"]["nonh"]
-            self.image_set = filterjson["filters"]["filters"]["imageset"]
+            self.imageset = filterjson["filters"]["filters"]["imageset"]
             self.cosplay = filterjson["filters"]["filters"]["cosplay"]
             self.asianporn = filterjson["filters"]["filters"]["asianporn"]
             self.misc = filterjson["filters"]["filters"]["misc"]
@@ -389,17 +384,18 @@ class SadpandaApp(App):
         data_dir = getattr(self, 'user_data_dir')
         Window.bind(on_keyboard=self.onBackBtn)
         filterstore = JsonStore(join(data_dir, "filterstore.json"))
+        # Makes sure only non-h is the default.
         filters = {
-                "doujinshi": 1,
-                "manga": 1,
-                "artistcg": 1,
-                "gamecg": 1,
-                "western": 1,
+                "doujinshi": 0,
+                "manga": 0,
+                "artistcg": 0,
+                "gamecg": 0,
+                "western": 0,
                 "nonh": 1,
-                "imageset": 1,
-                "cosplay": 1,
-                "asianporn": 1,
-                "misc": 1
+                "imageset": 0,
+                "cosplay": 0,
+                "asianporn": 0,
+                "misc": 0
                 }
         filterstore.put("filters", filters=filters)
 

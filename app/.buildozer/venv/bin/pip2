@@ -1,4 +1,4 @@
-#!/home/cruor/code/personalprojs/sadpandareader/app/.buildozer/venv/bin/python2.7
+#!/home/cruor/code/sadpandareader/app/.buildozer/venv/bin/python2.7
 
 # -*- coding: utf-8 -*-
 import re

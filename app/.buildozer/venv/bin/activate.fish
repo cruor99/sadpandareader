@@ -32,7 +32,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/cruor/code/personalprojs/sadpandareader/app/.buildozer/venv"
+set -gx VIRTUAL_ENV "/home/cruor/code/sadpandareader/app/.buildozer/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

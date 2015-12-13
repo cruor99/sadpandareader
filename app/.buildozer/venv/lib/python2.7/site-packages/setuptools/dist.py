@@ -115,18 +115,21 @@ def check_extras(dist, attr, value):
 def assert_bool(dist, attr, value):
     """Verify that value is True, False, 0, or 1"""
     if bool(value) != value:
-        raise DistutilsSetupError(
-            "%r must be a boolean value (got %r)" % (attr,value)
-        )
+        tmpl = "{attr!r} must be a boolean value (got {value!r})"
+        raise DistutilsSetupError(tmpl.format(attr=attr, value=value))
+
+
 def check_requirements(dist, attr, value):
     """Verify that install_requires is a valid requirements list"""
     try:
         list(pkg_resources.parse_requirements(value))
-    except (TypeError,ValueError):
-        raise DistutilsSetupError(
-            "%r must be a string or list of strings "
-            "containing valid project/version requirement specifiers" % (attr,)
+    except (TypeError, ValueError) as error:
+        tmpl = (
+            "{attr!r} must be a string or list of strings "
+            "containing valid project/version requirement specifiers; {error}"
         )
+        raise DistutilsSetupError(tmpl.format(attr=attr, error=error))
+
 def check_entry_points(dist, attr, value):
     """Verify that entry_points map is parseable"""
     try:
