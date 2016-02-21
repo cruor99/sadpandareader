@@ -7,7 +7,7 @@ from kivy.uix.image import AsyncImage as Image
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.popup import Popup
-from kivy.properties import StringProperty, ListProperty, NumericProperty, ObjectProperty
+from kivy.properties import StringProperty, ListProperty, NumericProperty
 from kivy.storage.jsonstore import JsonStore
 from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
@@ -42,7 +42,6 @@ class FrontScreen(Screen):
     searchword = StringProperty("")
     searchpage = NumericProperty(0)
 
-
     def on_enter(self):
 
         search_store = JsonStore(join(data_dir, 'search_store.json'))
@@ -74,31 +73,29 @@ class FrontScreen(Screen):
         galleryinfo = [state.gallery_id, state.gallery_token, state.pagecount,
                        state.gallery_name]
         gallery_store.put("current_gallery", galleryinfo=galleryinfo)
-        print self.get_root_window()
         App.get_running_app().root.next_screen("gallery_screen")
 
     def populate_front(self, *largs):
-        #filter store
+        # filter store
         filterstore = JsonStore(join(data_dir, "filterstore.json"))
         filters = filterstore.get("filters")
         filtertemp = filters["filters"]
-        print filtertemp
         # ehentai link
         self.gidlist = []
         headers = {'User-agent': 'Mozilla/5.0'}
-        r = requests.get("http://g.e-hentai.org/?page="+str(self.searchpage)+
-                "f_doujinshi="+str(filtertemp["doujinshi"])+
-                "&f_manga="+str(filtertemp["manga"])+
-                "&f_artistcg="+str(filtertemp["artistcg"])+
-                "&f_gamecg="+str(filtertemp["gamecg"])+
-                "&f_western="+str(filtertemp["western"])+
-                "&f_non-h="+str(filtertemp["nonh"])+
-                "&f_imageset="+str(filtertemp["imageset"])+
-                "&f_cosplay="+str(filtertemp["cosplay"])+
-                "&f_asianporn="+str(filtertemp["asianporn"])+
-                "&f_misc="+str(filtertemp["misc"])+
-                "&f_search="+self.searchword+"&f_apply=Apply+Filter",
-                headers=headers)
+        r = requests.get("http://g.e-hentai.org/?page="+str(self.searchpage) +
+                         "f_doujinshi="+str(filtertemp["doujinshi"]) +
+                         "&f_manga="+str(filtertemp["manga"]) +
+                         "&f_artistcg="+str(filtertemp["artistcg"]) +
+                         "&f_gamecg="+str(filtertemp["gamecg"]) +
+                         "&f_western="+str(filtertemp["western"]) +
+                         "&f_non-h="+str(filtertemp["nonh"]) +
+                         "&f_imageset="+str(filtertemp["imageset"]) +
+                         "&f_cosplay="+str(filtertemp["cosplay"]) +
+                         "&f_asianporn="+str(filtertemp["asianporn"]) +
+                         "&f_misc="+str(filtertemp["misc"]) +
+                         "&f_search="+self.searchword+"&f_apply=Apply+Filter",
+                         headers=headers)
         self.searchpage += 1
         # pure html of ehentai link
         data = r.text
@@ -120,7 +117,6 @@ class FrontScreen(Screen):
             # grab the gallery id
             gid = splitlink[-3]
             self.gidlist.append([gid, gtoken])
-            print(self.gidlist)
 
         headers = {"Content-type": "application/json", "Accept": "text/plain",
                    'User-agent': 'Mozilla/5.0'}
@@ -184,7 +180,6 @@ class GalleryScreen(Screen):
 
     def on_leave(self):
         self.ids.gallery_carousel.clear_widgets()
-        print self.ids.gallery_carousel.slides
         self.gallery_id = ""
         self.gallery_token = ""
         self.pagelinks = []
@@ -197,13 +192,16 @@ class GalleryScreen(Screen):
         pageregex = re.compile('http://g.e-hentai.org/s/\S{10}/\d{6}-\d+')
 
         if gallerypages.is_integer():
-            print(gallerypages)
+            pass
         else:
             gallerypages += 1
 
         headers = {'User-agent': 'Mozilla/5.0'}
         for i in range(int(gallerypages)):
-            galleryrequest = requests.get("http://g.e-hentai.org/g/{}/{}/?p={}".format(self.gallery_id, self.gallery_token, i), headers=headers)
+            galleryrequest = requests.get("http://g.e-hentai.org/g/{}/{}/?p={}\
+                                          ".format(self.gallery_id,
+                                          self.gallery_token, i),
+                                          headers=headers)
 
             soup = BS(galleryrequest.text)
 
@@ -212,8 +210,7 @@ class GalleryScreen(Screen):
 
         pagetimer = 0
         for page in self.pagelinks:
-            #Clock.schedule_once(partial(self.grab_image, page), 2*pagetimer)
-            self.grab_image(page)
+            Clock.schedule_once(partial(self.grab_image, page), 2*pagetimer)
             pagetimer += 1
 
     def grab_image(self, i, *largs):
@@ -238,7 +235,6 @@ class SearchPopup(Popup):
     global data_dir
 
     def savesearch(self):
-        print(self.ids.searchstring.text)
         search_store = JsonStore(join(data_dir, 'search_store.json'))
         searchquery = self.ids.searchstring.text
         search_store.put("searchstring", searchphrase=searchquery)
@@ -259,45 +255,44 @@ class SadpandaRoot(BoxLayout):
         self.ids.sadpanda_screen_manager.current = neoscreen
 
     def goto_front(self, instance):
-        print self.ids.sadpanda_screen_manager.current
-        self.ids.sadpanda_screen_manager.switch_to(FrontScreen()) # = "front_screen"
-        self.ids.sadpanda_screen_manager.add_widget(GalleryScreen(id="gallery_screen", name="gallery_screen"))
+        self.ids.sadpanda_screen_manager.switch_to(FrontScreen())
+        self.ids.sadpanda_screen_manager.add_widget(GalleryScreen(id="gallery_\
+                                                    screen",
+                                                    name="gallery_screen"))
         self.screen_list.append("gallery_screen")
 
     def search_popup(self):
         spopup = SearchPopup()
-        print(spopup)
         spopup.bind(on_dismiss=self.goto_front)
         spopup.open()
 
     def onBackBtn(self):
         # check if there are screens we can go back to
         if self.screen_list:
-            print self.screen_list
             currentscreen = self.screen_list.pop()
             self.ids.sadpanda_screen_manager.current = currentscreen
             # Prevents closing of app
             return True
-        #no more screens to go back to, close app
+        # no more screens to go back to, close app
         return False
 
     def show_filters(self):
         fpop = FilterPopup()
-        fpop.bind(on_dismiss = self.set_filters)
+        fpop.bind(on_dismiss=self.set_filters)
         fpop.open()
 
     def set_filters(self, instance):
         filters = {
-                "doujinshi": 0,
-                "manga": 0,
-                "artistcg": 0,
-                "gamecg": 0,
-                "western": 0,
-                "nonh": 0,
-                "imageset": 0,
-                "cosplay": 0,
-                "asianporn": 0,
-                "misc": 0}
+            "doujinshi": 0,
+            "manga": 0,
+            "artistcg": 0,
+            "gamecg": 0,
+            "western": 0,
+            "nonh": 0,
+            "imageset": 0,
+            "cosplay": 0,
+            "asianporn": 0,
+            "misc": 0}
         if instance.ids.doujinshi.state == "down":
             filters["doujinshi"] = 1
         if instance.ids.manga.state == "down":
@@ -372,9 +367,6 @@ class FilterPopup(Popup):
         if self.misc == 1:
             self.ids.misc.state = "down"
 
-    def changeState(self, state, id):
-        print state, id
-
 
 class SadpandaApp(App):
 
@@ -386,17 +378,17 @@ class SadpandaApp(App):
         filterstore = JsonStore(join(data_dir, "filterstore.json"))
         # Makes sure only non-h is the default.
         filters = {
-                "doujinshi": 0,
-                "manga": 0,
-                "artistcg": 0,
-                "gamecg": 0,
-                "western": 0,
-                "nonh": 1,
-                "imageset": 0,
-                "cosplay": 0,
-                "asianporn": 0,
-                "misc": 0
-                }
+            "doujinshi": 0,
+            "manga": 0,
+            "artistcg": 0,
+            "gamecg": 0,
+            "western": 0,
+            "nonh": 1,
+            "imageset": 0,
+            "cosplay": 0,
+            "asianporn": 0,
+            "misc": 0
+            }
         filterstore.put("filters", filters=filters)
 
     def onBackBtn(self, window, key, *args):
