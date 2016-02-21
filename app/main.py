@@ -73,7 +73,6 @@ class FrontScreen(Screen):
         galleryinfo = [state.gallery_id, state.gallery_token, state.pagecount,
                        state.gallery_name]
         gallery_store.put("current_gallery", galleryinfo=galleryinfo)
-        print self.get_root_window()
         App.get_running_app().root.next_screen("gallery_screen")
 
     def populate_front(self, *largs):
@@ -81,7 +80,6 @@ class FrontScreen(Screen):
         filterstore = JsonStore(join(data_dir, "filterstore.json"))
         filters = filterstore.get("filters")
         filtertemp = filters["filters"]
-        print filtertemp
         # ehentai link
         self.gidlist = []
         headers = {'User-agent': 'Mozilla/5.0'}
@@ -119,7 +117,6 @@ class FrontScreen(Screen):
             # grab the gallery id
             gid = splitlink[-3]
             self.gidlist.append([gid, gtoken])
-            print(self.gidlist)
 
         headers = {"Content-type": "application/json", "Accept": "text/plain",
                    'User-agent': 'Mozilla/5.0'}
@@ -183,7 +180,6 @@ class GalleryScreen(Screen):
 
     def on_leave(self):
         self.ids.gallery_carousel.clear_widgets()
-        print self.ids.gallery_carousel.slides
         self.gallery_id = ""
         self.gallery_token = ""
         self.pagelinks = []
@@ -196,7 +192,7 @@ class GalleryScreen(Screen):
         pageregex = re.compile('http://g.e-hentai.org/s/\S{10}/\d{6}-\d+')
 
         if gallerypages.is_integer():
-            print(gallerypages)
+            pass
         else:
             gallerypages += 1
 
@@ -214,8 +210,7 @@ class GalleryScreen(Screen):
 
         pagetimer = 0
         for page in self.pagelinks:
-            # Clock.schedule_once(partial(self.grab_image, page), 2*pagetimer)
-            self.grab_image(page)
+            Clock.schedule_once(partial(self.grab_image, page), 2*pagetimer)
             pagetimer += 1
 
     def grab_image(self, i, *largs):
@@ -240,7 +235,6 @@ class SearchPopup(Popup):
     global data_dir
 
     def savesearch(self):
-        print(self.ids.searchstring.text)
         search_store = JsonStore(join(data_dir, 'search_store.json'))
         searchquery = self.ids.searchstring.text
         search_store.put("searchstring", searchphrase=searchquery)
@@ -261,7 +255,6 @@ class SadpandaRoot(BoxLayout):
         self.ids.sadpanda_screen_manager.current = neoscreen
 
     def goto_front(self, instance):
-        print self.ids.sadpanda_screen_manager.current
         self.ids.sadpanda_screen_manager.switch_to(FrontScreen())
         self.ids.sadpanda_screen_manager.add_widget(GalleryScreen(id="gallery_\
                                                     screen",
@@ -270,14 +263,12 @@ class SadpandaRoot(BoxLayout):
 
     def search_popup(self):
         spopup = SearchPopup()
-        print(spopup)
         spopup.bind(on_dismiss=self.goto_front)
         spopup.open()
 
     def onBackBtn(self):
         # check if there are screens we can go back to
         if self.screen_list:
-            print self.screen_list
             currentscreen = self.screen_list.pop()
             self.ids.sadpanda_screen_manager.current = currentscreen
             # Prevents closing of app
@@ -375,9 +366,6 @@ class FilterPopup(Popup):
             self.ids.asianporn.state = "down"
         if self.misc == 1:
             self.ids.misc.state = "down"
-
-    def changeState(self, state, id):
-        print state, id
 
 
 class SadpandaApp(App):
