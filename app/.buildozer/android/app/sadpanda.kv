@@ -1,0 +1,223 @@
+SadpandaRoot:
+
+<ThumbButton>:
+    size_hint_y: 1.7
+
+<ScrollableTitle>:
+    Label:
+        text: root.titletext
+        font_size: "20dp"
+        text_size: self.width, None
+        size_hint_y: None
+        height: self.texture_size[1]
+
+<WrappedLabel@Label>:
+    size_hint_y: None
+    height: self.texture_size[1] + (self.texture_size[1]/2)
+    markup: True
+    text_size: self.width, None
+
+
+<SadpandaRoot>:
+    orientation: "vertical"
+    ActionBar:
+        ActionView:
+            ActionPrevious:
+                title: ""
+                with_previous: False
+            ActionButton:
+                text: "To Front"
+                on_press: app.root.goto_front()
+            ActionButton:
+                text: "Search"
+                on_press: app.root.search_popup()
+            ActionOverflow:
+                ActionButton:
+                    text: "Filters"
+                    on_release: app.root.show_filters()
+                ActionButton:
+                    text: "Account Settings"
+
+    ScreenManager:
+        id: sadpanda_screen_manager
+        StartScreen:
+            id: start_screen
+            name: "start_screen"
+        FrontScreen:
+            id: front_screen
+            name: "front_screen"
+        GalleryScreen:
+            id: gallery_screen
+            name: "gallery_screen"
+        GalleryPreviewScreen
+            id: gallery_preview_screen
+            name: "gallery_preview_screen"
+
+
+<StartScreen@Screen>:
+    AnchorLayout:
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: "img/sadpanda.jpeg"
+        AnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+            BoxLayout:
+                orientation: "vertical"
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_x: None
+                    size_hint_y: None
+                    WrappedLabel:
+                        text: "[color=000000]Username[/color]"
+                        markup: True
+                        size_hint_x: None
+                    TextInput:
+                        id: username
+                        size_hint_y: None
+                        size_hint_x: None
+                        hint_text: "Username"
+                        background_color: [1,1,1,.5]
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_x: None
+                    size_hint_y: None
+                    WrappedLabel:
+                        text: "Password"
+                        size_hint_x: None
+                    TextInput:
+                        id: password
+                        size_hint_y: None
+                        size_hint_x: None
+                        hint_text: "Password"
+                        background_color: [1,1,1,.5]
+                Button:
+                    size_hint_y: None
+                    id: login
+                    text: "login"
+                    on_release: app.root.next_screen("front_screen")
+
+
+<FrontScreen>:
+    ScrollView:
+        size:  self.size
+        height: self.parent.height
+        width: self.parent.width-20
+        size_hint: None, None
+        GridLayout:
+            id: main_layout
+            cols: 1
+            padding: root.width * .02, root.height * .02
+            spacing: "70dp"
+            height: self.minimum_height
+            size_hint_y: None
+            row_default_height: '90dp'
+            row_force_default: True
+    Button:
+        size_hint_y: None
+        height: "60dp"
+        text: "Load More"
+        on_release: root.populate_front()
+
+<GalleryPreviewScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        AsyncImage:
+            # This might not work with exhentai
+            source: root.gallery_thumb
+            size_hint_y: .7
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            Button:
+                text: "Start Reading"
+                size_hint_y: None
+                on_release: root.view_gallery()
+            Button:
+                text: "Add to favourites"
+                size_hint_y: None
+        BoxLayout:
+            orientation: "vertical"
+            WrappedLabel:
+                size_hint_y: 1
+                text: root.gallery_name
+                valign: "top"
+            ScrollView:
+                GridLayout:
+                    id: tag_layout
+                    cols: 3
+                    height: self.minimum_height
+
+
+<GalleryImage>:
+    size: root.width, root.height
+
+<GalleryScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        WrappedLabel:
+            text: root.gallery_name
+        Carousel:
+            id: gallery_carousel
+            size_hint_y: 1.7
+            direction: "right"
+            min_move: 0.05
+
+<FilterPopup>:
+    title: "Set your filters here"
+    BoxLayout:
+        orientation: "vertical"
+        GridLayout:
+            cols: 5
+            rows: 2
+            ToggleButton:
+                id: nonh
+                text: "Non-H"
+            ToggleButton:
+                id: doujinshi
+                text: "Doujinshi"
+            ToggleButton:
+                id: western
+                text: "Western"
+            ToggleButton:
+                id: artistcg
+                text: "Artist CG"
+            ToggleButton:
+                id: gamecg
+                text: "Game CG"
+            ToggleButton:
+                id: manga
+                text: "Manga"
+            ToggleButton:
+                id: cosplay
+                text: "Cosplay"
+            ToggleButton:
+                id: asianporn
+                text: "Asian Porn"
+            ToggleButton:
+                id: imageset
+                text: "Image Set"
+            ToggleButton:
+                id: misc
+                text: "Misc"
+        Button:
+            text: "Set Filters"
+            on_release: root.dismiss()
+
+
+<SearchPopup>:
+    title: "Input Search Here"
+    BoxLayout:
+        orientation: "vertical"
+        padding: root.width * .2, root.height * .2
+        spacing: min(root.width, root.height) * .02
+        WrappedLabel:
+            text: "Search for your sadpanda here"
+        TextInput:
+            id: searchstring
+            size_hint_y: None
+        Button:
+            text: "Start Searching"
+            on_release: root.savesearch()
