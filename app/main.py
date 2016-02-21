@@ -5,7 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 from kivy.uix.image import AsyncImage as Image
 from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.label import Label
+from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty, ListProperty, NumericProperty
@@ -70,7 +70,7 @@ class FrontScreen(Screen):
         self.gallery_thumbs = []
 
         # final integer determines the time for the front to be populated
-        Clock.schedule_once(partial(self.populate_front, "0"), 1)
+        Clock.schedule_once(self.populate_front)
 
     def enter_gallery(self, instance):
         gallery_store = JsonStore(join(data_dir, 'gallerystore.json'))
@@ -186,17 +186,18 @@ class GalleryPreviewScreen(Screen):
             self.gallery_tags = galleryinfo["galleryinfo"][4]
             self.gallery_thumb = galleryinfo["galleryinfo"][5]
 
-        Clock.schedule_once(partial(self.populate_tags, "0"), 1)
+        Clock.schedule_once(self.populate_tags)
 
     def populate_tags(self, *args):
         self.ids.tag_layout.clear_widgets()
         for tag in self.gallery_tags:
-            taglabel = Label(text=tag)
-            taglabel.bind(on_press=self.search_tag)
-            print self.ids
+            taglabel = Button(text=tag, on_release=self.search_tag,
+                              background_color=(0, 0, 0, 0))
+            taglabel.bind(on_press=self.search_tag,
+                          text_size=taglabel.setter("text_size"))
             self.ids.tag_layout.add_widget(taglabel)
 
-    def view_gallery(self, instance):
+    def view_gallery(self):
         App.get_running_app().root.next_screen("gallery_screen")
 
     def search_tag(self, instance):
