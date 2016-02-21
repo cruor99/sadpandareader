@@ -5,6 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 from kivy.uix.image import AsyncImage as Image
 from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty, ListProperty, NumericProperty
@@ -28,8 +29,10 @@ class ThumbButton(ButtonBehavior, Image):
 
     gallery_id = StringProperty("")
     gallery_token = StringProperty("")
+    gallery_tags = ListProperty([])
     gallery_name = StringProperty("")
     pagecount = NumericProperty(0)
+    gallery_thumb = StringProperty("")
 
 
 class FrontScreen(Screen):
@@ -67,14 +70,15 @@ class FrontScreen(Screen):
         self.gallery_thumbs = []
 
         # final integer determines the time for the front to be populated
-        Clock.schedule_once(partial(self.populate_front, "0"), 1)
+        Clock.schedule_once(self.populate_front)
 
-    def enter_gallery(self, state):
+    def enter_gallery(self, instance):
         gallery_store = JsonStore(join(data_dir, 'gallerystore.json'))
-        galleryinfo = [state.gallery_id, state.gallery_token, state.pagecount,
-                       state.gallery_name]
+        galleryinfo = [instance.gallery_id, instance.gallery_token,
+                       instance.pagecount, instance.gallery_name,
+                       instance.gallery_tags, instance.gallery_thumb]
         gallery_store.put("current_gallery", galleryinfo=galleryinfo)
-        App.get_running_app().root.next_screen("gallery_screen")
+        App.get_running_app().root.next_screen("gallery_preview_screen")
 
     def populate_front(self, *largs):
         # filter store
@@ -145,7 +149,9 @@ class FrontScreen(Screen):
             gallery_id=str(gallery["gid"]),
             gallery_token=str(gallery["token"]),
             pagecount=int(gallery["filecount"]),
-            gallery_name=gallery["title"], allow_stretch=True)
+            gallery_name=gallery["title"],
+            gallery_tags=gallery["tags"],
+            gallery_thumb=gallery["thumb"], allow_stretch=True)
         gallerybutton.bind(on_press=self.enter_gallery)
         buttoncontainer = BoxLayout(orientation="horizontal")
         buttoncontainer.add_widget(gallerybutton)
@@ -156,6 +162,50 @@ class FrontScreen(Screen):
 class ScrollableTitle(ScrollView):
 
     titletext = StringProperty("")
+
+
+class GalleryPreviewScreen(Screen):
+
+    gallery_tags = ListProperty([])
+    gallery_id = StringProperty("")
+    pagecount = NumericProperty(0)
+    gallery_name = StringProperty("")
+    gallery_token = StringProperty("")
+    gallery_thumb = StringProperty("")
+
+    global data_dir
+
+    def on_enter(self):
+        gallery_store = JsonStore(join(data_dir, "gallerystore.json"))
+        if gallery_store.exists("current_gallery"):
+            galleryinfo = gallery_store.get("current_gallery")
+            self.gallery_id = galleryinfo["galleryinfo"][0]
+            self.gallery_token = galleryinfo["galleryinfo"][1]
+            self.pagecount = galleryinfo["galleryinfo"][2]
+            self.gallery_name = galleryinfo["galleryinfo"][3]
+            self.gallery_tags = galleryinfo["galleryinfo"][4]
+            self.gallery_thumb = galleryinfo["galleryinfo"][5]
+
+        Clock.schedule_once(self.populate_tags)
+
+    def populate_tags(self, *args):
+        self.ids.tag_layout.clear_widgets()
+        for tag in self.gallery_tags:
+            taglabel = Button(text=tag, on_release=self.search_tag,
+                              background_color=(0, 0, 0, 0))
+            taglabel.bind(on_press=self.search_tag,
+                          text_size=taglabel.setter("text_size"))
+            self.ids.tag_layout.add_widget(taglabel)
+
+    def view_gallery(self):
+        App.get_running_app().root.next_screen("gallery_screen")
+
+    def search_tag(self, instance):
+
+        search_store = JsonStore(join(data_dir, "search_store.json"))
+        tag = instance.text
+        search_store.put("searchstring", searchphrase=tag)
+        App.get_running_app().root.next_screen("front_screen")
 
 
 class GalleryScreen(Screen):

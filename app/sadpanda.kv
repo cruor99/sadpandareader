@@ -49,6 +49,9 @@ SadpandaRoot:
         GalleryScreen:
             id: gallery_screen
             name: "gallery_screen"
+        GalleryPreviewScreen
+            id: gallery_preview_screen
+            name: "gallery_preview_screen"
 
 
 <StartScreen@Screen>:
@@ -117,6 +120,36 @@ SadpandaRoot:
         height: "60dp"
         text: "Load More"
         on_release: root.populate_front()
+
+<GalleryPreviewScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        AsyncImage:
+            # This might not work with exhentai
+            source: root.gallery_thumb
+            size_hint_y: .7
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            Button:
+                text: "Start Reading"
+                size_hint_y: None
+                on_release: root.view_gallery()
+            Button:
+                text: "Add to favourites"
+                size_hint_y: None
+        BoxLayout:
+            orientation: "vertical"
+            WrappedLabel:
+                size_hint_y: 1
+                text: root.gallery_name
+                valign: "top"
+            ScrollView:
+                GridLayout:
+                    id: tag_layout
+                    cols: 3
+                    height: self.minimum_height
+
 
 <GalleryImage>:
     size: root.width, root.height
