@@ -8,9 +8,9 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty, ListProperty, NumericProperty
+from kivy.properties import BooleanProperty
 from kivy.storage.jsonstore import JsonStore
 from kivy.clock import Clock
-from kivy.uix.progressbar import ProgressBar
 
 from os.path import join
 import os
@@ -36,37 +36,38 @@ class FrontScreen(Screen):
 
     global data_dir
 
-    pb = ProgressBar(max=4500)
     gallery_thumbs = ListProperty([])
     gidlist = ListProperty([])
     searchword = StringProperty("")
     searchpage = NumericProperty(0)
+    newstart = BooleanProperty(True)
 
     def on_enter(self):
 
         search_store = JsonStore(join(data_dir, 'search_store.json'))
         if search_store.exists("searchstring"):
-            self.searchword = search_store["searchstring"]["searchphrase"]
+            newsearch = search_store["searchstring"]["searchphrase"]
+            if newsearch == self.searchword:
+                if self.newstart is True:
+                    self.new_search()
+                    self.newstart = False
+                else:
+                    pass
+            else:
+                self.searchword = newsearch
+                self.new_search()
         else:
             self.searchword = ""
+            self.new_search()
 
+    def new_search(self):
         self.ids.main_layout.clear_widgets()
         self.searchpage = 0
 
-        self.pb.value = 0
         self.gallery_thumbs = []
 
-        for i in range(10):
-            Clock.schedule_once(self.increasepb, i)
-
-        self.ids.main_layout.add_widget(self.pb)
-
-        Clock.schedule_once(partial(self.populate_front, "0"), 5)
-
-    def increasepb(self, state):
-        self.pb.value += 450
-        if self.pb.value == 4500:
-            self.ids.main_layout.remove_widget(self.pb)
+        # final integer determines the time for the front to be populated
+        Clock.schedule_once(partial(self.populate_front, "0"), 1)
 
     def enter_gallery(self, state):
         gallery_store = JsonStore(join(data_dir, 'gallerystore.json'))
