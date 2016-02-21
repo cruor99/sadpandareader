@@ -294,6 +294,8 @@ class SearchPopup(Popup):
 
 class SadpandaRoot(BoxLayout):
 
+    global data_dir
+
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)
         # list of previous screens
@@ -303,18 +305,26 @@ class SadpandaRoot(BoxLayout):
 
         self.screen_list.append(self.ids.sadpanda_screen_manager.current)
 
-        self.ids.sadpanda_screen_manager.current = neoscreen
+        if self.ids.sadpanda_screen_manager.current == neoscreen:
+            cur_screen = self.ids.sadpanda_screen_manager.get_screen(neoscreen)
+            cur_screen.new_search()
+            search_store = JsonStore(join(data_dir, "search_store.json"))
+            newsearch = search_store["searchstring"]["searchphrase"]
+            cur_screen.searchword = newsearch
+        else:
+            self.ids.sadpanda_screen_manager.current = neoscreen
 
-    def goto_front(self, instance):
-        self.ids.sadpanda_screen_manager.switch_to(FrontScreen())
-        self.ids.sadpanda_screen_manager.add_widget(GalleryScreen(id="gallery_\
-                                                    screen",
-                                                    name="gallery_screen"))
-        self.screen_list.append("gallery_screen")
+    def goto_front(self):
+        search_store = JsonStore(join(data_dir, "search_store.json"))
+        search_store.put("searchstring", searchphrase=" ")
+        self.next_screen("front_screen")
+
+    def start_search(self, instance):
+        self.next_screen("front_screen")
 
     def search_popup(self):
         spopup = SearchPopup()
-        spopup.bind(on_dismiss=self.goto_front)
+        spopup.bind(on_dismiss=self.start_search)
         spopup.open()
 
     def onBackBtn(self):
