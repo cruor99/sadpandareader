@@ -139,9 +139,12 @@ class FrontScreen(Screen):
         requestdump.rstrip(os.linesep)
         requestjson = json.loads(requestdump)
         i = 0
-        for gallery in requestjson["gmetadata"]:
-            self.add_button(gallery)
-            i += 1
+        try:
+            for gallery in requestjson["gmetadata"]:
+                self.add_button(gallery)
+                i += 1
+        except:
+            pass
 
     def add_button(self, gallery, *largs):
         gallerybutton = ThumbButton(
