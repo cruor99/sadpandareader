@@ -158,11 +158,11 @@ class FrontScreen(Screen):
         gallerybutton.bind(on_press=self.enter_gallery)
         buttoncontainer = BoxLayout(orientation="horizontal")
         buttoncontainer.add_widget(gallerybutton)
-        buttoncontainer.add_widget(ScrollableTitle(titletext=gallery["title"]))
+        buttoncontainer.add_widget(GalleryTitle(titletext=gallery["title"]))
         self.ids.main_layout.add_widget(buttoncontainer)
 
 
-class ScrollableTitle(ScrollView):
+class GalleryTitle(BoxLayout):
 
     titletext = StringProperty("")
 
