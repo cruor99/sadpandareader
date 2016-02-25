@@ -27,6 +27,10 @@ SadpandaRoot:
             ActionPrevious:
                 title: ""
                 with_previous: False
+                app_icon: "img/icon_round.png"
+                previous_image: "img/back_image.png"
+                with_previous: True
+                on_release: app.root.onBackBtn()
             ActionButton:
                 text: "To Front"
                 on_press: app.root.goto_front()
