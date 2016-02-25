@@ -323,7 +323,14 @@ class SadpandaRoot(BoxLayout):
         self.next_screen("front_screen")
 
     def start_search(self, instance):
-        self.next_screen("front_screen")
+        front_screen = self.ids.sadpanda_screen_manager.get_screen("front_screen")
+        searchword = front_screen.searchword
+        search_store = JsonStore(join(data_dir, "search_store.json"))
+        newsearch = search_store["searchstring"]["searchphrase"]
+        if newsearch == searchword:
+            pass
+        else:
+            self.next_screen("front_screen")
 
     def search_popup(self):
         spopup = SearchPopup()
