@@ -3,13 +3,15 @@ SadpandaRoot:
 <ThumbButton>:
     size_hint_y: 1.7
 
-<ScrollableTitle>:
+<GalleryTitle>:
+    size_hint_y: 1.7
     Label:
         text: root.titletext
-        font_size: "20dp"
-        text_size: self.width, None
-        size_hint_y: None
+        font_size: "16dp"
         height: self.texture_size[1]
+        size_hint_y: 1
+        max_lines: 6
+        text_size: self.width, None
 
 <WrappedLabel@Label>:
     size_hint_y: None
@@ -25,6 +27,10 @@ SadpandaRoot:
             ActionPrevious:
                 title: ""
                 with_previous: False
+                app_icon: "img/icon_round.png"
+                previous_image: "img/back_image.png"
+                with_previous: True
+                on_release: app.root.onBackBtn()
             ActionButton:
                 text: "To Front"
                 on_press: app.root.goto_front()
@@ -121,6 +127,14 @@ SadpandaRoot:
         text: "Load More"
         on_release: root.populate_front()
 
+<TagButton>:
+    size_hint_y: None
+    height: "55dp"
+    background_color: (.7, .7, .7, 0.5)
+    text: root.tagname
+    text_size: self.width, None
+    halign: "center"
+
 <GalleryPreviewScreen>:
     BoxLayout:
         orientation: "vertical"
@@ -145,10 +159,15 @@ SadpandaRoot:
                 text: root.gallery_name
                 valign: "top"
             ScrollView:
+                height: self.parent.height
+                width: self.parent.width-20
+                bar_inactive_color: [.7, .7, .7, .5]
                 GridLayout:
                     id: tag_layout
                     cols: 3
                     height: self.minimum_height
+                    size_hint_y: None
+
 
 
 <GalleryImage>:
@@ -218,6 +237,8 @@ SadpandaRoot:
         TextInput:
             id: searchstring
             size_hint_y: None
+            multiline: False
+            on_text_validate: root.savesearch()
         Button:
             text: "Start Searching"
             on_release: root.savesearch()

@@ -46,7 +46,7 @@ requirements = kivy, requests, beautifulsoup, openssl
 #presplash.filename = %(source.dir)s/data/presplash.png
 
 # (str) Icon of the application
-#icon.filename = %(source.dir)s/data/icon.png
+icon.filename = img/icon_round.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait

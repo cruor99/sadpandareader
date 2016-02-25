@@ -166,6 +166,10 @@ class GalleryTitle(BoxLayout):
 
     titletext = StringProperty("")
 
+class TagButton(Button):
+
+    tagname = StringProperty("")
+
 
 class GalleryPreviewScreen(Screen):
 
@@ -194,10 +198,8 @@ class GalleryPreviewScreen(Screen):
     def populate_tags(self, *args):
         self.ids.tag_layout.clear_widgets()
         for tag in self.gallery_tags:
-            taglabel = Button(text=tag, on_release=self.search_tag,
-                              background_color=(0, 0, 0, 0))
-            taglabel.bind(on_press=self.search_tag,
-                          text_size=taglabel.setter("text_size"))
+            taglabel = TagButton(tagname=tag)
+            taglabel.bind(on_press=self.search_tag)
             self.ids.tag_layout.add_widget(taglabel)
 
     def view_gallery(self):
@@ -448,19 +450,22 @@ class SadpandaApp(App):
         Window.bind(on_keyboard=self.onBackBtn)
         filterstore = JsonStore(join(data_dir, "filterstore.json"))
         # Makes sure only non-h is the default.
-        filters = {
-            "doujinshi": 0,
-            "manga": 0,
-            "artistcg": 0,
-            "gamecg": 0,
-            "western": 0,
-            "nonh": 1,
-            "imageset": 0,
-            "cosplay": 0,
-            "asianporn": 0,
-            "misc": 0
-            }
-        filterstore.put("filters", filters=filters)
+        if filterstore.exists("filters"):
+            pass
+        else:
+            filters = {
+                "doujinshi": 0,
+                "manga": 0,
+                "artistcg": 0,
+                "gamecg": 0,
+                "western": 0,
+                "nonh": 1,
+                "imageset": 0,
+                "cosplay": 0,
+                "asianporn": 0,
+                "misc": 0
+                }
+            filterstore.put("filters", filters=filters)
 
     def onBackBtn(self, window, key, *args):
         # user presses back button
