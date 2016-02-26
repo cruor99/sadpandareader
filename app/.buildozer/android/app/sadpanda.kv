@@ -1,3 +1,4 @@
+#:import win kivy.core.window
 SadpandaRoot:
 
 <ThumbButton>:
@@ -173,6 +174,11 @@ SadpandaRoot:
 <GalleryImage>:
     size: root.width, root.height
 
+<GalleryScatter>:
+    do_rotation: False
+    scale_min: 1
+    translation_touches: 1
+
 <GalleryScreen>:
     BoxLayout:
         orientation: "vertical"
@@ -183,6 +189,8 @@ SadpandaRoot:
             size_hint_y: 1.7
             direction: "right"
             min_move: 0.05
+            on_index: root.load_next()
+            scroll_timeout: 100
 
 <FilterPopup>:
     title: "Set your filters here"

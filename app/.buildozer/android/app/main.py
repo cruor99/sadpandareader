@@ -7,7 +7,9 @@ from kivy.uix.image import AsyncImage as Image
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.stencilview import StencilView
 from kivy.uix.popup import Popup
+from kivy.uix.scatterlayout import ScatterLayout
 from kivy.properties import StringProperty, ListProperty, NumericProperty
 from kivy.properties import BooleanProperty
 from kivy.storage.jsonstore import JsonStore
@@ -220,6 +222,8 @@ class GalleryScreen(Screen):
     pagelinks = ListProperty([])
     pagecount = NumericProperty(0)
     gallery_name = StringProperty("")
+    nextpage = NumericProperty(0)
+    current_page = NumericProperty(0)
 
     global data_dir
 
@@ -264,10 +268,26 @@ class GalleryScreen(Screen):
             for a in soup.findAll(name="a", attrs={"href": pageregex}):
                 self.pagelinks.append(a["href"])
 
-        pagetimer = 0
-        for page in self.pagelinks:
-            Clock.schedule_once(partial(self.grab_image, page), 2*pagetimer)
-            pagetimer += 1
+        # pagetimer = 0
+        # for page in self.pagelinks:
+        #   Clock.schedule_once(partial(self.grab_image, page), 2*pagetimer)
+        #    pagetimer += 1
+
+        self.next_page = 1
+        self.grab_image(self.pagelinks[0])
+
+    def load_next(self):
+        try:
+            nextpage_url = self.pagelinks[self.next_page]
+            self.grab_image(nextpage_url)
+            self.next_page += 1
+            nextpage_url = self.pagelinks[self.next_page]
+            self.grab_image(nextpage_url)
+            self.next_page += 1
+        except:
+            pass
+
+
 
     def grab_image(self, i, *largs):
         headers = {'User-agent': 'Mozilla/5.0'}
@@ -279,7 +299,18 @@ class GalleryScreen(Screen):
         for each in srctag:
             src = each["src"]
         image = GalleryImage(source=src, allow_stretch=True)
-        self.ids.gallery_carousel.add_widget(image)
+        imageroot = GalleryScatter()
+        imageroot.add_widget(image)
+        gallerycontainer = GalleryContainerLayout()
+        gallerycontainer.add_widget(imageroot)
+        self.ids.gallery_carousel.add_widget(gallerycontainer)
+
+class GalleryContainerLayout(BoxLayout, StencilView):
+    pass
+
+
+class GalleryScatter(ScatterLayout):
+    pass
 
 
 class GalleryImage(Image):

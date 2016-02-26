@@ -49,10 +49,10 @@ requirements = kivy, requests, beautifulsoup, openssl
 icon.filename = img/icon_round.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
-orientation = portrait
+orientation = all
 
 # (bool) Indicate if the application should be fullscreen or not
-fullscreen = 1
+fullscreen = 0
 
 
 #
