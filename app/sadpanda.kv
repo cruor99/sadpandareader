@@ -2,18 +2,21 @@
 SadpandaRoot:
 
 <ThumbButton>:
-    size_hint_y: 1.7
+    size_hint_y: None
+    height: self.texture_size[1]
+    width: self.texture_size[0]
+    keep_ratio: False
+
 
 <GalleryTitle>:
-    size_hint_y: 1.7
+    size_hint_y: 1
     Label:
         font_name: "fonts/NotoSansCJK-Regular.ttc"
         text: root.titletext
-        font_size: "16dp"
-        height: self.texture_size[1]
-        size_hint_y: 1
+        font_size: "12dp"
         max_lines: 6
-        text_size: self.width, None
+        text_size: self.width, self.height
+        valign: "top"
 
 <WrappedLabel@Label>:
     font_name: "fonts/NotoSansCJK-Regular.ttc"
@@ -104,25 +107,25 @@ SadpandaRoot:
 
 
 <FrontScreen>:
-    ScrollView:
-        size:  self.size
-        height: self.parent.height
-        width: self.parent.width-20
-        size_hint: None, None
-        GridLayout:
-            id: main_layout
-            cols: 1
-            padding: root.width * .02, root.height * .02
-            spacing: "70dp"
-            height: self.minimum_height
+    BoxLayout:
+        orientation: "vertical"
+        ScrollView:
+            #size:  self.size
+            #height: self.parent.height
+            #width: self.parent.width-20
+            GridLayout:
+                id: main_layout
+                cols: 1
+                padding: root.width * .02, root.height * .02
+                spacing: "10dp"
+                height: self.minimum_height
+                size_hint_y: None
+                row_default_height: '90dp'
+        Button:
             size_hint_y: None
-            row_default_height: '90dp'
-            row_force_default: True
-    Button:
-        size_hint_y: None
-        height: "60dp"
-        text: "Load More"
-        on_release: root.populate_front()
+            height: "60dp"
+            text: "Load More"
+            on_release: root.populate_front()
 
 <TagButton>:
     size_hint_y: None
@@ -184,8 +187,8 @@ SadpandaRoot:
             id: gallery_carousel
             size_hint_y: 1.7
             direction: "right"
-            min_move: 0.05
-            scroll_timeout: 100
+            min_move: 0.01
+            scroll_timeout: 500
             on_index: root.load_next()
 
 <FilterPopup>:
