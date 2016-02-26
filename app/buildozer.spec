@@ -139,7 +139,7 @@ android.permissions = INTERNET
 
 # (str) Name of the certificate to use for signing the debug version
 # Get a list of available identities: buildozer ios list_identities
-#ios.codesign.debug = "iPhone Developer: <lastname> <firstname> (<hexstring>)"
+ios.codesign.debug = "iPhone Developer: Kjetil Andre Liknes (YE9GH35KK6)"
 
 # (str) Name of the certificate to use for signing the release version
 #ios.codesign.release = %(ios.codesign.debug)s

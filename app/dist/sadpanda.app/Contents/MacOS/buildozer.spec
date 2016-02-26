@@ -1,0 +1,1 @@
+../Resources/buildozer.spec
