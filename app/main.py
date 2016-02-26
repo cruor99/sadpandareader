@@ -327,6 +327,14 @@ class SearchPopup(Popup):
         search_store.put("searchstring", searchphrase=searchquery)
         self.dismiss()
 
+    def open_filters(self):
+        fpop = FilterPopup()
+        fpop.bind(on_dismiss=self.set_filters)
+        fpop.open()
+
+    def set_filters(self, instance):
+        App.get_running_app().root.set_filters(instance)
+
 
 class SadpandaRoot(BoxLayout):
 

@@ -38,12 +38,6 @@ SadpandaRoot:
             ActionButton:
                 text: "Search"
                 on_press: app.root.search_popup()
-            ActionOverflow:
-                ActionButton:
-                    text: "Filters"
-                    on_release: app.root.show_filters()
-                ActionButton:
-                    text: "Account Settings"
 
     ScreenManager:
         id: sadpanda_screen_manager
@@ -250,3 +244,6 @@ SadpandaRoot:
         Button:
             text: "Start Searching"
             on_release: root.savesearch()
+        Button:
+            text: "Filters"
+            on_release: root.open_filters()
