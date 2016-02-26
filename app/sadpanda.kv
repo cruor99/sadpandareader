@@ -3,9 +3,11 @@ SadpandaRoot:
 
 <ThumbButton>:
     size_hint_y: None
-    height: self.texture_size[1]
-    width: self.texture_size[0]
-    keep_ratio: False
+    size_hint_x: None
+    height: "200dp"
+    width: "200dp"
+    keep_aspect: True
+    allow_stretch: True
 
 
 <GalleryTitle>:
@@ -120,7 +122,7 @@ SadpandaRoot:
                 spacing: "10dp"
                 height: self.minimum_height
                 size_hint_y: None
-                row_default_height: '90dp'
+                row_default_height: '200dp'
         Button:
             size_hint_y: None
             height: "60dp"

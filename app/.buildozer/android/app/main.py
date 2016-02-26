@@ -156,13 +156,16 @@ class FrontScreen(Screen):
             pagecount=int(gallery["filecount"]),
             gallery_name=gallery["title"],
             gallery_tags=gallery["tags"],
-            gallery_thumb=gallery["thumb"], allow_stretch=True)
+            gallery_thumb=gallery["thumb"])
         gallerybutton.bind(on_press=self.enter_gallery)
-        buttoncontainer = BoxLayout(orientation="horizontal")
+        buttoncontainer = GalleryButtonContainer(orientation="horizontal")
         buttoncontainer.add_widget(gallerybutton)
         buttoncontainer.add_widget(GalleryTitle(titletext=gallery["title"]))
         self.ids.main_layout.add_widget(buttoncontainer)
 
+
+class GalleryButtonContainer(BoxLayout, StencilView):
+    pass
 
 class GalleryTitle(BoxLayout, StencilView):
 

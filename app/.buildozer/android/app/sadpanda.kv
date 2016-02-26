@@ -2,15 +2,20 @@
 SadpandaRoot:
 
 <ThumbButton>:
-    size_hint_y: 1
-    height: self.texture_size[1] * 0.8
+    size_hint_y: None
+    size_hint_x: None
+    height: "200dp"
+    width: "200dp"
+    keep_aspect: True
+    allow_stretch: True
+
 
 <GalleryTitle>:
     size_hint_y: 1
     Label:
         font_name: "fonts/NotoSansCJK-Regular.ttc"
         text: root.titletext
-        font_size: "10dp"
+        font_size: "12dp"
         max_lines: 6
         text_size: self.width, self.height
         valign: "top"
@@ -117,7 +122,7 @@ SadpandaRoot:
                 spacing: "10dp"
                 height: self.minimum_height
                 size_hint_y: None
-                row_default_height: '90dp'
+                row_default_height: '200dp'
         Button:
             size_hint_y: None
             height: "60dp"

@@ -85,7 +85,7 @@ requests-2.9.1.dist-info/RECORD,,
 requests-2.9.1.dist-info/WHEEL,sha256=GrqQvamwgBV4nLoJe0vhYRSWzWsx7xjlt74FT0SWYfE,110
 requests-2.9.1.dist-info/metadata.json,sha256=f32h7EChWrcN3CPpMcwIcLZQ3tTK4bm9us9nknaQneU,955
 requests-2.9.1.dist-info/top_level.txt,sha256=fMSVmHfb5rbGOo6xv-O_tUX6j-WyixssE-SnwcDRxNQ,9
-/tmp/tmp7SI4YA/lib/python/requests-2.9.1.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+requests-2.9.1.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
 requests/packages/chardet/sbcsgroupprober.pyc,,
 requests/status_codes.pyc,,
 requests/packages/chardet/mbcsgroupprober.pyc,,
