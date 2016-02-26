@@ -7,6 +7,7 @@ SadpandaRoot:
 <GalleryTitle>:
     size_hint_y: 1.7
     Label:
+        font_name: "fonts/NotoSansCJK-Regular.ttc"
         text: root.titletext
         font_size: "16dp"
         height: self.texture_size[1]
@@ -15,6 +16,7 @@ SadpandaRoot:
         text_size: self.width, None
 
 <WrappedLabel@Label>:
+    font_name: "fonts/NotoSansCJK-Regular.ttc"
     size_hint_y: None
     height: self.texture_size[1] + (self.texture_size[1]/2)
     markup: True
