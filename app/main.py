@@ -377,7 +377,7 @@ class SadpandaRoot(BoxLayout):
     cookies = DictProperty([])
     username = StringProperty("")
     password = StringProperty("")
-    baseurl = StringProperty("exhentai")
+    baseurl = StringProperty("g.e-hentai")
     global data_dir
 
     def __init__(self, **kwargs):

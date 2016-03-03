@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Sadpandareader
+title = Sadpanda reader
 
 # (str) Package name
 package.name = sadpandareader
