@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Sadpandareader
+title = Sadpanda reader
 
 # (str) Package name
 package.name = sadpandareader
@@ -13,7 +13,7 @@ package.domain = org.sadpanda
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,jpeg
+source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -29,7 +29,7 @@ source.include_exts = py,png,jpg,kv,atlas,jpeg
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.1
+version = 1.0
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
@@ -46,13 +46,13 @@ requirements = kivy, requests, beautifulsoup, openssl
 #presplash.filename = %(source.dir)s/data/presplash.png
 
 # (str) Icon of the application
-#icon.filename = %(source.dir)s/data/icon.png
+icon.filename = img/icon_round.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
 
 # (bool) Indicate if the application should be fullscreen or not
-fullscreen = 1
+fullscreen = 0
 
 
 #
@@ -139,7 +139,7 @@ android.permissions = INTERNET
 
 # (str) Name of the certificate to use for signing the debug version
 # Get a list of available identities: buildozer ios list_identities
-#ios.codesign.debug = "iPhone Developer: <lastname> <firstname> (<hexstring>)"
+ios.codesign.debug = "iPhone Developer: Kjetil Andre Liknes (YE9GH35KK6)"
 
 # (str) Name of the certificate to use for signing the release version
 #ios.codesign.release = %(ios.codesign.debug)s
@@ -148,7 +148,7 @@ android.permissions = INTERNET
 [buildozer]
 
 # (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
-log_level = 1
+log_level = 2
 
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
 warn_on_root = 1

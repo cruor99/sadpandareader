@@ -1,0 +1,10 @@
+BeautifulSoup==3.2.1
+buildozer==0.30
+Cython==0.21.2
+Kivy==1.9.0
+Kivy-Garden==0.1.1
+pexpect==4.0.1
+ptyprocess==0.5
+pygame==1.9.2a0
+requests==2.8.1
+wheel==0.24.0
