@@ -185,6 +185,7 @@ SadpandaRoot:
 
 <GalleryImage>:
     size: root.width, root.height
+    nocache: True
 
 <GalleryScatter>:
     do_rotation: False
@@ -200,8 +201,10 @@ SadpandaRoot:
             id: gallery_carousel
             size_hint_y: 1.7
             direction: "right"
-            min_move: 0.01
             scroll_timeout: 200
+            anim_type: "out_quart"
+            anim_cancel_duration: 0.001
+            anim_move_duration: 0.1
             on_index: root.load_next()
 
 <FilterPopup>:

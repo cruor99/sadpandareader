@@ -6,7 +6,6 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.image import AsyncImage as Image
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.button import Button
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.stencilview import StencilView
 from kivy.uix.popup import Popup
 from kivy.uix.scatterlayout import ScatterLayout
@@ -17,8 +16,8 @@ from kivy.clock import Clock
 
 from os.path import join
 import os
-from functools import partial
 from BeautifulSoup import BeautifulSoup as BS
+from threading import Thread
 
 import requests
 import json
@@ -285,10 +284,14 @@ class GalleryScreen(Screen):
     def load_next(self):
         try:
             nextpage_url = self.pagelinks[self.next_page]
-            self.grab_image(nextpage_url)
+            thr = Thread(target=self.grab_image, args=[nextpage_url])
+            thr.daemon = True
+            thr.start()
             self.next_page += 1
             nextpage_url = self.pagelinks[self.next_page]
-            self.grab_image(nextpage_url)
+            thr2 = Trhead(target=self.grab_image, args=[nextpage_url])
+            thr2.daemon = True
+            thr.start()
             self.next_page += 1
         except:
             pass
@@ -296,6 +299,8 @@ class GalleryScreen(Screen):
 
 
     def grab_image(self, i, *largs):
+        gallerycontainer = GalleryContainerLayout()
+        self.ids.gallery_carousel.add_widget(gallerycontainer)
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
         pagerequest = requests.get(url=i, headers=headers, cookies=cookies)
@@ -308,9 +313,7 @@ class GalleryScreen(Screen):
         image = GalleryImage(source=src, allow_stretch=True)
         imageroot = GalleryScatter()
         imageroot.add_widget(image)
-        gallerycontainer = GalleryContainerLayout()
         gallerycontainer.add_widget(imageroot)
-        self.ids.gallery_carousel.add_widget(gallerycontainer)
 
 class GalleryContainerLayout(BoxLayout, StencilView):
     pass
@@ -353,6 +356,7 @@ class StartScreen(Screen):
         cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
         if cookie_store.exists("cookies"):
             App.get_running_app().root.cookies = cookie_store["cookies"]["cookies"]
+            App.get_running_app().root.baseurl = "exhentai"
             App.get_running_app().root.next_screen("front_screen")
         else:
             pass
@@ -364,7 +368,7 @@ class CaptchaPopup(Popup):
     action = StringProperty("")
 
     def try_again(self):
-        self.action = "try again"
+        self.action = "try_again"
         self.dismiss()
 
     def non_restricted(self):
