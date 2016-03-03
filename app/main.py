@@ -11,7 +11,7 @@ from kivy.uix.stencilview import StencilView
 from kivy.uix.popup import Popup
 from kivy.uix.scatterlayout import ScatterLayout
 from kivy.properties import StringProperty, ListProperty, NumericProperty
-from kivy.properties import BooleanProperty
+from kivy.properties import BooleanProperty, DictProperty
 from kivy.storage.jsonstore import JsonStore
 from kivy.clock import Clock
 
@@ -90,7 +90,8 @@ class FrontScreen(Screen):
         # ehentai link
         self.gidlist = []
         headers = {'User-agent': 'Mozilla/5.0'}
-        r = requests.get("http://g.e-hentai.org/?page="+str(self.searchpage) +
+        cookies = App.get_running_app().root.cookies
+        r = requests.get("http://"+App.get_running_app().root.baseurl+".org/?page="+str(self.searchpage) +
                          "f_doujinshi="+str(filtertemp["doujinshi"]) +
                          "&f_manga="+str(filtertemp["manga"]) +
                          "&f_artistcg="+str(filtertemp["artistcg"]) +
@@ -102,7 +103,7 @@ class FrontScreen(Screen):
                          "&f_asianporn="+str(filtertemp["asianporn"]) +
                          "&f_misc="+str(filtertemp["misc"]) +
                          "&f_search="+self.searchword+"&f_apply=Apply+Filter",
-                         headers=headers)
+                         headers=headers, cookies=cookies)
         self.searchpage += 1
         # pure html of ehentai link
         data = r.text
@@ -131,12 +132,13 @@ class FrontScreen(Screen):
             "method": "gdata",
             "gidlist": self.gidlist
             }
+        cookies = App.get_running_app().root.cookies
 
-        self.grabthumbs(headers, payload)
+        self.grabthumbs(headers, payload, cookies)
 
-    def grabthumbs(self, headers, payload, *largs):
-        r = requests.post("http://g.e-hentai.org/api.php",
-                          data=json.dumps(payload), headers=headers)
+    def grabthumbs(self, headers, payload, cookies, *largs):
+        r = requests.post("http://"+App.get_running_app().root.baseurl+".org/api.php",
+                          data=json.dumps(payload), headers=headers, cookies=cookies)
         requestdump = r.text
         requestdump.rstrip(os.linesep)
         requestjson = json.loads(requestdump)
@@ -252,7 +254,7 @@ class GalleryScreen(Screen):
     def populate_gallery(self):
         # change placehold.it with
         gallerypages = float(self.pagecount) / float(40)
-        pageregex = re.compile('http://g.e-hentai.org/s/\S{10}/\d{6}-\d+')
+        pageregex = re.compile('http://'+App.get_running_app().root.baseurl+'.org/s/\S{10}/\d{6}-\d+')
 
         if gallerypages.is_integer():
             pass
@@ -260,11 +262,12 @@ class GalleryScreen(Screen):
             gallerypages += 1
 
         headers = {'User-agent': 'Mozilla/5.0'}
+        cookies = App.get_running_app().root.cookies
         for i in range(int(gallerypages)):
-            galleryrequest = requests.get("http://g.e-hentai.org/g/{}/{}/?p={}\
+            galleryrequest = requests.get("http://"+App.get_running_app().root.baseurl+".org/g/{}/{}/?p={}\
                                           ".format(self.gallery_id,
                                           self.gallery_token, i),
-                                          headers=headers)
+                                          headers=headers, cookies=cookies)
 
             soup = BS(galleryrequest.text)
 
@@ -294,7 +297,8 @@ class GalleryScreen(Screen):
 
     def grab_image(self, i, *largs):
         headers = {'User-agent': 'Mozilla/5.0'}
-        pagerequest = requests.get(url=i, headers=headers)
+        cookies = App.get_running_app().root.cookies
+        pagerequest = requests.get(url=i, headers=headers, cookies=cookies)
 
         soup = BS(pagerequest.text)
 
@@ -339,14 +343,90 @@ class SearchPopup(Popup):
         App.get_running_app().root.set_filters(instance)
 
 
+class StartScreen(Screen):
+
+    def on_enter(self):
+
+        Clock.schedule_once(self.check_cookies)
+
+    def check_cookies(self, *args):
+        cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
+        if cookie_store.exists("cookies"):
+            App.get_running_app().root.cookies = cookie_store["cookies"]["cookies"]
+            App.get_running_app().root.next_screen("front_screen")
+        else:
+            pass
+
+
+
+class CaptchaPopup(Popup):
+
+    action = StringProperty("")
+
+    def try_again(self):
+        self.action = "try again"
+        self.dismiss()
+
+    def non_restricted(self):
+        self.action = "front_screen"
+        self.dismiss()
+
+
 class SadpandaRoot(BoxLayout):
 
+    cookies = DictProperty([])
+    username = StringProperty("")
+    password = StringProperty("")
+    baseurl = StringProperty("exhentai")
     global data_dir
 
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)
         # list of previous screens
         self.screen_list = []
+
+    def login_exhentai(self, username, password):
+        print username.text
+        self.username = username.text
+        self.password = password.text
+        cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
+
+        payload = {
+            "UserName": username.text,
+            "PassWord": password.text,
+            "returntype": "8",
+            "CookieDate": "1",
+            "b": "d",
+            "bt": "pone"
+        }
+        headers = {'User-Agent': 'Mozilla/5.0'}
+
+        r = requests.post("https://forums.e-hentai.org/index.php?act=Login&CODE=01",
+                          data=payload, headers=headers)
+        print r
+        #print r.content
+        print r.cookies
+
+
+        if len(r.cookies) <= 1:
+            captchapopup = CaptchaPopup()
+            captchapopup.bind(on_dismiss=self.login_captcha)
+            captchapopup.open()
+        else:
+            self.cookies = r.cookies
+            cookie_store.put("cookies", cookies=self.cookies)
+            self.baseurl = "exhentai"
+            self.next_screen("front_screen")
+
+    def login_captcha(self, instance):
+        if instance.action == "try_again":
+            print instance.action
+        else:
+            print instance.action
+            self.baseurl = "g.e-hentai"
+            self.next_screen("front_screen")
+
+
 
     def next_screen(self, neoscreen):
 
