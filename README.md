@@ -9,7 +9,11 @@ You use the same username and password.
 
 If you do not want access to the restricted content, just hit "To Front"
 
+## Various
 
+Built using [Kivy](https://kivy.org)
+
+Development was streamed on [Livecoding.tv](https://www.livecoding.tv/cruor99/)
 
 ## Screenshots
 
@@ -19,6 +23,3 @@ If you do not want access to the restricted content, just hit "To Front"
 
 
 
-Built using [Kivy](https://kivy.org)
-
-Development was streamed on [Livecoding.tv](https://www.livecoding.tv/cruor99/)
