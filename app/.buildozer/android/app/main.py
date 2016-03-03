@@ -168,9 +168,11 @@ class FrontScreen(Screen):
 class GalleryButtonContainer(BoxLayout, StencilView):
     pass
 
+
 class GalleryTitle(BoxLayout, StencilView):
 
     titletext = StringProperty("")
+
 
 class TagButton(Button):
 
@@ -289,14 +291,15 @@ class GalleryScreen(Screen):
             thr.start()
             self.next_page += 1
             nextpage_url = self.pagelinks[self.next_page]
-            thr2 = Trhead(target=self.grab_image, args=[nextpage_url])
+            thr2 = Thread(target=self.grab_image, args=[nextpage_url])
             thr2.daemon = True
-            thr.start()
+            thr2.start()
             self.next_page += 1
+            print "test before"
+            print self.ids.gallery_carousel.slides
+            print "test after"
         except:
-            pass
-
-
+            print "test"
 
     def grab_image(self, i, *largs):
         gallerycontainer = GalleryContainerLayout()
@@ -314,6 +317,7 @@ class GalleryScreen(Screen):
         imageroot = GalleryScatter()
         imageroot.add_widget(image)
         gallerycontainer.add_widget(imageroot)
+
 
 class GalleryContainerLayout(BoxLayout, StencilView):
     pass
@@ -362,7 +366,6 @@ class StartScreen(Screen):
             pass
 
 
-
 class CaptchaPopup(Popup):
 
     action = StringProperty("")
@@ -407,10 +410,6 @@ class SadpandaRoot(BoxLayout):
 
         r = requests.post("https://forums.e-hentai.org/index.php?act=Login&CODE=01",
                           data=payload, headers=headers)
-        print r
-        #print r.content
-        print r.cookies
-
 
         if len(r.cookies) <= 1:
             captchapopup = CaptchaPopup()
@@ -429,8 +428,6 @@ class SadpandaRoot(BoxLayout):
             print instance.action
             self.baseurl = "g.e-hentai"
             self.next_screen("front_screen")
-
-
 
     def next_screen(self, neoscreen):
 

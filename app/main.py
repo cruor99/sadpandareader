@@ -291,12 +291,15 @@ class GalleryScreen(Screen):
             thr.start()
             self.next_page += 1
             nextpage_url = self.pagelinks[self.next_page]
-            thr2 = Trhead(target=self.grab_image, args=[nextpage_url])
+            thr2 = Thread(target=self.grab_image, args=[nextpage_url])
             thr2.daemon = True
-            thr.start()
+            thr2.start()
             self.next_page += 1
+            print "test before"
+            print self.ids.gallery_carousel.slides
+            print "test after"
         except:
-            pass
+            print "test"
 
     def grab_image(self, i, *largs):
         gallerycontainer = GalleryContainerLayout()
