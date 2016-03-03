@@ -353,6 +353,7 @@ class StartScreen(Screen):
         cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
         if cookie_store.exists("cookies"):
             App.get_running_app().root.cookies = cookie_store["cookies"]["cookies"]
+            App.get_running_app().root.baseurl = "exhentai"
             App.get_running_app().root.next_screen("front_screen")
         else:
             pass
