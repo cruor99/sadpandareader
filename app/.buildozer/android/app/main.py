@@ -15,13 +15,13 @@ from kivy.storage.jsonstore import JsonStore
 from kivy.clock import Clock
 
 from os.path import join
-import os
 from BeautifulSoup import BeautifulSoup as BS
-from threading import Thread
+from functools import partial
 
 import requests
 import json
 import re
+import os
 
 data_dir = ""
 
@@ -286,18 +286,11 @@ class GalleryScreen(Screen):
     def load_next(self):
         try:
             nextpage_url = self.pagelinks[self.next_page]
-            thr = Thread(target=self.grab_image, args=[nextpage_url])
-            thr.daemon = True
-            thr.start()
+            Clock.schedule_once(partial(self.grab_image, nextpage_url))
             self.next_page += 1
             nextpage_url = self.pagelinks[self.next_page]
-            thr2 = Thread(target=self.grab_image, args=[nextpage_url])
-            thr2.daemon = True
-            thr2.start()
+            Clock.schedule_once(partial(self.grab_image, nextpage_url))
             self.next_page += 1
-            print "test before"
-            print self.ids.gallery_carousel.slides
-            print "test after"
         except:
             print "test"
 
