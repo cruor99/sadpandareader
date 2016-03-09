@@ -31,9 +31,6 @@ class SadpandaRoot(BoxLayout):
     def login_exhentai(self, username, password):
         self.username = username.text
         self.password = password.text
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        # cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
 
         payload = {
             "UserName": username.text,
@@ -70,8 +67,6 @@ class SadpandaRoot(BoxLayout):
 
     def next_screen(self, neoscreen):
 
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
         self.screen_list.append(self.ids.sadpanda_screen_manager.current)
 
         if self.ids.sadpanda_screen_manager.current == neoscreen:
@@ -84,10 +79,9 @@ class SadpandaRoot(BoxLayout):
             self.ids.sadpanda_screen_manager.current = neoscreen
 
     def goto_front(self):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        search_store = JsonStore(join(data_dir, "search_store.json"))
-        search_store.put("searchstring", searchphrase=" ")
+        blanksearch = Search(searchterm=" ")
+        db.add(blanksearch)
+        db.commit()
         self.next_screen("front_screen")
 
     def start_search(self, instance):
