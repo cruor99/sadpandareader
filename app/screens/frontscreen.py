@@ -16,7 +16,7 @@ import json
 
 from BeautifulSoup import BeautifulSoup as BS
 
-from models import db, Search
+from models import db, Search, Filters
 
 
 class FrontScreen(Screen):
@@ -69,24 +69,24 @@ class FrontScreen(Screen):
         # filter store
         data_dir_store = JsonStore("user_data_dir.json")
         data_dir = data_dir_store["data_dir"]["data_dir"]
-        filterstore = JsonStore(join(data_dir, "filterstore.json"))
-        filters = filterstore.get("filters")
-        filtertemp = filters["filters"]
-        # ehentai link
+        filters = db.query(Filters).order_by(Filters.id.desc()).first()
+        #filterstore = JsonStore(join(data_dir, "filterstore.json"))
+        #filters = filterstore.get("filters")
+        #filtertemp = filters["filters"]
         self.gidlist = []
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
         r = requests.get("http://"+App.get_running_app().root.baseurl+".org/?page="+str(self.searchpage) +
-                         "f_doujinshi="+str(filtertemp["doujinshi"]) +
-                         "&f_manga="+str(filtertemp["manga"]) +
-                         "&f_artistcg="+str(filtertemp["artistcg"]) +
-                         "&f_gamecg="+str(filtertemp["gamecg"]) +
-                         "&f_western="+str(filtertemp["western"]) +
-                         "&f_non-h="+str(filtertemp["nonh"]) +
-                         "&f_imageset="+str(filtertemp["imageset"]) +
-                         "&f_cosplay="+str(filtertemp["cosplay"]) +
-                         "&f_asianporn="+str(filtertemp["asianporn"]) +
-                         "&f_misc="+str(filtertemp["misc"]) +
+                         "f_doujinshi="+str(filters.doujinshi) +
+                         "&f_manga="+str(filters.manga) +
+                         "&f_artistcg="+str(filters.artistcg) +
+                         "&f_gamecg="+str(filters.gamecg) +
+                         "&f_western="+str(filters.western) +
+                         "&f_non-h="+str(filters.nonh) +
+                         "&f_imageset="+str(filters.imageset) +
+                         "&f_cosplay="+str(filters.cosplay) +
+                         "&f_asianporn="+str(filters.asianporn) +
+                         "&f_misc="+str(filters.misc) +
                          "&f_search="+self.searchword+"&f_apply=Apply+Filter",
                          headers=headers, cookies=cookies)
         self.searchpage += 1

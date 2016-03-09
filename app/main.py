@@ -116,8 +116,6 @@ class SadpandaRoot(BoxLayout):
         fpop.open()
 
     def set_filters(self, instance):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
         filters = {
             "doujinshi": 0,
             "manga": 0,
@@ -150,37 +148,32 @@ class SadpandaRoot(BoxLayout):
         if instance.ids.misc.state == "down":
             filters["misc"] = 1
 
-        filterstore = JsonStore(join(data_dir, "filterstore.json"))
-        filterstore.put("filters", filters=filters)
+        newfilter = Filters(doujinshi=filters["doujinshi"],
+                            manga=filters["manga"],
+                            artistcg=filters["artistcg"],
+                            gamecg=filters["gamecg"],
+                            western=filters["western"],
+                            nonh=filters["nonh"],
+                            imageset=filters["imageset"],
+                            cosplay=filters["cosplay"],
+                            asianporn=filters["asianporn"],
+                            misc=filters["misc"])
+        db.add(newfilter)
+        db.commit()
 
 
 class SadpandaApp(App):
 
     def __init__(self, **kwargs):
         super(SadpandaApp, self).__init__(**kwargs)
-        global data_dir
-        data_dir = JsonStore("user_data_dir.json")
-        data_dir.put("data_dir", data_dir=getattr(self, 'user_data_dir'))
-        tempdatadir = getattr(self, "user_data_dir")
         Window.bind(on_keyboard=self.onBackBtn)
-        filterstore = JsonStore(join(tempdatadir, "filterstore.json"))
         # Makes sure only non-h is the default.
-        if filterstore.exists("filters"):
-            pass
-        else:
-            filters = {
-                "doujinshi": 0,
-                "manga": 0,
-                "artistcg": 0,
-                "gamecg": 0,
-                "western": 0,
-                "nonh": 1,
-                "imageset": 0,
-                "cosplay": 0,
-                "asianporn": 0,
-                "misc": 0
-                }
-            filterstore.put("filters", filters=filters)
+        clearstart = Filters(nonh=1, doujinshi=0, manga=0,
+                             artistcg=0, gamecg=0, western=0,
+                             imageset=0, cosplay=0, asianporn=0,
+                             misc=0)
+        db.add(clearstart)
+        db.commit()
 
     def onBackBtn(self, window, key, *args):
         # user presses back button
