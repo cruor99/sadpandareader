@@ -17,7 +17,7 @@ data_dir = ""
 
 class SadpandaRoot(BoxLayout):
 
-    cookies = DictProperty([])
+    cookies = DictProperty({})
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("g.e-hentai")

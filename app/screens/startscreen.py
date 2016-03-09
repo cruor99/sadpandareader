@@ -7,6 +7,9 @@ from os.path import join
 
 from models import User, db
 
+import json
+import ast
+
 
 class StartScreen(Screen):
 
@@ -22,7 +25,9 @@ class StartScreen(Screen):
 
         user = db.query(User).first()
         if user:
-            cookies = user.cookies
+            cookies = ast.literal_eval(user.cookies)
+            print cookies, "cookies here"
+            print type(cookies)
             App.get_running_app().root.cookies = cookies
             App.get_running_app().root.baseurl = "exhentai"
             App.get_running_app().root.next_screen("front_screen")
