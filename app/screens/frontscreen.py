@@ -16,6 +16,8 @@ import json
 
 from BeautifulSoup import BeautifulSoup as BS
 
+from models import db, Search
+
 
 class FrontScreen(Screen):
 
@@ -29,21 +31,18 @@ class FrontScreen(Screen):
 
     def on_enter(self):
 
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        search_store = JsonStore(join(data_dir, 'search_store.json'))
-        if search_store.exists("searchstring"):
-            newsearch = search_store["searchstring"]["searchphrase"]
-            if newsearch == self.searchword:
-                if self.newstart is True:
-                    self.new_search()
-                    self.newstart = False
-                else:
-                    pass
-            else:
-                self.searchword = newsearch
+        search = db.query(Search).order_by(Search.id.desc()).first()
+        if search:
+            print search.searchterm, "frontscreen"
+            if self.newstart is True:
+                self.searchword = search.searchterm
                 self.new_search()
+                self.newstart = False
+            else:
+                self.searchword = search.searchterm
+                self.new_search
         else:
+            print "No search"
             self.searchword = ""
             self.new_search()
 

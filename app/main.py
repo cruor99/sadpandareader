@@ -10,6 +10,7 @@ from os.path import join
 import requests
 from screens import *
 from components import *
+from models import User, Filters, Gallery, Pagelink, Search, db
 
 data_dir = ""
 
@@ -28,7 +29,6 @@ class SadpandaRoot(BoxLayout):
         self.screen_list = []
 
     def login_exhentai(self, username, password):
-        print username.text
         self.username = username.text
         self.password = password.text
         data_dir_store = JsonStore("user_data_dir.json")
@@ -75,8 +75,8 @@ class SadpandaRoot(BoxLayout):
         if self.ids.sadpanda_screen_manager.current == neoscreen:
             cur_screen = self.ids.sadpanda_screen_manager.get_screen(neoscreen)
             cur_screen.new_search()
-            search_store = JsonStore(join(data_dir, "search_store.json"))
-            newsearch = search_store["searchstring"]["searchphrase"]
+            search = db.query(Search).order_by(Search.id.desc()).first()
+            newsearch = search.searchterm
             cur_screen.searchword = newsearch
         else:
             self.ids.sadpanda_screen_manager.current = neoscreen
@@ -89,12 +89,11 @@ class SadpandaRoot(BoxLayout):
         self.next_screen("front_screen")
 
     def start_search(self, instance):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
         front_screen = self.ids.sadpanda_screen_manager.get_screen("front_screen")
         searchword = front_screen.searchword
-        search_store = JsonStore(join(data_dir, "search_store.json"))
-        newsearch = search_store["searchstring"]["searchphrase"]
+        search = db.query(Search).order_by(Search.id.desc()).first()
+        newsearch = search.searchterm
+        print newsearch, "newsearch"
         if newsearch == searchword:
             pass
         else:

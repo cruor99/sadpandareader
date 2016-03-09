@@ -4,6 +4,8 @@ from os.path import join
 from kivy.properties import StringProperty, NumericProperty
 from kivy.app import App
 
+from models import Search, db
+
 
 class CaptchaPopup(Popup):
 
@@ -23,11 +25,9 @@ class SearchPopup(Popup):
     global data_dir
 
     def savesearch(self):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        search_store = JsonStore(join(data_dir, 'search_store.json'))
-        searchquery = self.ids.searchstring.text
-        search_store.put("searchstring", searchphrase=searchquery)
+        newsearch = Search(searchterm=self.ids.searchstring.text)
+        db.add(newsearch)
+        db.commit()
         self.dismiss()
 
     def open_filters(self):
