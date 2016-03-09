@@ -5,6 +5,8 @@ from kivy.storage.jsonstore import JsonStore
 
 from os.path import join
 
+from models import User, db
+
 
 class StartScreen(Screen):
 
@@ -18,9 +20,10 @@ class StartScreen(Screen):
         data_dir_store = JsonStore("user_data_dir.json")
         data_dir = data_dir_store["data_dir"]["data_dir"]
 
-        cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
-        if cookie_store.exists("cookies"):
-            App.get_running_app().root.cookies = cookie_store["cookies"]["cookies"]
+        user = db.query(User).first()
+        if user:
+            cookies = user.cookies
+            App.get_running_app().root.cookies = cookies
             App.get_running_app().root.baseurl = "exhentai"
             App.get_running_app().root.next_screen("front_screen")
         else:

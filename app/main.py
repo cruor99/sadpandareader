@@ -33,7 +33,7 @@ class SadpandaRoot(BoxLayout):
         self.password = password.text
         data_dir_store = JsonStore("user_data_dir.json")
         data_dir = data_dir_store["data_dir"]["data_dir"]
-        cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
+        # cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
 
         payload = {
             "UserName": username.text,
@@ -54,7 +54,9 @@ class SadpandaRoot(BoxLayout):
             captchapopup.open()
         else:
             self.cookies = r.cookies
-            cookie_store.put("cookies", cookies=self.cookies)
+            cookies = User(cookies=str(self.cookies))
+            db.add(cookies)
+            db.commit()
             self.baseurl = "exhentai"
             self.next_screen("front_screen")
 
