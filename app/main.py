@@ -88,7 +88,10 @@ class SadpandaRoot(BoxLayout):
         front_screen = self.ids.sadpanda_screen_manager.get_screen("front_screen")
         searchword = front_screen.searchword
         search = db.query(Search).order_by(Search.id.desc()).first()
-        newsearch = search.searchterm
+        if search:
+            newsearch = search.searchterm
+        else:
+            newsearch = " "
         print newsearch, "newsearch"
         if newsearch == searchword:
             pass
@@ -173,6 +176,9 @@ class SadpandaApp(App):
                              imageset=0, cosplay=0, asianporn=0,
                              misc=0)
         db.add(clearstart)
+        db.commit()
+        clearsearch = Search(searchterm=" ")
+        db.add(clearsearch)
         db.commit()
 
     def onBackBtn(self, window, key, *args):

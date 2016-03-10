@@ -9,6 +9,8 @@ from os.path import join
 # Self made components
 from components import TagButton
 
+from models import db, Gallery, GalleryTags, Search
+
 
 class GalleryPreviewScreen(Screen):
 
@@ -22,17 +24,18 @@ class GalleryPreviewScreen(Screen):
     global data_dir
 
     def on_enter(self):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        gallery_store = JsonStore(join(data_dir, "gallerystore.json"))
-        if gallery_store.exists("current_gallery"):
-            galleryinfo = gallery_store.get("current_gallery")
-            self.gallery_id = galleryinfo["galleryinfo"][0]
-            self.gallery_token = galleryinfo["galleryinfo"][1]
-            self.pagecount = galleryinfo["galleryinfo"][2]
-            self.gallery_name = galleryinfo["galleryinfo"][3]
-            self.gallery_tags = galleryinfo["galleryinfo"][4]
-            self.gallery_thumb = galleryinfo["galleryinfo"][5]
+        gallerydata = db.query(Gallery).order_by(Gallery.id.desc()).first()
+        print gallerydata.gallery_name
+        tags = db.query(GalleryTags).filter_by(galleryid=gallerydata.id).all()
+        taglist = []
+        for tag in tags:
+            taglist.append(tag.tag)
+        self.gallery_id = gallerydata.gallery_id
+        self.gallery_token = gallerydata.gallery_token
+        self.pagecount = gallerydata.pagecount
+        self.gallery_name = gallerydata.gallery_name
+        self.gallery_tags = taglist
+        self.gallery_thumb = gallerydata.gallery_thumb
 
         Clock.schedule_once(self.populate_tags)
 
@@ -48,9 +51,8 @@ class GalleryPreviewScreen(Screen):
 
     def search_tag(self, instance):
 
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        search_store = JsonStore(join(data_dir, "search_store.json"))
         tag = instance.text
-        search_store.put("searchstring", searchphrase=tag)
+        search = Search(searchterm=tag)
+        db.add(search)
+        db.commit()
         App.get_running_app().root.next_screen("front_screen")

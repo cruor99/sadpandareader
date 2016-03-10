@@ -16,7 +16,7 @@ import json
 
 from BeautifulSoup import BeautifulSoup as BS
 
-from models import db, Search, Filters
+from models import db, Search, Filters, Gallery, GalleryTags
 
 
 class FrontScreen(Screen):
@@ -36,11 +36,13 @@ class FrontScreen(Screen):
             print search.searchterm, "frontscreen"
             if self.newstart is True:
                 self.searchword = search.searchterm
+                print self.searchword
                 self.new_search()
                 self.newstart = False
             else:
                 self.searchword = search.searchterm
-                self.new_search
+                print self.searchword, "else"
+                self.new_search()
         else:
             print "No search"
             self.searchword = ""
@@ -48,6 +50,7 @@ class FrontScreen(Screen):
 
     def new_search(self):
         self.ids.main_layout.clear_widgets()
+        print self.ids.main_layout.children
         self.searchpage = 0
 
         self.gallery_thumbs = []
@@ -62,6 +65,17 @@ class FrontScreen(Screen):
         galleryinfo = [instance.gallery_id, instance.gallery_token,
                        instance.pagecount, instance.gallery_name,
                        instance.gallery_tags, instance.gallery_thumb]
+        gallery = Gallery(gallery_id = instance.gallery_id,
+                          gallery_token=instance.gallery_token,
+                          pagecount=instance.pagecount,
+                          gallery_name=instance.gallery_name,
+                          gallery_thumb=instance.gallery_thumb)
+        db.add(gallery)
+        db.commit()
+        for tag in instance.gallery_tags:
+            gallerytag = GalleryTags(galleryid=gallery.id, tag=tag)
+            db.add(gallerytag)
+            db.commit()
         gallery_store.put("current_gallery", galleryinfo=galleryinfo)
         App.get_running_app().root.next_screen("gallery_preview_screen")
 

@@ -43,10 +43,20 @@ class Gallery(Base):
 
     id = Column(Integer, primary_key=True)
     gallery_id = Column(String)
+    gallery_token = Column(String)
     # pagelinks = Column(String)
     pagecount = Column(Integer)
     gallery_name = Column(String)
+    gallery_thumb = Column(String)
 
+
+class GalleryTags(Base):
+    __tablename__ = "gallerytags"
+
+    id = Column(Integer, primary_key=True)
+    galleryid = Column(Integer, ForeignKey("galleries.id"))
+    galleries = relationship("Gallery")
+    tag = Column(String)
 
 class Pagelink(Base):
     __tablename__ = "pagelinks"
