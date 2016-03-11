@@ -161,10 +161,12 @@ SadpandaRoot:
             Button:
                 text: "Start Reading"
                 size_hint_y: None
+                height: dp(40)
                 on_release: root.view_gallery()
             Button:
                 text: "Add to favourites"
                 size_hint_y: None
+                height: dp(40)
         BoxLayout:
             orientation: "vertical"
             WrappedLabel:
@@ -195,11 +197,18 @@ SadpandaRoot:
     auto_bring_to_front: False
 
 <GalleryScreen>:
+    canvas.before:
+        Color:
+            rgb: (1, 1, 1)
+        Rectangle:
+            size: self.size
+            pos: self.pos
     BoxLayout:
         orientation: "vertical"
         WrappedLabel:
             text: root.gallery_name
             max_lines: 1
+            color: 0, 0, 0, 1
         ScreenManager:
             id: gallery_manager
             size_hint_y: 1.7
