@@ -65,18 +65,24 @@ class FrontScreen(Screen):
         galleryinfo = [instance.gallery_id, instance.gallery_token,
                        instance.pagecount, instance.gallery_name,
                        instance.gallery_tags, instance.gallery_thumb]
-        gallery = Gallery(gallery_id = instance.gallery_id,
-                          gallery_token=instance.gallery_token,
-                          pagecount=instance.pagecount,
-                          gallery_name=instance.gallery_name,
-                          gallery_thumb=instance.gallery_thumb)
-        db.add(gallery)
-        db.commit()
-        for tag in instance.gallery_tags:
-            gallerytag = GalleryTags(galleryid=gallery.id, tag=tag)
-            db.add(gallerytag)
+        existgallery = db.query(Gallery).filter_by(gallery_id=instance.gallery_id).first()
+        if existgallery:
+            pass
+        else:
+            gallery = Gallery(gallery_id = instance.gallery_id,
+                            gallery_token=instance.gallery_token,
+                            pagecount=instance.pagecount,
+                            gallery_name=instance.gallery_name,
+                            gallery_thumb=instance.gallery_thumb)
+            db.add(gallery)
             db.commit()
-        gallery_store.put("current_gallery", galleryinfo=galleryinfo)
+            for tag in instance.gallery_tags:
+                gallerytag = GalleryTags(galleryid=gallery.id, tag=tag)
+                db.add(gallerytag)
+                db.commit()
+            gallery_store.put("current_gallery", galleryinfo=galleryinfo)
+        preview_screen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
+        preview_screen.gallery_id = instance.gallery_id
         App.get_running_app().root.next_screen("gallery_preview_screen")
 
     def populate_front(self, *largs):

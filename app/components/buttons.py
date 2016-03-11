@@ -23,3 +23,7 @@ class GalleryButtonContainer(BoxLayout, StencilView):
 class TagButton(Button):
 
     tagname = StringProperty("")
+
+
+class GalleryNavButton(Button):
+    pass

@@ -24,7 +24,7 @@ class GalleryPreviewScreen(Screen):
     global data_dir
 
     def on_enter(self):
-        gallerydata = db.query(Gallery).order_by(Gallery.id.desc()).first()
+        gallerydata = db.query(Gallery).filter_by(gallery_id=self.gallery_id).first()
         print gallerydata.gallery_name
         tags = db.query(GalleryTags).filter_by(galleryid=gallerydata.id).all()
         taglist = []
@@ -47,6 +47,8 @@ class GalleryPreviewScreen(Screen):
             self.ids.tag_layout.add_widget(taglabel)
 
     def view_gallery(self):
+        galleryscreen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("gallery_screen")
+        galleryscreen.gallery_id = self.gallery_id
         App.get_running_app().root.next_screen("gallery_screen")
 
     def search_tag(self, instance):
