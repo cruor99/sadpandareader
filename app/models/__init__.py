@@ -65,6 +65,7 @@ class Pagelink(Base):
     galleryid = Column(Integer, ForeignKey("galleries.id"))
     galleries = relationship("Gallery")
     pagelink = Column(String)
+    current = Column(Integer)
 
 
 if __name__ == "__main__":
