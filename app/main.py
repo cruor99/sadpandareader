@@ -12,7 +12,6 @@ from screens import *
 from components import *
 from models import User, Filters, Gallery, Pagelink, Search, db
 
-data_dir = ""
 
 
 class SadpandaRoot(BoxLayout):
@@ -21,7 +20,6 @@ class SadpandaRoot(BoxLayout):
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("g.e-hentai")
-    global data_dir
 
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)

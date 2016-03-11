@@ -13,7 +13,7 @@ package.domain = org.sadpanda
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf
+source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf,db
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -29,11 +29,11 @@ source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 1.0
+version = 1.2
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, requests, beautifulsoup, openssl
+requirements = kivy, requests, beautifulsoup, openssl, sqlalchemy, sqlite3
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

@@ -21,7 +21,6 @@ from models import db, Search, Filters, Gallery, GalleryTags
 
 class FrontScreen(Screen):
 
-    global data_dir
 
     gallery_thumbs = ListProperty([])
     gidlist = ListProperty([])
@@ -59,9 +58,6 @@ class FrontScreen(Screen):
         Clock.schedule_once(self.populate_front)
 
     def enter_gallery(self, instance):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        gallery_store = JsonStore(join(data_dir, 'gallerystore.json'))
         galleryinfo = [instance.gallery_id, instance.gallery_token,
                        instance.pagecount, instance.gallery_name,
                        instance.gallery_tags, instance.gallery_thumb]
@@ -80,17 +76,13 @@ class FrontScreen(Screen):
                 gallerytag = GalleryTags(galleryid=gallery.id, tag=tag)
                 db.add(gallerytag)
                 db.commit()
-            gallery_store.put("current_gallery", galleryinfo=galleryinfo)
         preview_screen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
         preview_screen.gallery_id = instance.gallery_id
         App.get_running_app().root.next_screen("gallery_preview_screen")
 
     def populate_front(self, *largs):
         # filter store
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
         filters = db.query(Filters).order_by(Filters.id.desc()).first()
-        #filterstore = JsonStore(join(data_dir, "filterstore.json"))
         #filters = filterstore.get("filters")
         #filtertemp = filters["filters"]
         self.gidlist = []

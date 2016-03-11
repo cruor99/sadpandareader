@@ -21,7 +21,6 @@ class GalleryPreviewScreen(Screen):
     gallery_token = StringProperty("")
     gallery_thumb = StringProperty("")
 
-    global data_dir
 
     def on_enter(self):
         gallerydata = db.query(Gallery).filter_by(gallery_id=self.gallery_id).first()

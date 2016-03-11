@@ -32,7 +32,6 @@ class GalleryScreen(Screen):
     nextpage = NumericProperty(0)
     current_page = NumericProperty()
 
-    global data_dir
 
     def __init__(self, **kwargs):
         super(GalleryScreen, self).__init__(**kwargs)
@@ -98,7 +97,6 @@ class GalleryScreen(Screen):
 
         currentexist = db.query(Pagelink).filter_by(galleryid=self.db_id, current=1).first()
         if currentexist:
-            print "currentexist"
             first_screen = self.construct_image(currentexist.pagelink)
             self.ids.gallery_manager.add_widget(first_screen)
         else:
@@ -123,7 +121,6 @@ class GalleryScreen(Screen):
                     page.current = 0
                     db.commit()
                     newscreen = self.construct_image(newpage.pagelink)
-                    print newpage.pagelink, "New pagelink next"
                     self.ids.gallery_manager.switch_to(newscreen)
                     break
                 except:
@@ -131,7 +128,6 @@ class GalleryScreen(Screen):
                     pass
 
     def previous_image(self, instance):
-        print "previous image"
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
 
         for page in pagelinks:
@@ -143,37 +139,31 @@ class GalleryScreen(Screen):
                     page.current = 0
                     db.commit()
                     newscreen = self.construct_image(newpage.pagelink)
-                    print newpage.pagelink, "New pagelink previous"
                     self.ids.gallery_manager.switch_to(newscreen)
                     break
                 except:
                     # Create start of gallery popup
                     pass
 
-
     def construct_image(self, pagelink):
-        print pagelink
         src = self.grab_image(pagelink)
         image = GalleryImage(source=src, allow_stretch=True)
         imageroot = GalleryScatter()
         gallerycontainer = GalleryContainerLayout()
         imageroot.add_widget(image)
-        buttoncontainer = BoxLayout(orientation="horizontal")
-        forwardsbutton = GalleryNavButton()
+        forwardsbutton = GalleryNavButton(pos_hint={"x": 0.8})
         forwardsbutton.bind(on_release=self.next_image)
-        backwardsbutton = GalleryNavButton()
+        backwardsbutton = GalleryNavButton(pos_hint={"x": 0.01})
         backwardsbutton.bind(on_release=self.previous_image)
-        buttoncontainer.add_widget(backwardsbutton)
         gallerycontainer.add_widget(imageroot)
-        buttoncontainer.add_widget(forwardsbutton)
-        gallerycontainer.add_widget(buttoncontainer)
+        gallerycontainer.add_widget(backwardsbutton)
+        gallerycontainer.add_widget(forwardsbutton)
         galleryscreen = GalleryImageScreen(id=pagelink)
         galleryscreen.add_widget(gallerycontainer)
 
         return galleryscreen
 
     def grab_image(self, i):
-        print "grab_image"
         #pageurls = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
         # print pageurls, "pageurls"
         #for page in pageurls:
