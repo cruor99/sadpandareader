@@ -197,15 +197,20 @@ SadpandaRoot:
         orientation: "vertical"
         WrappedLabel:
             text: root.gallery_name
-        Carousel:
-            id: gallery_carousel
+            max_lines: 1
+        ScreenManager:
+            id: gallery_manager
             size_hint_y: 1.7
-            direction: "right"
-            scroll_timeout: 200
-            anim_type: "out_quart"
-            anim_cancel_duration: 0.001
-            anim_move_duration: 0.1
-            on_index: root.load_next()
+
+<GalleryNavButton>:
+    background_color: 0, 0, 0, .2
+    background_normal: "img/transparent.png"
+    background_down: "img/button_bg_down.png"
+    #size_hint_x: None
+    #width: dp(70)
+
+
+
 
 <FilterPopup>:
     title: "Set your filters here"

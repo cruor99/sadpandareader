@@ -16,6 +16,8 @@ import json
 
 from BeautifulSoup import BeautifulSoup as BS
 
+from models import db, Search, Filters, Gallery, GalleryTags
+
 
 class FrontScreen(Screen):
 
@@ -29,26 +31,26 @@ class FrontScreen(Screen):
 
     def on_enter(self):
 
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        search_store = JsonStore(join(data_dir, 'search_store.json'))
-        if search_store.exists("searchstring"):
-            newsearch = search_store["searchstring"]["searchphrase"]
-            if newsearch == self.searchword:
-                if self.newstart is True:
-                    self.new_search()
-                    self.newstart = False
-                else:
-                    pass
+        search = db.query(Search).order_by(Search.id.desc()).first()
+        if search:
+            print search.searchterm, "frontscreen"
+            if self.newstart is True:
+                self.searchword = search.searchterm
+                print self.searchword
+                self.new_search()
+                self.newstart = False
             else:
-                self.searchword = newsearch
+                self.searchword = search.searchterm
+                print self.searchword, "else"
                 self.new_search()
         else:
+            print "No search"
             self.searchword = ""
             self.new_search()
 
     def new_search(self):
         self.ids.main_layout.clear_widgets()
+        print self.ids.main_layout.children
         self.searchpage = 0
 
         self.gallery_thumbs = []
@@ -63,31 +65,48 @@ class FrontScreen(Screen):
         galleryinfo = [instance.gallery_id, instance.gallery_token,
                        instance.pagecount, instance.gallery_name,
                        instance.gallery_tags, instance.gallery_thumb]
-        gallery_store.put("current_gallery", galleryinfo=galleryinfo)
+        existgallery = db.query(Gallery).filter_by(gallery_id=instance.gallery_id).first()
+        if existgallery:
+            pass
+        else:
+            gallery = Gallery(gallery_id = instance.gallery_id,
+                            gallery_token=instance.gallery_token,
+                            pagecount=instance.pagecount,
+                            gallery_name=instance.gallery_name,
+                            gallery_thumb=instance.gallery_thumb)
+            db.add(gallery)
+            db.commit()
+            for tag in instance.gallery_tags:
+                gallerytag = GalleryTags(galleryid=gallery.id, tag=tag)
+                db.add(gallerytag)
+                db.commit()
+            gallery_store.put("current_gallery", galleryinfo=galleryinfo)
+        preview_screen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
+        preview_screen.gallery_id = instance.gallery_id
         App.get_running_app().root.next_screen("gallery_preview_screen")
 
     def populate_front(self, *largs):
         # filter store
         data_dir_store = JsonStore("user_data_dir.json")
         data_dir = data_dir_store["data_dir"]["data_dir"]
-        filterstore = JsonStore(join(data_dir, "filterstore.json"))
-        filters = filterstore.get("filters")
-        filtertemp = filters["filters"]
-        # ehentai link
+        filters = db.query(Filters).order_by(Filters.id.desc()).first()
+        #filterstore = JsonStore(join(data_dir, "filterstore.json"))
+        #filters = filterstore.get("filters")
+        #filtertemp = filters["filters"]
         self.gidlist = []
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
         r = requests.get("http://"+App.get_running_app().root.baseurl+".org/?page="+str(self.searchpage) +
-                         "f_doujinshi="+str(filtertemp["doujinshi"]) +
-                         "&f_manga="+str(filtertemp["manga"]) +
-                         "&f_artistcg="+str(filtertemp["artistcg"]) +
-                         "&f_gamecg="+str(filtertemp["gamecg"]) +
-                         "&f_western="+str(filtertemp["western"]) +
-                         "&f_non-h="+str(filtertemp["nonh"]) +
-                         "&f_imageset="+str(filtertemp["imageset"]) +
-                         "&f_cosplay="+str(filtertemp["cosplay"]) +
-                         "&f_asianporn="+str(filtertemp["asianporn"]) +
-                         "&f_misc="+str(filtertemp["misc"]) +
+                         "f_doujinshi="+str(filters.doujinshi) +
+                         "&f_manga="+str(filters.manga) +
+                         "&f_artistcg="+str(filters.artistcg) +
+                         "&f_gamecg="+str(filters.gamecg) +
+                         "&f_western="+str(filters.western) +
+                         "&f_non-h="+str(filters.nonh) +
+                         "&f_imageset="+str(filters.imageset) +
+                         "&f_cosplay="+str(filters.cosplay) +
+                         "&f_asianporn="+str(filters.asianporn) +
+                         "&f_misc="+str(filters.misc) +
                          "&f_search="+self.searchword+"&f_apply=Apply+Filter",
                          headers=headers, cookies=cookies)
         self.searchpage += 1

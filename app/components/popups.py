@@ -4,6 +4,8 @@ from os.path import join
 from kivy.properties import StringProperty, NumericProperty
 from kivy.app import App
 
+from models import Search, db, Filters
+
 
 class CaptchaPopup(Popup):
 
@@ -23,11 +25,9 @@ class SearchPopup(Popup):
     global data_dir
 
     def savesearch(self):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        search_store = JsonStore(join(data_dir, 'search_store.json'))
-        searchquery = self.ids.searchstring.text
-        search_store.put("searchstring", searchphrase=searchquery)
+        newsearch = Search(searchterm=self.ids.searchstring.text)
+        db.add(newsearch)
+        db.commit()
         self.dismiss()
 
     def open_filters(self):
@@ -55,20 +55,18 @@ class FilterPopup(Popup):
 
     def __init__(self, **kwargs):
         super(FilterPopup, self).__init__(**kwargs)
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        filterjson = JsonStore(join(data_dir, "filterstore.json"))
-        if filterjson.exists("filters"):
-            self.doujinshi = filterjson["filters"]["filters"]["doujinshi"]
-            self.manga = filterjson["filters"]["filters"]["manga"]
-            self.artistcg = filterjson["filters"]["filters"]["artistcg"]
-            self.gamecg = filterjson["filters"]["filters"]["gamecg"]
-            self.western = filterjson["filters"]["filters"]["western"]
-            self.nonh = filterjson["filters"]["filters"]["nonh"]
-            self.imageset = filterjson["filters"]["filters"]["imageset"]
-            self.cosplay = filterjson["filters"]["filters"]["cosplay"]
-            self.asianporn = filterjson["filters"]["filters"]["asianporn"]
-            self.misc = filterjson["filters"]["filters"]["misc"]
+        filters = db.query(Filters).order_by(Filters.id.desc()).first()
+        if filters:
+            self.doujinshi = filters.doujinshi
+            self.manga = filters.manga
+            self.artistcg = filters.artistcg
+            self.gamecg = filters.gamecg
+            self.western = filters.western
+            self.nonh = filters.nonh
+            self.imageset = filters.imageset
+            self.cosplay = filters.cosplay
+            self.asianporn = filters.asianporn
+            self.misc = filters.misc
         if self.doujinshi == 1:
             self.ids.doujinshi.state = "down"
         if self.manga == 1:

@@ -10,13 +10,14 @@ from os.path import join
 import requests
 from screens import *
 from components import *
+from models import User, Filters, Gallery, Pagelink, Search, db
 
 data_dir = ""
 
 
 class SadpandaRoot(BoxLayout):
 
-    cookies = DictProperty([])
+    cookies = DictProperty({})
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("g.e-hentai")
@@ -28,12 +29,8 @@ class SadpandaRoot(BoxLayout):
         self.screen_list = []
 
     def login_exhentai(self, username, password):
-        print username.text
         self.username = username.text
         self.password = password.text
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
 
         payload = {
             "UserName": username.text,
@@ -54,7 +51,9 @@ class SadpandaRoot(BoxLayout):
             captchapopup.open()
         else:
             self.cookies = r.cookies
-            cookie_store.put("cookies", cookies=self.cookies)
+            cookies = User(cookies=str(self.cookies))
+            db.add(cookies)
+            db.commit()
             self.baseurl = "exhentai"
             self.next_screen("front_screen")
 
@@ -68,33 +67,32 @@ class SadpandaRoot(BoxLayout):
 
     def next_screen(self, neoscreen):
 
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
         self.screen_list.append(self.ids.sadpanda_screen_manager.current)
 
         if self.ids.sadpanda_screen_manager.current == neoscreen:
             cur_screen = self.ids.sadpanda_screen_manager.get_screen(neoscreen)
             cur_screen.new_search()
-            search_store = JsonStore(join(data_dir, "search_store.json"))
-            newsearch = search_store["searchstring"]["searchphrase"]
+            search = db.query(Search).order_by(Search.id.desc()).first()
+            newsearch = search.searchterm
             cur_screen.searchword = newsearch
         else:
             self.ids.sadpanda_screen_manager.current = neoscreen
 
     def goto_front(self):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
-        search_store = JsonStore(join(data_dir, "search_store.json"))
-        search_store.put("searchstring", searchphrase=" ")
+        blanksearch = Search(searchterm=" ")
+        db.add(blanksearch)
+        db.commit()
         self.next_screen("front_screen")
 
     def start_search(self, instance):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
         front_screen = self.ids.sadpanda_screen_manager.get_screen("front_screen")
         searchword = front_screen.searchword
-        search_store = JsonStore(join(data_dir, "search_store.json"))
-        newsearch = search_store["searchstring"]["searchphrase"]
+        search = db.query(Search).order_by(Search.id.desc()).first()
+        if search:
+            newsearch = search.searchterm
+        else:
+            newsearch = " "
+        print newsearch, "newsearch"
         if newsearch == searchword:
             pass
         else:
@@ -121,8 +119,6 @@ class SadpandaRoot(BoxLayout):
         fpop.open()
 
     def set_filters(self, instance):
-        data_dir_store = JsonStore("user_data_dir.json")
-        data_dir = data_dir_store["data_dir"]["data_dir"]
         filters = {
             "doujinshi": 0,
             "manga": 0,
@@ -155,37 +151,35 @@ class SadpandaRoot(BoxLayout):
         if instance.ids.misc.state == "down":
             filters["misc"] = 1
 
-        filterstore = JsonStore(join(data_dir, "filterstore.json"))
-        filterstore.put("filters", filters=filters)
+        newfilter = Filters(doujinshi=filters["doujinshi"],
+                            manga=filters["manga"],
+                            artistcg=filters["artistcg"],
+                            gamecg=filters["gamecg"],
+                            western=filters["western"],
+                            nonh=filters["nonh"],
+                            imageset=filters["imageset"],
+                            cosplay=filters["cosplay"],
+                            asianporn=filters["asianporn"],
+                            misc=filters["misc"])
+        db.add(newfilter)
+        db.commit()
 
 
 class SadpandaApp(App):
 
     def __init__(self, **kwargs):
         super(SadpandaApp, self).__init__(**kwargs)
-        global data_dir
-        data_dir = JsonStore("user_data_dir.json")
-        data_dir.put("data_dir", data_dir=getattr(self, 'user_data_dir'))
-        tempdatadir = getattr(self, "user_data_dir")
         Window.bind(on_keyboard=self.onBackBtn)
-        filterstore = JsonStore(join(tempdatadir, "filterstore.json"))
         # Makes sure only non-h is the default.
-        if filterstore.exists("filters"):
-            pass
-        else:
-            filters = {
-                "doujinshi": 0,
-                "manga": 0,
-                "artistcg": 0,
-                "gamecg": 0,
-                "western": 0,
-                "nonh": 1,
-                "imageset": 0,
-                "cosplay": 0,
-                "asianporn": 0,
-                "misc": 0
-                }
-            filterstore.put("filters", filters=filters)
+        clearstart = Filters(nonh=1, doujinshi=0, manga=0,
+                             artistcg=0, gamecg=0, western=0,
+                             imageset=0, cosplay=0, asianporn=0,
+                             misc=0)
+        db.add(clearstart)
+        db.commit()
+        clearsearch = Search(searchterm=" ")
+        db.add(clearsearch)
+        db.commit()
 
     def onBackBtn(self, window, key, *args):
         # user presses back button

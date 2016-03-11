@@ -1,10 +1,15 @@
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.scatterlayout import ScatterLayout
 from kivy.uix.stencilview import StencilView
 from kivy.uix.image import AsyncImage as Image
+from kivy.uix.screenmanager import Screen
 
 
-class GalleryContainerLayout(BoxLayout, StencilView):
+class GalleryImageScreen(Screen):
+    pass
+
+
+class GalleryContainerLayout(FloatLayout, StencilView):
     pass
 
 
