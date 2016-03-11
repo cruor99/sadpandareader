@@ -22,7 +22,6 @@ class CaptchaPopup(Popup):
 
 class SearchPopup(Popup):
 
-    global data_dir
 
     def savesearch(self):
         newsearch = Search(searchterm=self.ids.searchstring.text)
@@ -51,7 +50,6 @@ class FilterPopup(Popup):
     asianporn = NumericProperty(0)
     misc = NumericProperty(0)
 
-    global data_dir
 
     def __init__(self, **kwargs):
         super(FilterPopup, self).__init__(**kwargs)

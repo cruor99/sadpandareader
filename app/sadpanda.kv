@@ -190,7 +190,9 @@ SadpandaRoot:
 <GalleryScatter>:
     do_rotation: False
     scale_min: 1
-    translation_touches: 2
+    scale_max: 3
+    translation_touches: 1
+    auto_bring_to_front: False
 
 <GalleryScreen>:
     BoxLayout:
@@ -206,8 +208,8 @@ SadpandaRoot:
     background_color: 0, 0, 0, .2
     background_normal: "img/transparent.png"
     background_down: "img/button_bg_down.png"
-    #size_hint_x: None
-    #width: dp(70)
+    size_hint_x: None
+    width: dp(70)
 
 
 

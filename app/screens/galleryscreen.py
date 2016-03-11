@@ -32,7 +32,6 @@ class GalleryScreen(Screen):
     nextpage = NumericProperty(0)
     current_page = NumericProperty()
 
-    global data_dir
 
     def __init__(self, **kwargs):
         super(GalleryScreen, self).__init__(**kwargs)
@@ -150,7 +149,6 @@ class GalleryScreen(Screen):
                     # Create start of gallery popup
                     pass
 
-
     def construct_image(self, pagelink):
         print pagelink
         src = self.grab_image(pagelink)
@@ -158,15 +156,13 @@ class GalleryScreen(Screen):
         imageroot = GalleryScatter()
         gallerycontainer = GalleryContainerLayout()
         imageroot.add_widget(image)
-        buttoncontainer = BoxLayout(orientation="horizontal")
-        forwardsbutton = GalleryNavButton()
+        forwardsbutton = GalleryNavButton(pos_hint={"x": 0.8})
         forwardsbutton.bind(on_release=self.next_image)
-        backwardsbutton = GalleryNavButton()
+        backwardsbutton = GalleryNavButton(pos_hint={"x": 0.01})
         backwardsbutton.bind(on_release=self.previous_image)
-        buttoncontainer.add_widget(backwardsbutton)
         gallerycontainer.add_widget(imageroot)
-        buttoncontainer.add_widget(forwardsbutton)
-        gallerycontainer.add_widget(buttoncontainer)
+        gallerycontainer.add_widget(backwardsbutton)
+        gallerycontainer.add_widget(forwardsbutton)
         galleryscreen = GalleryImageScreen(id=pagelink)
         galleryscreen.add_widget(gallerycontainer)
 
