@@ -9,7 +9,12 @@ You use the same username and password.
 
 If you do not want access to the restricted content, just hit "To Front"
 
+## Download
+
+For the android apk and other binaries, check the [releases page](https://github.com/cruor99/sadpandareader/releases)
+
 ## Various
+
 
 Built using [Kivy](https://kivy.org)
 
