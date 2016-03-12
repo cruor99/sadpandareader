@@ -24,7 +24,6 @@ class GalleryPreviewScreen(Screen):
 
     def on_enter(self):
         gallerydata = db.query(Gallery).filter_by(gallery_id=self.gallery_id).first()
-        print gallerydata.gallery_name
         tags = db.query(GalleryTags).filter_by(galleryid=gallerydata.id).all()
         taglist = []
         for tag in tags:

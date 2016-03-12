@@ -57,9 +57,8 @@ class SadpandaRoot(BoxLayout):
 
     def login_captcha(self, instance):
         if instance.action == "try_again":
-            print instance.action
+            pass
         else:
-            print instance.action
             self.baseurl = "g.e-hentai"
             self.next_screen("front_screen")
 
@@ -90,7 +89,6 @@ class SadpandaRoot(BoxLayout):
             newsearch = search.searchterm
         else:
             newsearch = " "
-        print newsearch, "newsearch"
         if newsearch == searchword:
             pass
         else:
@@ -169,12 +167,16 @@ class SadpandaApp(App):
         super(SadpandaApp, self).__init__(**kwargs)
         Window.bind(on_keyboard=self.onBackBtn)
         # Makes sure only non-h is the default.
-        clearstart = Filters(nonh=1, doujinshi=0, manga=0,
-                             artistcg=0, gamecg=0, western=0,
-                             imageset=0, cosplay=0, asianporn=0,
-                             misc=0)
-        db.add(clearstart)
-        db.commit()
+        existfilters = db.query(Filters).order_by(Filters.id.desc()).first()
+        if existfilters:
+            pass
+        else:
+            clearstart = Filters(nonh=1, doujinshi=0, manga=0,
+                                artistcg=0, gamecg=0, western=0,
+                                imageset=0, cosplay=0, asianporn=0,
+                                misc=0)
+            db.add(clearstart)
+            db.commit()
         clearsearch = Search(searchterm=" ")
         db.add(clearsearch)
         db.commit()

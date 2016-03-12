@@ -32,24 +32,22 @@ class FrontScreen(Screen):
 
         search = db.query(Search).order_by(Search.id.desc()).first()
         if search:
-            print search.searchterm, "frontscreen"
             if self.newstart is True:
                 self.searchword = search.searchterm
-                print self.searchword
                 self.new_search()
                 self.newstart = False
             else:
-                self.searchword = search.searchterm
-                print self.searchword, "else"
-                self.new_search()
+                if self.searchword == search.searchterm:
+                    pass
+                else:
+                    self.searchword = search.searchterm
+                    self.new_search()
         else:
-            print "No search"
             self.searchword = ""
             self.new_search()
 
     def new_search(self):
         self.ids.main_layout.clear_widgets()
-        print self.ids.main_layout.children
         self.searchpage = 0
 
         self.gallery_thumbs = []

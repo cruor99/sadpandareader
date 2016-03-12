@@ -41,7 +41,6 @@ class GalleryScreen(Screen):
     def on_enter(self):
         self.ids.gallery_manager.clear_widgets()
         gallery = db.query(Gallery).filter_by(gallery_id=self.gallery_id).first()
-        print gallery.gallery_id
         self.db_id = gallery.id
         self.gallery_id = gallery.gallery_id
         self.gallery_token = gallery.gallery_token
@@ -109,7 +108,6 @@ class GalleryScreen(Screen):
 
     def next_image(self, instance):
         screenlen = len(self.ids.gallery_manager.children)
-        print screenlen
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
 
         for page in pagelinks:
@@ -164,10 +162,6 @@ class GalleryScreen(Screen):
         return galleryscreen
 
     def grab_image(self, i):
-        #pageurls = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
-        # print pageurls, "pageurls"
-        #for page in pageurls:
-            #print page.pagelink
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
         pagerequest = requests.get(url=i, headers=headers, cookies=cookies)
