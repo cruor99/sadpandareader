@@ -39,7 +39,6 @@ class GalleryScreen(Screen):
         self.screen_list = deque()
 
     def on_enter(self):
-        self.ids.gallery_manager.clear_widgets()
         gallery = db.query(Gallery).filter_by(gallery_id=self.gallery_id).first()
         self.db_id = gallery.id
         self.gallery_id = gallery.gallery_id
@@ -49,7 +48,6 @@ class GalleryScreen(Screen):
         self.populate_gallery()
 
     def on_leave(self):
-        self.ids.gallery_manager.clear_widgets()
         self.db_id = 0
         self.gallery_id = ""
         self.gallery_token = ""
@@ -97,10 +95,10 @@ class GalleryScreen(Screen):
         currentexist = db.query(Pagelink).filter_by(galleryid=self.db_id, current=1).first()
         if currentexist:
             first_screen = self.construct_image(currentexist.pagelink)
-            self.ids.gallery_manager.add_widget(first_screen)
+            self.ids.gallery_manager.switch_to(first_screen)
         else:
             first_screen = self.construct_image(self.pagelinks[0])
-            self.ids.gallery_manager.add_widget(first_screen)
+            self.ids.gallery_manager.switch_to(first_screen)
             # consider adding this in its own thread
             firstimage = db.query(Pagelink).filter_by(pagelink=self.pagelinks[0]).first()
             firstimage.current = 1

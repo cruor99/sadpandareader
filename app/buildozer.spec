@@ -13,7 +13,7 @@ package.domain = org.sadpanda
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf,db
+source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf,db,gif
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -43,7 +43,7 @@ requirements = kivy, requests, beautifulsoup, openssl, sqlalchemy, sqlite3
 #garden_requirements =
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/data/presplash.png
+presplash.filename = img/sadpanda.jpg
 
 # (str) Icon of the application
 icon.filename = img/icon_round.png

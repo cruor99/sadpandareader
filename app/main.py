@@ -2,10 +2,10 @@
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
-from kivy.storage.jsonstore import JsonStore
 from kivy.properties import DictProperty, StringProperty
+from kivy.loader import Loader
+from kivy.core.image import Image as CoreImage
 
-from os.path import join
 
 import requests
 from screens import *
@@ -25,6 +25,7 @@ class SadpandaRoot(BoxLayout):
         super(SadpandaRoot, self).__init__(**kwargs)
         # list of previous screens
         self.screen_list = []
+        Loader.loading_image = CoreImage("img/loading.gif", size=(16, 16))
 
     def login_exhentai(self, username, password):
         self.username = username.text
