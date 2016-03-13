@@ -191,7 +191,7 @@ class SadpandaApp(App):
         return True
 
     def build(self):
-        return SadpandaRoot()
+        pass
 
 if __name__ == "__main__":
     SadpandaApp().run()
