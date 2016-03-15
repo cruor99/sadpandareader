@@ -86,7 +86,6 @@ class FrontScreen(Screen):
         self.gidlist = []
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
-        print self.searchword
         if self.searchpage == 0:
             r = requests.get("http://"+App.get_running_app().root.baseurl+".org/?"+
                             "f_doujinshi="+str(filters.doujinshi) +
