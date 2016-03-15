@@ -86,19 +86,37 @@ class FrontScreen(Screen):
         self.gidlist = []
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
-        r = requests.get("http://"+App.get_running_app().root.baseurl+".org/?page="+str(self.searchpage) +
-                         "f_doujinshi="+str(filters.doujinshi) +
-                         "&f_manga="+str(filters.manga) +
-                         "&f_artistcg="+str(filters.artistcg) +
-                         "&f_gamecg="+str(filters.gamecg) +
-                         "&f_western="+str(filters.western) +
-                         "&f_non-h="+str(filters.nonh) +
-                         "&f_imageset="+str(filters.imageset) +
-                         "&f_cosplay="+str(filters.cosplay) +
-                         "&f_asianporn="+str(filters.asianporn) +
-                         "&f_misc="+str(filters.misc) +
-                         "&f_search="+self.searchword+"&f_apply=Apply+Filter",
-                         headers=headers, cookies=cookies)
+        print self.searchword
+        if self.searchpage == 0:
+            r = requests.get("http://"+App.get_running_app().root.baseurl+".org/?"+
+                            "f_doujinshi="+str(filters.doujinshi) +
+                            "&f_manga="+str(filters.manga) +
+                            "&f_artistcg="+str(filters.artistcg) +
+                            "&f_gamecg="+str(filters.gamecg) +
+                            "&f_western="+str(filters.western) +
+                            "&f_non-h="+str(filters.nonh) +
+                            "&f_imageset="+str(filters.imageset) +
+                            "&f_cosplay="+str(filters.cosplay) +
+                            "&f_asianporn="+str(filters.asianporn) +
+                            "&f_misc="+str(filters.misc) +
+                            "&f_search="+self.searchword+"&f_apply=Apply+Filter",
+                            headers=headers, cookies=cookies)
+        else:
+            r = requests.get("http://"+App.get_running_app().root.baseurl+".org/?"+
+                             "page="+str(self.searchpage) +
+                             "&f_doujinshi="+str(filters.doujinshi) +
+                             "&f_manga="+str(filters.manga) +
+                             "&f_artistcg="+str(filters.artistcg) +
+                             "&f_gamecg="+str(filters.gamecg) +
+                             "&f_western="+str(filters.western) +
+                             "&f_non-h="+str(filters.nonh) +
+                             "&f_imageset="+str(filters.imageset) +
+                             "&f_cosplay="+str(filters.cosplay) +
+                             "&f_asianporn="+str(filters.asianporn) +
+                             "&f_misc="+str(filters.misc) +
+                             "&f_search="+self.searchword+"&f_apply=Apply+Filter",
+                             headers=headers, cookies=cookies)
+
         self.searchpage += 1
         # pure html of ehentai link
         data = r.text
