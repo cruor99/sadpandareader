@@ -20,6 +20,8 @@ class SadpandaRoot(BoxLayout):
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("g.e-hentai")
+    pushurl = StringProperty("http://1dvxtg49adq5f5jtzm2a04p2sr2pje3fem1x6gfu2cyhr30p.pushould.com")
+    client_token = StringProperty("6rgcw2zlr4ubpvcegjajqpnmehx5gp5zm1yigjzp1mgfvy6c")
 
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)
