@@ -34,6 +34,8 @@ class SadpandaRoot(BoxLayout):
     baseurl = StringProperty("g.e-hentai")
     pushurl = StringProperty("http://1dvxtg49adq5f5jtzm2a04p2sr2pje3fem1x6gfu2cyhr30p.pushould.com")
     client_token = StringProperty("6rgcw2zlr4ubpvcegjajqpnmehx5gp5zm1yigjzp1mgfvy6c")
+    newmessage = StringProperty("")
+
 
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)
@@ -44,55 +46,37 @@ class SadpandaRoot(BoxLayout):
         Clock.schedule_once(self.start_thread)
 
     def start_thread(self, *args):
+        self.bind(newmessage=self.do_notify)
         pushthread = Thread(target=self.check_pushould)
         pushthread.daemon = True
         pushthread.start()
 
     def check_pushould(self):
-        # while True:
-        # do the stuff
-        # title = "Message from the dev"
-        # message = "Testmessage"
-        # ticker = "Test ticker"
-
-        # kwargs = {"title": title, 'message': message}
         socketio = SocketIO(self.pushurl, params={"transports": ["polling", "websocket"]})
-        socketio.on('send', self.do_notify)
+        socketio.on('send', self.add_message)
         socketio.emit("subscribe", {"room": "sadpandapush",
                                     "token": self.client_token})
         socketio.wait()
-        # Clock.schedule_once(partial(self.do_notify, title, message))
 
-    def do_notify(self, response):
-        #print response["message"]
-        #title = "Update message"
-        #message = response["message"]
-        #title = title.decode('utf8')
-        #message = message.decode('utf8')
-        #kwargs = {"title": title, "message": message}
-        #app_icon = join(dirname(realpath(__file__)), 'img/icon_round.png')
-        #notification.notify(**kwargs)
-        #notification.notify(title=title, message=message, timeout=5000, app_icon=app_icon)
-        #notification.notify(title="Test", message="Test message")
+    def add_message(self, response):
+        self.newmessage = response["message"]
 
-        title = "Test title"
-        message = response["message"]
-        if PY2:
-            title = title.decode('utf8')
-            message = message.decode('utf8')
-        kwargs = {'title': title, 'message': message}
+    def do_notify(self, *args):
+        # title = "Test title"
+        #message = self.newmessage
+        #if PY2:
+        #    title = title.decode('utf8')
+        #    message = message.decode('utf8')
+        #kwargs = {'title': title, 'message': message}#
 
-        kwargs['app_name'] = "Plyer Notification Example"
-        if platform == "win":
-            kwargs['app_icon'] = join(dirname(realpath(__file__)),
-                                      'plyer-icon.ico')
-            kwargs['timeout'] = 4
-        else:
-            kwargs['app_icon'] = join(dirname(realpath(__file__)),
-                                      'img/icon_round.png')
-            if platform == "linux":
-                kwargs['timeout'] = 5000
-        notification.notify(**kwargs)
+        #kwargs['app_name'] = "Plyer Notification Example"
+        #if platform == "win":
+        #    kwargs['app_icon'] = join(dirname(realpath(__file__)),
+        #                              'plyer-icon.ico')
+        #    kwargs['timeout'] = 4
+        #if platform == "linux":
+        #    kwargs['timeout'] = 5000
+        notification.notify("Update available", self.newmessage, timeout=5000)
 
     def login_exhentai(self, username, password):
         self.username = username.text
