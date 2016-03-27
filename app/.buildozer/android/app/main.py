@@ -56,8 +56,6 @@ class SadpandaRoot(BoxLayout):
         # ticker = "Test ticker"
 
         # kwargs = {"title": title, 'message': message}
-        # kwargs['app_icon'] = join(dirname(realpath(__file__)),
-        #                          "img/icon_round.png")
         socketio = SocketIO(self.pushurl, params={"transports": ["polling", "websocket"]})
         socketio.on('send', self.do_notify)
         socketio.emit("subscribe", {"room": "sadpandapush",
@@ -66,15 +64,35 @@ class SadpandaRoot(BoxLayout):
         # Clock.schedule_once(partial(self.do_notify, title, message))
 
     def do_notify(self, response):
-        print response["message"]
-        title = "Update message"
-        message = response["message"]
-        title = title.decode('utf8')
-        message = message.decode('utf8')
-        kwargs = {"title": title, "message": message}
-        kwargs["app_icon"] = join(dirname(realpath(__file__)), 'img/icon_round.png')
-        notification.notify(**kwargs)
+        #print response["message"]
+        #title = "Update message"
+        #message = response["message"]
+        #title = title.decode('utf8')
+        #message = message.decode('utf8')
+        #kwargs = {"title": title, "message": message}
+        #app_icon = join(dirname(realpath(__file__)), 'img/icon_round.png')
+        #notification.notify(**kwargs)
+        #notification.notify(title=title, message=message, timeout=5000, app_icon=app_icon)
+        #notification.notify(title="Test", message="Test message")
 
+        title = "Test title"
+        message = response["message"]
+        if PY2:
+            title = title.decode('utf8')
+            message = message.decode('utf8')
+        kwargs = {'title': title, 'message': message}
+
+        kwargs['app_name'] = "Plyer Notification Example"
+        if platform == "win":
+            kwargs['app_icon'] = join(dirname(realpath(__file__)),
+                                      'plyer-icon.ico')
+            kwargs['timeout'] = 4
+        else:
+            kwargs['app_icon'] = join(dirname(realpath(__file__)),
+                                      'img/icon_round.png')
+            if platform == "linux":
+                kwargs['timeout'] = 5000
+        notification.notify(**kwargs)
 
     def login_exhentai(self, username, password):
         self.username = username.text
@@ -130,7 +148,6 @@ class SadpandaRoot(BoxLayout):
         db.add(blanksearch)
         db.commit()
         self.next_screen("front_screen")
-        self.check_pushould()
 
     def start_search(self, instance):
         front_screen = self.ids.sadpanda_screen_manager.get_screen("front_screen")
