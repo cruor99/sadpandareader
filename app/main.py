@@ -2,16 +2,30 @@
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import DictProperty, StringProperty
+from kivy.properties import DictProperty, StringProperty, ObjectProperty
 from kivy.loader import Loader
 from kivy.core.image import Image as CoreImage
+from kivy.clock import Clock
 
+from plyer import notification
+from plyer.utils import platform
+from plyer.compat import PY2
+
+from threading import Thread
+import time
+from os.path import join, dirname, realpath
+from functools import partial
 
 import requests
 from screens import *
 from components import *
 from models import User, Filters, Gallery, Pagelink, Search, db
 
+# Socket-io stuff
+from socketIO_client import SocketIO
+
+#KivyMD stuff
+from kivymd.theming import ThemeManager
 
 
 class SadpandaRoot(BoxLayout):
@@ -20,14 +34,54 @@ class SadpandaRoot(BoxLayout):
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("g.e-hentai")
-    pushurl = StringProperty("http://1dvxtg49adq5f5jtzm2a04p2sr2pje3fem1x6gfu2cyhr30p.pushould.com")
-    client_token = StringProperty("6rgcw2zlr4ubpvcegjajqpnmehx5gp5zm1yigjzp1mgfvy6c")
+    pushurl = StringProperty(
+        "https://1dvxtg49adq5f5jtzm2a04p2sr2pje3fem1x6gfu2cyhr30p.pushould.com")
+    client_token = StringProperty(
+        "6rgcw2zlr4ubpvcegjajqpnmehx5gp5zm1yigjzp1mgfvy6c")
+    newmessage = StringProperty("")
 
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)
         # list of previous screens
         self.screen_list = []
         Loader.loading_image = CoreImage("img/loading.gif", size=(16, 16))
+
+        Clock.schedule_once(self.start_thread)
+
+    def start_thread(self, *args):
+        self.bind(newmessage=self.do_notify)
+        pushthread = Thread(target=self.check_pushould)
+        pushthread.daemon = True
+        pushthread.start()
+
+    def check_pushould(self):
+        socketio = SocketIO(self.pushurl,
+                            params={"transports": ["polling", "websocket"],
+                                    "client_token": str(self.client_token)},
+                            verify=False)
+        socketio.on('send', self.add_message)
+        socketio.emit("subscribe", {"room": "sadpandapush"})
+        socketio.wait()
+
+    def add_message(self, response):
+        self.newmessage = response["message"]
+
+    def do_notify(self, *args):
+        # title = "Test title"
+        #message = self.newmessage
+        #if PY2:
+        #    title = title.decode('utf8')
+        #    message = message.decode('utf8')
+        #kwargs = {'title': title, 'message': message}#
+
+        #kwargs['app_name'] = "Plyer Notification Example"
+        #if platform == "win":
+        #    kwargs['app_icon'] = join(dirname(realpath(__file__)),
+        #                              'plyer-icon.ico')
+        #    kwargs['timeout'] = 4
+        #if platform == "linux":
+        #    kwargs['timeout'] = 5000
+        notification.notify("Update available", self.newmessage, timeout=5000)
 
     def login_exhentai(self, username, password):
         self.username = username.text
@@ -43,13 +97,16 @@ class SadpandaRoot(BoxLayout):
         }
         headers = {'User-Agent': 'Mozilla/5.0'}
 
-        r = requests.post("https://forums.e-hentai.org/index.php?act=Login&CODE=01",
-                          data=payload, headers=headers)
+        r = requests.post(
+            "https://forums.e-hentai.org/index.php?act=Login&CODE=01",
+            data=payload,
+            headers=headers)
 
         if len(r.cookies) <= 1:
             captchapopup = CaptchaPopup()
             captchapopup.bind(on_dismiss=self.login_captcha)
             captchapopup.open()
+
         else:
             self.cookies = r.cookies
             cookies = User(cookies=str(self.cookies))
@@ -85,7 +142,8 @@ class SadpandaRoot(BoxLayout):
         self.next_screen("front_screen")
 
     def start_search(self, instance):
-        front_screen = self.ids.sadpanda_screen_manager.get_screen("front_screen")
+        front_screen = self.ids.sadpanda_screen_manager.get_screen(
+            "front_screen")
         searchword = front_screen.searchword
         search = db.query(Search).order_by(Search.id.desc()).first()
         if search:
@@ -128,7 +186,8 @@ class SadpandaRoot(BoxLayout):
             "imageset": 0,
             "cosplay": 0,
             "asianporn": 0,
-            "misc": 0}
+            "misc": 0
+        }
         if instance.ids.doujinshi.state == "down":
             filters["doujinshi"] = 1
         if instance.ids.manga.state == "down":
@@ -166,6 +225,9 @@ class SadpandaRoot(BoxLayout):
 
 class SadpandaApp(App):
 
+    theme_cls = ThemeManager()
+    nav_drawer = ObjectProperty()
+
     def __init__(self, **kwargs):
         super(SadpandaApp, self).__init__(**kwargs)
         Window.bind(on_keyboard=self.onBackBtn)
@@ -174,10 +236,16 @@ class SadpandaApp(App):
         if existfilters:
             pass
         else:
-            clearstart = Filters(nonh=1, doujinshi=0, manga=0,
-                                artistcg=0, gamecg=0, western=0,
-                                imageset=0, cosplay=0, asianporn=0,
-                                misc=0)
+            clearstart = Filters(nonh=1,
+                                 doujinshi=0,
+                                 manga=0,
+                                 artistcg=0,
+                                 gamecg=0,
+                                 western=0,
+                                 imageset=0,
+                                 cosplay=0,
+                                 asianporn=0,
+                                 misc=0)
             db.add(clearstart)
             db.commit()
         clearsearch = Search(searchterm=" ")
@@ -193,7 +261,9 @@ class SadpandaApp(App):
         return True
 
     def build(self):
-        pass
+        self.nav_drawer = SadpandaNavdrawer()
+        self.theme_cls.theme_style = "Dark"
+
 
 if __name__ == "__main__":
     SadpandaApp().run()
