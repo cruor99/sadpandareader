@@ -263,6 +263,10 @@ class SadpandaApp(App):
     def build(self):
         self.nav_drawer = SadpandaNavdrawer()
         self.theme_cls.theme_style = "Dark"
+        self.theme_cls.primary_palette = "Grey"
+        self.theme_cls.primary_hue = "900"
+
+        return SadpandaRoot()
 
 
 if __name__ == "__main__":

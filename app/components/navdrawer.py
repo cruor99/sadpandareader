@@ -1,5 +1,5 @@
 from kivymd.navigationdrawer import NavigationDrawer
 
 
-class SadpandaNavdrawer():
+class SadpandaNavdrawer(NavigationDrawer):
     pass

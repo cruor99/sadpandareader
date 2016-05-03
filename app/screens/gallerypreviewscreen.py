@@ -20,6 +20,7 @@ class GalleryPreviewScreen(Screen):
     gallery_name = StringProperty("")
     gallery_token = StringProperty("")
     gallery_thumb = StringProperty("")
+    title = StringProperty("Preview and Tags")
 
 
     def on_enter(self):

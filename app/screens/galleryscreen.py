@@ -31,6 +31,7 @@ class GalleryScreen(Screen):
     gallery_name = StringProperty("")
     nextpage = NumericProperty(0)
     current_page = NumericProperty()
+    title = gallery_name
 
 
     def __init__(self, **kwargs):
