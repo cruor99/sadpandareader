@@ -1,10 +1,14 @@
 from kivy.uix.popup import Popup
+from kivy.uix.boxlayout import BoxLayout
 from kivy.storage.jsonstore import JsonStore
 from os.path import join
 from kivy.properties import StringProperty, NumericProperty
 from kivy.app import App
 
 from models import Search, db, Filters
+
+from kivymd.dialog import MDDialog
+from kivymd.textfields import SingleLineTextField
 
 
 class CaptchaPopup(Popup):
@@ -20,11 +24,17 @@ class CaptchaPopup(Popup):
         self.dismiss()
 
 
-class SearchPopup(Popup):
+class SearchPopup(MDDialog):
 
+    def __init__(self, **kwargs):
+        super(SearchPopup, self).__init__(**kwargs)
+        #self.content = SearchArea()
+
+        self.add_action_button("Search", action=lambda *x: self.savesearch())
+        self.add_action_button("Filters", action=lambda *x: App.get_running_app().root.show_filters())
 
     def savesearch(self):
-        newsearch = Search(searchterm=self.ids.searchstring.text)
+        newsearch = Search(searchterm=self.ids.searcharea.text)
         db.add(newsearch)
         db.commit()
         self.dismiss()
@@ -36,6 +46,15 @@ class SearchPopup(Popup):
 
     def set_filters(self, instance):
         App.get_running_app().root.set_filters(instance)
+
+
+class SearchArea(SingleLineTextField):
+
+    def savesearch(self):
+        newsearch = Search(searchterm=self.ids.searchstring.text)
+        db.add(newsearch)
+        db.commit()
+        self.dismiss()
 
 
 class FilterPopup(Popup):

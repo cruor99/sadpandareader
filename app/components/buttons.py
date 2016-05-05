@@ -24,6 +24,7 @@ class ThumbButton(TwoLineAvatarListItem):
         else:
             self.secondary_text = self.gallery_name
 
+
 class AvatarSampleWidget(ILeftBodyTouch, Image):
     pass
 

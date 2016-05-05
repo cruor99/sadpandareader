@@ -239,25 +239,20 @@
 
 
 <SearchPopup>:
-    title: "Input Search Here"
-    BoxLayout:
-        orientation: "vertical"
-        padding: root.width * .2, root.height * .2
-        spacing: min(root.width, root.height) * .02
-        WrappedLabel:
-            text: "Search for your sadpanda here"
-        TextInput:
-            id: searchstring
-            size_hint_y: None
-            multiline: False
-            on_text_validate: root.savesearch()
-        MDRaisedButton:
-            text: "Start Searching"
-            on_release: root.savesearch()
-        MDRaisedButton:
-            text: "Filters"
-            on_release: root.open_filters()
+    title: "Search"
+    id: searchpopup
+    size_hint: .8, None
+    height: dp(200)
+    SearchArea:
+        id: searcharea
+        on_text_validate: root.savesearch()
 
+<SearchArea>:
+    size_hint: None, None
+    height: "48dp"
+    width: "150dp"
+    hint_text: "Terms and tags"
+    foreground_color: (1, 1, 1, .5)
 
 <SadpandaNavdrawer>:
     NavigationDrawerIconButton:
