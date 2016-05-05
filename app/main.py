@@ -67,20 +67,6 @@ class SadpandaRoot(BoxLayout):
         self.newmessage = response["message"]
 
     def do_notify(self, *args):
-        # title = "Test title"
-        #message = self.newmessage
-        #if PY2:
-        #    title = title.decode('utf8')
-        #    message = message.decode('utf8')
-        #kwargs = {'title': title, 'message': message}#
-
-        #kwargs['app_name'] = "Plyer Notification Example"
-        #if platform == "win":
-        #    kwargs['app_icon'] = join(dirname(realpath(__file__)),
-        #                              'plyer-icon.ico')
-        #    kwargs['timeout'] = 4
-        #if platform == "linux":
-        #    kwargs['timeout'] = 5000
         notification.notify("Update available", self.newmessage, timeout=5000)
 
     def login_exhentai(self, username, password):
