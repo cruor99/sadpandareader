@@ -63,7 +63,7 @@ class SearchArea(SingleLineTextField):
         self.dismiss()
 
 
-class FilterPopup(Popup):
+class FilterPopup(MDDialog):
     doujinshi = NumericProperty(0)
     manga = NumericProperty(0)
     artistcg = NumericProperty(0)
@@ -90,22 +90,22 @@ class FilterPopup(Popup):
             self.asianporn = filters.asianporn
             self.misc = filters.misc
         if self.doujinshi == 1:
-            self.ids.doujinshi.state = "down"
+            self.ids.doujinshi.active = True
         if self.manga == 1:
-            self.ids.manga.state = "down"
+            self.ids.manga.active = True
         if self.artistcg == 1:
-            self.ids.artistcg.state = "down"
+            self.ids.artistcg.active = True
         if self.gamecg == 1:
-            self.ids.gamecg.state = "down"
+            self.ids.gamecg.active = True
         if self.western == 1:
-            self.ids.western.state = "down"
+            self.ids.western.active = True
         if self.nonh == 1:
-            self.ids.nonh.state = "down"
+            self.ids.nonh.active = True
         if self.imageset == 1:
-            self.ids.imageset.state = "down"
+            self.ids.imageset.active = True
         if self.cosplay == 1:
-            self.ids.cosplay.state = "down"
+            self.ids.cosplay.active = True
         if self.asianporn == 1:
-            self.ids.asianporn.state = "down"
+            self.ids.asianporn.active = True
         if self.misc == 1:
-            self.ids.misc.state = "down"
+            self.ids.misc.active = True

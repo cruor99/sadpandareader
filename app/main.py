@@ -174,25 +174,25 @@ class SadpandaRoot(BoxLayout):
             "asianporn": 0,
             "misc": 0
         }
-        if instance.ids.doujinshi.state == "down":
+        if instance.ids.doujinshi.active == True:
             filters["doujinshi"] = 1
-        if instance.ids.manga.state == "down":
+        if instance.ids.manga.active == True:
             filters["manga"] = 1
-        if instance.ids.artistcg.state == "down":
+        if instance.ids.artistcg.active == True:
             filters["artistcg"] = 1
-        if instance.ids.gamecg.state == "down":
+        if instance.ids.gamecg.active == True:
             filters["gamecg"] = 1
-        if instance.ids.western.state == "down":
+        if instance.ids.western.active == True:
             filters["western"] = 1
-        if instance.ids.nonh.state == "down":
+        if instance.ids.nonh.active == True:
             filters["nonh"] = 1
-        if instance.ids.imageset.state == "down":
+        if instance.ids.imageset.active == True:
             filters["imageset"] = 1
-        if instance.ids.cosplay.state == "down":
+        if instance.ids.cosplay.active == True:
             filters["cosplay"] = 1
-        if instance.ids.asianporn.state == "down":
+        if instance.ids.asianporn.active == True:
             filters["asianporn"] = 1
-        if instance.ids.misc.state == "down":
+        if instance.ids.misc.active == True:
             filters["misc"] = 1
 
         newfilter = Filters(doujinshi=filters["doujinshi"],

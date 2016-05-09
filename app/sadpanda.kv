@@ -1,6 +1,7 @@
 #:import win kivy.core.window
 #:import Toolbar kivymd.toolbar.Toolbar
 #:import SingleLineTextField kivymd.textfields.SingleLineTextField
+#:import MDSwitch kivymd.selectioncontrols.MDSwitch
 #:import MDList kivymd.list.MDList
 
 <ThumbButton>:
@@ -123,7 +124,7 @@
             source: root.gallery_thumb
             allow_stretch: True
             size_hint_y: None
-            height: dp(300)
+            height: dp(200)
         BoxLayout:
             orientation: "horizontal"
             size_hint_y: .3
@@ -136,7 +137,7 @@
                 theme_text_color: "Primary"
                 on_release: root.view_gallery()
             MDFlatButton:
-                text: "Add to favourites"
+                text: "Favourite (Soon)"
                 size_hint_y: None
                 size_hint_x: 1
                 theme_text_color: "Primary"
@@ -151,14 +152,15 @@
             GridLayout:
                 cols: 2
                 padding: dp(1)
+                size_hint_y: None
                 MDLabel:
                     text: "Pagecount: " +str(root.pagecount)
                     size_hint_y: None
-                    valign: "center"
+                    valign: "middle"
                 MDLabel:
                     text: "Filesize: " + str((root.filesize/1024)/1024) + " MB"
                     size_hint_y: None
-                    valign: "center"
+                    valign: "middle"
             ScrollView:
                 height: self.parent.height
                 width: self.parent.width-20
@@ -204,43 +206,108 @@
 
 <FilterPopup>:
     title: "Set your filters here"
+    size_hint: .8, None
+    height: dp(500)
     BoxLayout:
         orientation: "vertical"
         GridLayout:
-            cols: 5
-            rows: 2
-            ToggleButton:
-                id: nonh
-                text: "Non-H"
-            ToggleButton:
-                id: doujinshi
-                text: "Doujinshi"
-            ToggleButton:
-                id: western
-                text: "Western"
-            ToggleButton:
-                id: artistcg
-                text: "Artist CG"
-            ToggleButton:
-                id: gamecg
-                text: "Game CG"
-            ToggleButton:
-                id: manga
-                text: "Manga"
-            ToggleButton:
-                id: cosplay
-                text: "Cosplay"
-            ToggleButton:
-                id: asianporn
-                text: "Asian Porn"
-            ToggleButton:
-                id: imageset
-                text: "Image Set"
-            ToggleButton:
-                id: misc
-                text: "Misc"
+            cols: 2
+            padding: dp(40), dp(1)
+            spacing: dp(15)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Non-H"
+                MDSwitch:
+                    id: nonh
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+                    text: "Non-H"
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Doujinshi"
+                MDSwitch:
+                    id: doujinshi
+                    text: "Doujinshi"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Western"
+                MDSwitch:
+                    id: western
+                    text: "Western"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Artist CG"
+                MDSwitch:
+                    id: artistcg
+                    text: "Artist CG"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Game CG"
+                MDSwitch:
+                    id: gamecg
+                    text: "Game CG"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Manga"
+                MDSwitch:
+                    id: manga
+                    text: "Manga"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Cosplay"
+                MDSwitch:
+                    id: cosplay
+                    text: "Cosplay"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Asian Porn"
+                MDSwitch:
+                    id: asianporn
+                    text: "Asian Porn"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Image Set"
+                MDSwitch:
+                    id: imageset
+                    text: "Image Set"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Misc"
+                MDSwitch:
+                    id: misc
+                    text: "Misc"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
         MDRaisedButton:
             text: "Set Filters"
+            size_hint_y: None
+            height: dp(64)
             on_release: root.dismiss()
 
 

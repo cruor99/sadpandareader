@@ -7,6 +7,7 @@ from kivy.app import App
 
 from os import linesep
 from os.path import join
+from functools import partial
 
 # Self created components
 from components import ThumbButton, GalleryTitle, AvatarSampleWidget
@@ -27,6 +28,7 @@ class FrontScreen(Screen):
     searchpage = NumericProperty(0)
     newstart = BooleanProperty(True)
     title = StringProperty("Front page")
+    has_entered = False
 
     def on_enter(self):
 
@@ -54,6 +56,10 @@ class FrontScreen(Screen):
         self.gallery_thumbs = []
 
         Clock.schedule_once(self.populate_front)
+        Clock.schedule_once(partial(self.entered, True))
+
+    def entered(self, conditional, dt):
+        self.has_entered = True
 
     def enter_gallery(self, instance):
         galleryinfo = [instance.gallery_id, instance.gallery_token,
@@ -90,7 +96,8 @@ class FrontScreen(Screen):
 
     def populate_front(self, *largs):
         # filter store
-        self.ids.galleryscroll.scroll_y = 0.4
+        if self.has_entered == True:
+            self.ids.galleryscroll.scroll_y = 0.4
         filters = db.query(Filters).order_by(Filters.id.desc()).first()
         #filters = filterstore.get("filters")
         #filtertemp = filters["filters"]
