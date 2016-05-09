@@ -33,14 +33,14 @@ class GalleryScreen(Screen):
     current_page = NumericProperty()
     title = gallery_name
 
-
     def __init__(self, **kwargs):
         super(GalleryScreen, self).__init__(**kwargs)
         # list of previous screens
         self.screen_list = deque()
 
     def on_enter(self):
-        gallery = db.query(Gallery).filter_by(gallery_id=self.gallery_id).first()
+        gallery = db.query(Gallery).filter_by(
+            gallery_id=self.gallery_id).first()
         self.db_id = gallery.id
         self.gallery_id = gallery.gallery_id
         self.gallery_token = gallery.gallery_token
@@ -59,7 +59,8 @@ class GalleryScreen(Screen):
     def populate_gallery(self):
         # change placehold.it with
         gallerypages = float(self.pagecount) / float(40)
-        pageregex = re.compile('http://'+App.get_running_app().root.baseurl+'.org/s/\S{10}/\d{6}-\d+')
+        pageregex = re.compile('http://' + App.get_running_app().root.baseurl +
+                               '.org/s/\S{10}/\d{6}-\d+')
 
         if gallerypages.is_integer():
             pass
@@ -69,20 +70,25 @@ class GalleryScreen(Screen):
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
         for i in range(int(gallerypages)):
-            galleryrequest = requests.get("http://"+App.get_running_app().root.baseurl+".org/g/{}/{}/?p={}\
-                                          ".format(self.gallery_id,
-                                          self.gallery_token, i),
-                                          headers=headers, cookies=cookies)
+            galleryrequest = requests.get(
+                "http://" + App.get_running_app().root.baseurl +
+                ".org/g/{}/{}/?p={}\
+                                          "
+                .format(self.gallery_id, self.gallery_token, i),
+                headers=headers,
+                cookies=cookies)
 
             soup = BS(galleryrequest.text)
 
             for a in soup.findAll(name="a", attrs={"href": pageregex}):
                 self.pagelinks.append(a["href"])
-                existpageurl = db.query(Pagelink).filter_by(pagelink=a["href"]).first()
+                existpageurl = db.query(Pagelink).filter_by(
+                    pagelink=a["href"]).first()
                 if existpageurl:
                     pass
                 else:
-                    pageurl = Pagelink(galleryid=self.db_id, pagelink=a["href"])
+                    pageurl = Pagelink(galleryid=self.db_id,
+                                       pagelink=a["href"])
                     db.add(pageurl)
                     db.commit()
 
@@ -93,7 +99,8 @@ class GalleryScreen(Screen):
 
         self.next_page = 1
 
-        currentexist = db.query(Pagelink).filter_by(galleryid=self.db_id, current=1).first()
+        currentexist = db.query(Pagelink).filter_by(galleryid=self.db_id,
+                                                    current=1).first()
         if currentexist:
             first_screen = self.construct_image(currentexist.pagelink)
             self.ids.gallery_manager.switch_to(first_screen)
@@ -101,17 +108,17 @@ class GalleryScreen(Screen):
             first_screen = self.construct_image(self.pagelinks[0])
             self.ids.gallery_manager.switch_to(first_screen)
             # consider adding this in its own thread
-            firstimage = db.query(Pagelink).filter_by(pagelink=self.pagelinks[0]).first()
+            firstimage = db.query(Pagelink).filter_by(
+                pagelink=self.pagelinks[0]).first()
             firstimage.current = 1
             db.commit()
 
     def next_image(self, instance):
-        screenlen = len(self.ids.gallery_manager.children)
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
 
         for page in pagelinks:
             if page.current == 1:
-                newpageindex = pagelinks.index(page) +1
+                newpageindex = pagelinks.index(page) + 1
                 try:
                     newpage = pagelinks[newpageindex]
                     newpage.current = 1
