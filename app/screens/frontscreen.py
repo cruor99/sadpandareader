@@ -58,7 +58,7 @@ class FrontScreen(Screen):
     def enter_gallery(self, instance):
         galleryinfo = [instance.gallery_id, instance.gallery_token,
                        instance.pagecount, instance.gallery_name,
-                       instance.gallery_tags, instance.gallery_thumb]
+                       instance.gallery_tags, instance.gallery_thumb, instance.filesize]
         existgallery = db.query(Gallery).filter_by(
             gallery_id=instance.gallery_id).first()
         if existgallery:
@@ -68,7 +68,8 @@ class FrontScreen(Screen):
                               gallery_token=instance.gallery_token,
                               pagecount=instance.pagecount,
                               gallery_name=instance.gallery_name,
-                              gallery_thumb=instance.gallery_thumb)
+                              gallery_thumb=instance.gallery_thumb,
+                              filesize=instance.filesize)
             db.add(gallery)
             db.commit()
             for tag in instance.gallery_tags:
@@ -180,6 +181,7 @@ class FrontScreen(Screen):
             gallery_name=gallery["title"],
             gallery_tags=gallery["tags"],
             gallery_thumb=gallery["thumb"],
+            filesize=gallery["filesize"],
             size_hint_x=1, )
         gallerybutton.bind(on_release=self.enter_gallery)
         gallerybutton.add_widget(AvatarSampleWidget(source=gallery["thumb"]))

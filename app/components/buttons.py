@@ -16,6 +16,7 @@ class ThumbButton(TwoLineAvatarListItem):
     gallery_name = StringProperty("")
     pagecount = NumericProperty(0)
     gallery_thumb = StringProperty("")
+    filesize = NumericProperty(0)
 
     def __init__(self, **kwargs):
         super(ThumbButton, self).__init__(**kwargs)

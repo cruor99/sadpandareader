@@ -130,12 +130,13 @@
             source: root.gallery_thumb
             allow_stretch: True
             size_hint_y: None
-            height: dp(350)
+            height: dp(300)
         BoxLayout:
             orientation: "horizontal"
             size_hint_y: .3
             MDFlatButton:
                 text: "Start Reading"
+                font_name: "fonts/NotoSansCJK-Regular.ttc"
                 height: dp(40)
                 size_hint_y: None
                 size_hint_x: 1
@@ -149,10 +150,22 @@
                 height: dp(40)
         BoxLayout:
             orientation: "vertical"
-            WrappedLabel:
-                size_hint_y: 1
+            MDLabel:
                 text: root.gallery_name
                 valign: "top"
+                halign: "center"
+                font_style: "Title"
+            GridLayout:
+                cols: 2
+                padding: dp(1)
+                MDLabel:
+                    text: "Pagecount: " +str(root.pagecount)
+                    size_hint_y: None
+                    valign: "center"
+                MDLabel:
+                    text: "Filesize: " + str((root.filesize/1024)/1024) + " MB"
+                    size_hint_y: None
+                    valign: "center"
             ScrollView:
                 height: self.parent.height
                 width: self.parent.width-20

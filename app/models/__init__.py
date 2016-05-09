@@ -48,6 +48,7 @@ class Gallery(Base):
     pagecount = Column(Integer)
     gallery_name = Column(String)
     gallery_thumb = Column(String)
+    filesize = Column(Integer)
 
 
 class GalleryTags(Base):
