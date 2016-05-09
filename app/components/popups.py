@@ -11,9 +11,15 @@ from kivymd.dialog import MDDialog
 from kivymd.textfields import SingleLineTextField
 
 
-class CaptchaPopup(Popup):
+class CaptchaPopup(MDDialog):
 
     action = StringProperty("")
+
+    def __init__(self, **kwargs):
+        super(CaptchaPopup, self).__init__(**kwargs)
+        self.add_action_button("Try Again", action=lambda *x: self.try_again())
+        self.add_action_button("Continue",
+                               action=lambda *x: self.non_restricted())
 
     def try_again(self):
         self.action = "try_again"
@@ -25,13 +31,14 @@ class CaptchaPopup(Popup):
 
 
 class SearchPopup(MDDialog):
-
     def __init__(self, **kwargs):
         super(SearchPopup, self).__init__(**kwargs)
         #self.content = SearchArea()
 
         self.add_action_button("Search", action=lambda *x: self.savesearch())
-        self.add_action_button("Filters", action=lambda *x: App.get_running_app().root.show_filters())
+        self.add_action_button(
+            "Filters",
+            action=lambda *x: App.get_running_app().root.show_filters())
 
     def savesearch(self):
         newsearch = Search(searchterm=self.ids.searcharea.text)
@@ -49,7 +56,6 @@ class SearchPopup(MDDialog):
 
 
 class SearchArea(SingleLineTextField):
-
     def savesearch(self):
         newsearch = Search(searchterm=self.ids.searchstring.text)
         db.add(newsearch)
@@ -68,7 +74,6 @@ class FilterPopup(Popup):
     cosplay = NumericProperty(0)
     asianporn = NumericProperty(0)
     misc = NumericProperty(0)
-
 
     def __init__(self, **kwargs):
         super(FilterPopup, self).__init__(**kwargs)

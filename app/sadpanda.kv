@@ -73,18 +73,11 @@
 
 
 <CaptchaPopup>:
-    BoxLayout:
-        orientation: "vertical"
-        Label:
-            text: "Login failed."
-
-        MDRaisedButton:
-            text: "Try again"
-            id: try_again
-            on_release: root.try_again()
-        MDRaisedButton:
-            text: "View Non-restricted content"
-            on_release: root.non_restricted()
+    size_hint: .8, None
+    height: dp(200)
+    title: "Login Failed"
+    MDLabel:
+        text: "You can either try again or continue to non-restricted content."
 
 
 <FrontScreen>:
