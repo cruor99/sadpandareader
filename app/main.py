@@ -67,20 +67,6 @@ class SadpandaRoot(BoxLayout):
         self.newmessage = response["message"]
 
     def do_notify(self, *args):
-        # title = "Test title"
-        #message = self.newmessage
-        #if PY2:
-        #    title = title.decode('utf8')
-        #    message = message.decode('utf8')
-        #kwargs = {'title': title, 'message': message}#
-
-        #kwargs['app_name'] = "Plyer Notification Example"
-        #if platform == "win":
-        #    kwargs['app_icon'] = join(dirname(realpath(__file__)),
-        #                              'plyer-icon.ico')
-        #    kwargs['timeout'] = 4
-        #if platform == "linux":
-        #    kwargs['timeout'] = 5000
         notification.notify("Update available", self.newmessage, timeout=5000)
 
     def login_exhentai(self, username, password):
@@ -188,25 +174,25 @@ class SadpandaRoot(BoxLayout):
             "asianporn": 0,
             "misc": 0
         }
-        if instance.ids.doujinshi.state == "down":
+        if instance.ids.doujinshi.active == True:
             filters["doujinshi"] = 1
-        if instance.ids.manga.state == "down":
+        if instance.ids.manga.active == True:
             filters["manga"] = 1
-        if instance.ids.artistcg.state == "down":
+        if instance.ids.artistcg.active == True:
             filters["artistcg"] = 1
-        if instance.ids.gamecg.state == "down":
+        if instance.ids.gamecg.active == True:
             filters["gamecg"] = 1
-        if instance.ids.western.state == "down":
+        if instance.ids.western.active == True:
             filters["western"] = 1
-        if instance.ids.nonh.state == "down":
+        if instance.ids.nonh.active == True:
             filters["nonh"] = 1
-        if instance.ids.imageset.state == "down":
+        if instance.ids.imageset.active == True:
             filters["imageset"] = 1
-        if instance.ids.cosplay.state == "down":
+        if instance.ids.cosplay.active == True:
             filters["cosplay"] = 1
-        if instance.ids.asianporn.state == "down":
+        if instance.ids.asianporn.active == True:
             filters["asianporn"] = 1
-        if instance.ids.misc.state == "down":
+        if instance.ids.misc.active == True:
             filters["misc"] = 1
 
         newfilter = Filters(doujinshi=filters["doujinshi"],
@@ -263,6 +249,10 @@ class SadpandaApp(App):
     def build(self):
         self.nav_drawer = SadpandaNavdrawer()
         self.theme_cls.theme_style = "Dark"
+        self.theme_cls.primary_palette = "Grey"
+        self.theme_cls.primary_hue = "900"
+
+        return SadpandaRoot()
 
 
 if __name__ == "__main__":

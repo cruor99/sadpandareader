@@ -20,7 +20,8 @@ class GalleryPreviewScreen(Screen):
     gallery_name = StringProperty("")
     gallery_token = StringProperty("")
     gallery_thumb = StringProperty("")
-
+    filesize = NumericProperty(0)
+    title = StringProperty("Preview and Tags")
 
     def on_enter(self):
         gallerydata = db.query(Gallery).filter_by(gallery_id=self.gallery_id).first()
@@ -34,6 +35,7 @@ class GalleryPreviewScreen(Screen):
         self.gallery_name = gallerydata.gallery_name
         self.gallery_tags = taglist
         self.gallery_thumb = gallerydata.gallery_thumb
+        self.filesize = gallerydata.filesize
 
         Clock.schedule_once(self.populate_tags)
 
