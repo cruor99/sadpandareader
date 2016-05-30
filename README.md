@@ -29,7 +29,7 @@ Development was streamed on [Livecoding.tv](https://www.livecoding.tv/cruor99/)
 ## Screenshots
 
 ![Front Page](http://i.imgur.com/F2ocLX8.png)
-![Tags](http://i.imgur.com/VnZsx8g.png)
+![Tags](http://i.imgur.com/rUuuz8h.png)
 ![Gallery Viewer](http://i.imgur.com/SFX2GdA.png)
 
 
