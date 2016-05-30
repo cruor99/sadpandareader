@@ -1,16 +1,14 @@
 from kivy.uix.screenmanager import Screen
 from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from kivy.properties import NumericProperty
-from kivy.storage.jsonstore import JsonStore
-from kivy.clock import Clock, mainthread
+from kivy.clock import Clock
 from kivy.app import App
 
 from os import linesep
-from os.path import join
 from functools import partial
 
 # Self created components
-from components import ThumbButton, GalleryTitle, AvatarSampleWidget
+from components import ThumbButton, AvatarSampleWidget
 
 import requests
 import json
@@ -132,6 +130,7 @@ class FrontScreen(Screen):
                 headers=headers,
                 cookies=cookies)
 
+        print r.content
         self.searchpage += 1
         # pure html of ehentai link
         data = r.text

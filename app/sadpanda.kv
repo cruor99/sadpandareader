@@ -34,6 +34,9 @@
         GalleryPreviewScreen:
             id: gallery_preview_screen
             name: "gallery_preview_screen"
+        FavouriteScreen:
+            id: favourite_screen
+            name: "favourite_screen"
 
 
 <StartScreen>:
@@ -71,6 +74,15 @@
                 width: "150dp"
                 text: "login"
                 on_release: app.root.login_exhentai(username, password)
+            MDFlatButton:
+                size_hint_y: None
+                size_hint_x: None
+                id: unrestricted
+                height: "60dp"
+                width: "150dp"
+                text: "View Unrestricted"
+                on_release: app.root.goto_front()
+
 
 
 <CaptchaPopup>:
@@ -104,6 +116,20 @@
                 elevation_normal: 8
                 pos_hint: {"center_x": 0.9, "center_y": 0.1}
                 on_release: app.root.search_popup()
+
+<FavouriteScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Toolbar:
+            id: toolbar
+            title: root.title
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+        FloatLayout:
+            ScrollView:
+                id: favouritescroll
+                MDList:
+                    id: favourite_layout
+                    size_hint_x: 1
 
 <TagButton>:
     size_hint_y: None
@@ -335,4 +361,5 @@
         on_release: app.root.search_popup()
     NavigationDrawerIconButton:
         icon: "star"
-        text: "Favourites (COMING SOON)"
+        text: "Favourites"
+        on_release: app.root.next_screen("favourite_screen")
