@@ -1,0 +1,11 @@
+Metadata-Version: 1.1
+Name: kivymd
+Version: 0.1.2
+Summary: Set of widgets for Kivy inspired by Google's Material Design
+Home-page: https://github.com/mixedCase/kivymd
+Author: Andrés Rodríguez
+Author-email: andres.rodriguez@lithersoft.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires: kivy

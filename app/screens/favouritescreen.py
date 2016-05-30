@@ -20,10 +20,10 @@ class FavouriteScreen(Screen):
         self.favourites = db.query(Favourites).all()
 
     def on_enter(self):
+        self.favourites = db.query(Favourites).all()
         for favourite in self.favourites:
             self.gallerylinks.append("http://" + App.get_running_app().root.baseurl + ".org/g/" + favourite.gallery_id + "/" + favourite.gallery_token)
             self.gidlist.append([favourite.gallery_id, favourite.gallery_token])
-        print self.gidlist
         self.populate_favs()
 
     def on_leave(self):
@@ -46,7 +46,6 @@ class FavouriteScreen(Screen):
         requestdump.rstrip(linesep)
         requestjson = json.loads(requestdump)
         i = 0
-        print requestjson
         try:
             for gallery in requestjson["gmetadata"]:
                 self.add_button(gallery)
@@ -55,7 +54,6 @@ class FavouriteScreen(Screen):
             pass
 
     def add_button(self, gallery, *largs):
-        print "Attempt to add button"
         gallerybutton = ThumbButton(
             # gallerysource=gallery["thumb"],
             gallery_id=str(gallery["gid"]),
