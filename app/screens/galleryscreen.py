@@ -118,14 +118,14 @@ class GalleryScreen(Screen):
         if self.scrollstopper is False:
             if offset > 1:
                 self.scrollstopper = True
-                self.ids.gallery_manager.transition.direct = "left"
+                self.ids.gallery_manager.transition.direction = "right"
                 self.previous_image(self)
                 Clock.schedule_once(self.togglestopper, 1)
             else:
                 pass
             if offset < -1:
                 self.scrollstopper = True
-                self.ids.gallery_manager.transition.direct = "right"
+                self.ids.gallery_manager.transition.direction = "left"
                 self.next_image(self)
                 Clock.schedule_once(self.togglestopper, 1)
             else:
@@ -139,7 +139,7 @@ class GalleryScreen(Screen):
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
 
         print self.scrollstopper
-        self.ids.gallery_manager.transition.direct = "right"
+        self.ids.gallery_manager.transition.direction = "left"
         for page in pagelinks:
             if page.current == 1:
                 newpageindex = pagelinks.index(page) + 1
@@ -158,7 +158,7 @@ class GalleryScreen(Screen):
     def previous_image(self, instance):
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
 
-        self.ids.gallery_manager.transition.direct = "left"
+        self.ids.gallery_manager.transition.direction = "right"
         print self.scrollstopper
         for page in pagelinks:
             if page.current == 1:
