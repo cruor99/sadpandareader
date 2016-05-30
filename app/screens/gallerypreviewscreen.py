@@ -9,8 +9,9 @@ from os.path import join
 # Self made components
 from components import TagButton
 
-from models import db, Gallery, GalleryTags, Search
+from models import db, Gallery, GalleryTags, Search, Favourites
 
+import kivymd.snackbar as Snackbar
 
 class GalleryPreviewScreen(Screen):
 
@@ -38,6 +39,22 @@ class GalleryPreviewScreen(Screen):
         self.filesize = gallerydata.filesize
 
         Clock.schedule_once(self.populate_tags)
+
+    def add_favourite(self, *args):
+        existfavourite = db.query(Favourites).filter_by(gallery_id=self.gallery_id).first()
+        if existfavourite:
+            return
+        else:
+            newfav = Favourites()
+            newfav.gallery_id = self.gallery_id
+            newfav.gallery_token = self.gallery_token
+            newfav.pagecount = self.pagecount
+            newfav.gallery_name = self.gallery_name
+            newfav.gallery_thumb = self.gallery_thumb
+            newfav.filesize = self.filesize
+            db.add(newfav)
+            db.commit()
+            Snackbar.make("Added to favourites!")
 
     def populate_tags(self, *args):
         self.ids.tag_layout.clear_widgets()

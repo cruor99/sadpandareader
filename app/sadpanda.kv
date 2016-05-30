@@ -137,11 +137,12 @@
                 theme_text_color: "Primary"
                 on_release: root.view_gallery()
             MDFlatButton:
-                text: "Favourite (Soon)"
+                text: "Favourite"
                 size_hint_y: None
                 size_hint_x: 1
                 theme_text_color: "Primary"
                 height: dp(40)
+                on_release: root.add_favourite()
         BoxLayout:
             orientation: "vertical"
             MDLabel:
