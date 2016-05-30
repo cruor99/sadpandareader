@@ -7,6 +7,12 @@ A Kivy app for transcending the sadpanda.
 For logging in, you need to be registered [here](http://e-hentai.org/)
 You use the same username and password.
 
+** DO NOTE THAT FRESH ACCOUNTS MIGHT NOT WORK **
+
+In the case of a really fresh account, the sadpanda reader might crash.
+In that case, it is advised to give it a few days to let it work - or reinstall
+the app and access the non-restricted content.
+
 If you do not want access to the restricted content, just hit "To Front"
 
 ## Download

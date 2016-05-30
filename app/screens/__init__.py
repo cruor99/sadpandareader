@@ -2,3 +2,4 @@ from galleryscreen import GalleryScreen
 from gallerypreviewscreen import GalleryPreviewScreen
 from startscreen import StartScreen
 from frontscreen import FrontScreen
+from favouritescreen import FavouriteScreen
