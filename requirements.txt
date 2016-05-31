@@ -3,7 +3,7 @@ Cython==0.21.2
 docutils==0.12
 Kivy==1.9.2.dev0
 Kivy-Garden==0.1.4
-kivymd==0.1.2
+git+https://github.com/cruor99/KivyMD
 nose==1.3.7
 pdb==0.1
 pexpect==4.0.1
