@@ -2,363 +2,30 @@
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
-from kivy.storage.jsonstore import JsonStore
-from kivy.properties import DictProperty, StringProperty
+from kivy.properties import DictProperty, StringProperty, ObjectProperty
+from kivy.loader import Loader
+from kivy.core.image import Image as CoreImage
+from kivy.clock import Clock
 
-from os.path import join
+from plyer import notification
+from plyer.utils import platform
+from plyer.compat import PY2
+
+from threading import Thread
+import time
+from os.path import join, dirname, realpath
+from functools import partial
 
 import requests
 from screens import *
 from components import *
 from models import User, Filters, Gallery, Pagelink, Search, db
 
-data_dir = ""
-
-
-class ThumbButton(ButtonBehavior, Image):
-
-    gallery_id = StringProperty("")
-    gallery_token = StringProperty("")
-    gallery_tags = ListProperty([])
-    gallery_name = StringProperty("")
-    pagecount = NumericProperty(0)
-    gallery_thumb = StringProperty("")
-
-
-class FrontScreen(Screen):
-
-    global data_dir
-
-    gallery_thumbs = ListProperty([])
-    gidlist = ListProperty([])
-    searchword = StringProperty("")
-    searchpage = NumericProperty(0)
-    newstart = BooleanProperty(True)
-
-    def on_enter(self):
-
-        search_store = JsonStore(join(data_dir, 'search_store.json'))
-        if search_store.exists("searchstring"):
-            newsearch = search_store["searchstring"]["searchphrase"]
-            if newsearch == self.searchword:
-                if self.newstart is True:
-                    self.new_search()
-                    self.newstart = False
-                else:
-                    pass
-            else:
-                self.searchword = newsearch
-                self.new_search()
-        else:
-            self.searchword = ""
-            self.new_search()
-
-    def new_search(self):
-        self.ids.main_layout.clear_widgets()
-        self.searchpage = 0
-
-        self.gallery_thumbs = []
-
-        # final integer determines the time for the front to be populated
-        Clock.schedule_once(self.populate_front)
-
-    def enter_gallery(self, instance):
-        gallery_store = JsonStore(join(data_dir, 'gallerystore.json'))
-        galleryinfo = [instance.gallery_id, instance.gallery_token,
-                       instance.pagecount, instance.gallery_name,
-                       instance.gallery_tags, instance.gallery_thumb]
-        gallery_store.put("current_gallery", galleryinfo=galleryinfo)
-        App.get_running_app().root.next_screen("gallery_preview_screen")
-
-    def populate_front(self, *largs):
-        # filter store
-        filterstore = JsonStore(join(data_dir, "filterstore.json"))
-        filters = filterstore.get("filters")
-        filtertemp = filters["filters"]
-        # ehentai link
-        self.gidlist = []
-        headers = {'User-agent': 'Mozilla/5.0'}
-        cookies = App.get_running_app().root.cookies
-        r = requests.get("http://"+App.get_running_app().root.baseurl+".org/?page="+str(self.searchpage) +
-                         "f_doujinshi="+str(filtertemp["doujinshi"]) +
-                         "&f_manga="+str(filtertemp["manga"]) +
-                         "&f_artistcg="+str(filtertemp["artistcg"]) +
-                         "&f_gamecg="+str(filtertemp["gamecg"]) +
-                         "&f_western="+str(filtertemp["western"]) +
-                         "&f_non-h="+str(filtertemp["nonh"]) +
-                         "&f_imageset="+str(filtertemp["imageset"]) +
-                         "&f_cosplay="+str(filtertemp["cosplay"]) +
-                         "&f_asianporn="+str(filtertemp["asianporn"]) +
-                         "&f_misc="+str(filtertemp["misc"]) +
-                         "&f_search="+self.searchword+"&f_apply=Apply+Filter",
-                         headers=headers, cookies=cookies)
-        self.searchpage += 1
-        # pure html of ehentai link
-        data = r.text
-
-        soup = BS(data, fromEncoding='utf8')
-        gallerylinks = []
-
-        # grabs all the divs with class it5 which denotes the gallery on the
-        # page
-        for link in soup.findAll('div', {'class': 'it5'}):
-            # grabs all the links, should only be gallery links as of 29th of
-            # august 2015
-            gallerylinks.append(link.find('a')["href"])
-
-        for link in gallerylinks:
-            splitlink = link.split('/')
-            # grab the gallery token
-            gtoken = splitlink[-2]
-            # grab the gallery id
-            gid = splitlink[-3]
-            self.gidlist.append([gid, gtoken])
-
-        headers = {"Content-type": "application/json", "Accept": "text/plain",
-                   'User-agent': 'Mozilla/5.0'}
-        payload = {
-            "method": "gdata",
-            "gidlist": self.gidlist
-            }
-        cookies = App.get_running_app().root.cookies
-
-        self.grabthumbs(headers, payload, cookies)
-
-    def grabthumbs(self, headers, payload, cookies, *largs):
-        r = requests.post("http://"+App.get_running_app().root.baseurl+".org/api.php",
-                          data=json.dumps(payload), headers=headers, cookies=cookies)
-        requestdump = r.text
-        requestdump.rstrip(os.linesep)
-        requestjson = json.loads(requestdump)
-        i = 0
-        try:
-            for gallery in requestjson["gmetadata"]:
-                self.add_button(gallery)
-                i += 1
-        except:
-            pass
-
-    def add_button(self, gallery, *largs):
-        gallerybutton = ThumbButton(
-            source=gallery["thumb"],
-            gallery_id=str(gallery["gid"]),
-            gallery_token=str(gallery["token"]),
-            pagecount=int(gallery["filecount"]),
-            gallery_name=gallery["title"],
-            gallery_tags=gallery["tags"],
-            gallery_thumb=gallery["thumb"])
-        gallerybutton.bind(on_press=self.enter_gallery)
-        buttoncontainer = GalleryButtonContainer(orientation="horizontal")
-        buttoncontainer.add_widget(gallerybutton)
-        buttoncontainer.add_widget(GalleryTitle(titletext=gallery["title"]))
-        self.ids.main_layout.add_widget(buttoncontainer)
-
-
-class GalleryButtonContainer(BoxLayout, StencilView):
-    pass
-
-class GalleryTitle(BoxLayout, StencilView):
-
-    titletext = StringProperty("")
-
-class TagButton(Button):
-
-    tagname = StringProperty("")
-
-
-class GalleryPreviewScreen(Screen):
-
-    gallery_tags = ListProperty([])
-    gallery_id = StringProperty("")
-    pagecount = NumericProperty(0)
-    gallery_name = StringProperty("")
-    gallery_token = StringProperty("")
-    gallery_thumb = StringProperty("")
-
-    global data_dir
-
-    def on_enter(self):
-        gallery_store = JsonStore(join(data_dir, "gallerystore.json"))
-        if gallery_store.exists("current_gallery"):
-            galleryinfo = gallery_store.get("current_gallery")
-            self.gallery_id = galleryinfo["galleryinfo"][0]
-            self.gallery_token = galleryinfo["galleryinfo"][1]
-            self.pagecount = galleryinfo["galleryinfo"][2]
-            self.gallery_name = galleryinfo["galleryinfo"][3]
-            self.gallery_tags = galleryinfo["galleryinfo"][4]
-            self.gallery_thumb = galleryinfo["galleryinfo"][5]
-
-        Clock.schedule_once(self.populate_tags)
-
-    def populate_tags(self, *args):
-        self.ids.tag_layout.clear_widgets()
-        for tag in self.gallery_tags:
-            taglabel = TagButton(tagname=tag)
-            taglabel.bind(on_press=self.search_tag)
-            self.ids.tag_layout.add_widget(taglabel)
-
-    def view_gallery(self):
-        App.get_running_app().root.next_screen("gallery_screen")
-
-    def search_tag(self, instance):
-
-        search_store = JsonStore(join(data_dir, "search_store.json"))
-        tag = instance.text
-        search_store.put("searchstring", searchphrase=tag)
-        App.get_running_app().root.next_screen("front_screen")
-
-
-class GalleryScreen(Screen):
-
-    gallery_id = StringProperty("")
-    gallery_token = StringProperty("")
-    pagelinks = ListProperty([])
-    pagecount = NumericProperty(0)
-    gallery_name = StringProperty("")
-    nextpage = NumericProperty(0)
-    current_page = NumericProperty(0)
-
-    global data_dir
-
-    def on_enter(self):
-        self.ids.gallery_carousel.clear_widgets()
-        gallery_store = JsonStore(join(data_dir, 'gallerystore.json'))
-        if gallery_store.exists("current_gallery"):
-            galleryinfo = gallery_store.get("current_gallery")
-            self.gallery_id = galleryinfo["galleryinfo"][0]
-            self.gallery_token = galleryinfo["galleryinfo"][1]
-            self.pagecount = galleryinfo["galleryinfo"][2]
-            self.gallery_name = galleryinfo["galleryinfo"][3]
-        self.populate_gallery()
-
-    def on_leave(self):
-        self.ids.gallery_carousel.clear_widgets()
-        self.gallery_id = ""
-        self.gallery_token = ""
-        self.pagelinks = []
-        self.pagecount = 0
-        self.gallery_name = ""
-
-    def populate_gallery(self):
-        # change placehold.it with
-        gallerypages = float(self.pagecount) / float(40)
-        pageregex = re.compile('http://'+App.get_running_app().root.baseurl+'.org/s/\S{10}/\d{6}-\d+')
-
-        if gallerypages.is_integer():
-            pass
-        else:
-            gallerypages += 1
-
-        headers = {'User-agent': 'Mozilla/5.0'}
-        cookies = App.get_running_app().root.cookies
-        for i in range(int(gallerypages)):
-            galleryrequest = requests.get("http://"+App.get_running_app().root.baseurl+".org/g/{}/{}/?p={}\
-                                          ".format(self.gallery_id,
-                                          self.gallery_token, i),
-                                          headers=headers, cookies=cookies)
-
-            soup = BS(galleryrequest.text)
-
-            for a in soup.findAll(name="a", attrs={"href": pageregex}):
-                self.pagelinks.append(a["href"])
-
-        # pagetimer = 0
-        # for page in self.pagelinks:
-        #   Clock.schedule_once(partial(self.grab_image, page), 2*pagetimer)
-        #    pagetimer += 1
-
-        self.next_page = 1
-        self.grab_image(self.pagelinks[0])
-
-    def load_next(self):
-        try:
-            nextpage_url = self.pagelinks[self.next_page]
-            self.grab_image(nextpage_url)
-            self.next_page += 1
-            nextpage_url = self.pagelinks[self.next_page]
-            self.grab_image(nextpage_url)
-            self.next_page += 1
-        except:
-            pass
-
-
-
-    def grab_image(self, i, *largs):
-        headers = {'User-agent': 'Mozilla/5.0'}
-        cookies = App.get_running_app().root.cookies
-        pagerequest = requests.get(url=i, headers=headers, cookies=cookies)
-
-        soup = BS(pagerequest.text)
-
-        srctag = soup.findAll(name="img", attrs={"id": "img"})
-        for each in srctag:
-            src = each["src"]
-        image = GalleryImage(source=src, allow_stretch=True)
-        imageroot = GalleryScatter()
-        imageroot.add_widget(image)
-        gallerycontainer = GalleryContainerLayout()
-        gallerycontainer.add_widget(imageroot)
-        self.ids.gallery_carousel.add_widget(gallerycontainer)
-
-class GalleryContainerLayout(BoxLayout, StencilView):
-    pass
-
-
-class GalleryScatter(ScatterLayout):
-    pass
-
-
-class GalleryImage(Image):
-    pass
-
-
-class SearchPopup(Popup):
-
-    global data_dir
-
-    def savesearch(self):
-        search_store = JsonStore(join(data_dir, 'search_store.json'))
-        searchquery = self.ids.searchstring.text
-        search_store.put("searchstring", searchphrase=searchquery)
-        self.dismiss()
-
-    def open_filters(self):
-        fpop = FilterPopup()
-        fpop.bind(on_dismiss=self.set_filters)
-        fpop.open()
-
-    def set_filters(self, instance):
-        App.get_running_app().root.set_filters(instance)
-
-
-class StartScreen(Screen):
-
-    def on_enter(self):
-
-        Clock.schedule_once(self.check_cookies)
-
-    def check_cookies(self, *args):
-        cookie_store = JsonStore(join(data_dir, "cookie_store.json"))
-        if cookie_store.exists("cookies"):
-            App.get_running_app().root.cookies = cookie_store["cookies"]["cookies"]
-            App.get_running_app().root.baseurl = "exhentai"
-            App.get_running_app().root.next_screen("front_screen")
-        else:
-            pass
-
-
-
-class CaptchaPopup(Popup):
-
-    action = StringProperty("")
-
-    def try_again(self):
-        self.action = "try again"
-        self.dismiss()
-
-    def non_restricted(self):
-        self.action = "front_screen"
-        self.dismiss()
+# Socket-io stuff
+from socketIO_client import SocketIO
+
+#KivyMD stuff
+from kivymd.theming import ThemeManager
 
 
 class SadpandaRoot(BoxLayout):
@@ -367,11 +34,40 @@ class SadpandaRoot(BoxLayout):
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("g.e-hentai")
+    pushurl = StringProperty(
+        "https://1dvxtg49adq5f5jtzm2a04p2sr2pje3fem1x6gfu2cyhr30p.pushould.com")
+    client_token = StringProperty(
+        "6rgcw2zlr4ubpvcegjajqpnmehx5gp5zm1yigjzp1mgfvy6c")
+    newmessage = StringProperty("")
 
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)
         # list of previous screens
         self.screen_list = []
+        Loader.loading_image = CoreImage("img/loading.gif", size=(16, 16))
+
+        Clock.schedule_once(self.start_thread)
+
+    def start_thread(self, *args):
+        self.bind(newmessage=self.do_notify)
+        pushthread = Thread(target=self.check_pushould)
+        pushthread.daemon = True
+        pushthread.start()
+
+    def check_pushould(self):
+        socketio = SocketIO(self.pushurl,
+                            params={"transports": ["polling", "websocket"],
+                                    "client_token": str(self.client_token)},
+                            verify=False)
+        socketio.on('send', self.add_message)
+        socketio.emit("subscribe", {"room": "sadpandapush"})
+        socketio.wait()
+
+    def add_message(self, response):
+        self.newmessage = response["message"]
+
+    def do_notify(self, *args):
+        notification.notify("Update available", self.newmessage, timeout=5000)
 
     def login_exhentai(self, username, password):
         self.username = username.text
@@ -387,13 +83,16 @@ class SadpandaRoot(BoxLayout):
         }
         headers = {'User-Agent': 'Mozilla/5.0'}
 
-        r = requests.post("https://forums.e-hentai.org/index.php?act=Login&CODE=01",
-                          data=payload, headers=headers)
+        r = requests.post(
+            "https://forums.e-hentai.org/index.php?act=Login&CODE=01",
+            data=payload,
+            headers=headers)
 
         if len(r.cookies) <= 1:
             captchapopup = CaptchaPopup()
             captchapopup.bind(on_dismiss=self.login_captcha)
             captchapopup.open()
+
         else:
             self.cookies = r.cookies
             cookies = User(cookies=str(self.cookies))
@@ -404,9 +103,8 @@ class SadpandaRoot(BoxLayout):
 
     def login_captcha(self, instance):
         if instance.action == "try_again":
-            print instance.action
+            pass
         else:
-            print instance.action
             self.baseurl = "g.e-hentai"
             self.next_screen("front_screen")
 
@@ -430,14 +128,14 @@ class SadpandaRoot(BoxLayout):
         self.next_screen("front_screen")
 
     def start_search(self, instance):
-        front_screen = self.ids.sadpanda_screen_manager.get_screen("front_screen")
+        front_screen = self.ids.sadpanda_screen_manager.get_screen(
+            "front_screen")
         searchword = front_screen.searchword
         search = db.query(Search).order_by(Search.id.desc()).first()
         if search:
             newsearch = search.searchterm
         else:
             newsearch = " "
-        print newsearch, "newsearch"
         if newsearch == searchword:
             pass
         else:
@@ -474,26 +172,27 @@ class SadpandaRoot(BoxLayout):
             "imageset": 0,
             "cosplay": 0,
             "asianporn": 0,
-            "misc": 0}
-        if instance.ids.doujinshi.state == "down":
+            "misc": 0
+        }
+        if instance.ids.doujinshi.active == True:
             filters["doujinshi"] = 1
-        if instance.ids.manga.state == "down":
+        if instance.ids.manga.active == True:
             filters["manga"] = 1
-        if instance.ids.artistcg.state == "down":
+        if instance.ids.artistcg.active == True:
             filters["artistcg"] = 1
-        if instance.ids.gamecg.state == "down":
+        if instance.ids.gamecg.active == True:
             filters["gamecg"] = 1
-        if instance.ids.western.state == "down":
+        if instance.ids.western.active == True:
             filters["western"] = 1
-        if instance.ids.nonh.state == "down":
+        if instance.ids.nonh.active == True:
             filters["nonh"] = 1
-        if instance.ids.imageset.state == "down":
+        if instance.ids.imageset.active == True:
             filters["imageset"] = 1
-        if instance.ids.cosplay.state == "down":
+        if instance.ids.cosplay.active == True:
             filters["cosplay"] = 1
-        if instance.ids.asianporn.state == "down":
+        if instance.ids.asianporn.active == True:
             filters["asianporn"] = 1
-        if instance.ids.misc.state == "down":
+        if instance.ids.misc.active == True:
             filters["misc"] = 1
 
         newfilter = Filters(doujinshi=filters["doujinshi"],
@@ -512,16 +211,29 @@ class SadpandaRoot(BoxLayout):
 
 class SadpandaApp(App):
 
+    theme_cls = ThemeManager()
+    nav_drawer = ObjectProperty()
+
     def __init__(self, **kwargs):
         super(SadpandaApp, self).__init__(**kwargs)
         Window.bind(on_keyboard=self.onBackBtn)
         # Makes sure only non-h is the default.
-        clearstart = Filters(nonh=1, doujinshi=0, manga=0,
-                             artistcg=0, gamecg=0, western=0,
-                             imageset=0, cosplay=0, asianporn=0,
-                             misc=0)
-        db.add(clearstart)
-        db.commit()
+        existfilters = db.query(Filters).order_by(Filters.id.desc()).first()
+        if existfilters:
+            pass
+        else:
+            clearstart = Filters(nonh=1,
+                                 doujinshi=0,
+                                 manga=0,
+                                 artistcg=0,
+                                 gamecg=0,
+                                 western=0,
+                                 imageset=0,
+                                 cosplay=0,
+                                 asianporn=0,
+                                 misc=0)
+            db.add(clearstart)
+            db.commit()
         clearsearch = Search(searchterm=" ")
         db.add(clearsearch)
         db.commit()
@@ -535,7 +247,13 @@ class SadpandaApp(App):
         return True
 
     def build(self):
+        self.nav_drawer = SadpandaNavdrawer()
+        self.theme_cls.theme_style = "Dark"
+        self.theme_cls.primary_palette = "Grey"
+        self.theme_cls.primary_hue = "900"
+
         return SadpandaRoot()
+
 
 if __name__ == "__main__":
     SadpandaApp().run()

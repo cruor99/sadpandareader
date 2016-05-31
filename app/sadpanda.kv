@@ -1,24 +1,14 @@
 #:import win kivy.core.window
-SadpandaRoot:
+#:import Toolbar kivymd.toolbar.Toolbar
+#:import SingleLineTextField kivymd.textfields.SingleLineTextField
+#:import MDSwitch kivymd.selectioncontrols.MDSwitch
+#:import MDList kivymd.list.MDList
 
 <ThumbButton>:
-    size_hint_y: None
-    size_hint_x: None
-    height: "200dp"
-    width: "200dp"
-    keep_aspect: True
-    allow_stretch: True
-
-
-<GalleryTitle>:
-    size_hint_y: 1
-    Label:
-        font_name: "fonts/NotoSansCJK-Regular.ttc"
-        text: root.titletext
-        font_size: "15dp"
-        max_lines: 6
-        text_size: self.width, self.height
-        valign: "top"
+    font_name: "fonts/NotoSansCJK-Regular.ttc"
+    _num_lines: 3
+    primary_font_style: "Body1"
+    secondary_size_hint_y: 1
 
 <WrappedLabel@Label>:
     font_name: "fonts/NotoSansCJK-Regular.ttc"
@@ -30,22 +20,6 @@ SadpandaRoot:
 
 <SadpandaRoot>:
     orientation: "vertical"
-    ActionBar:
-        ActionView:
-            ActionPrevious:
-                title: ""
-                with_previous: False
-                app_icon: "img/icon_round.png"
-                previous_image: "img/back_image.png"
-                with_previous: True
-                on_release: app.root.onBackBtn()
-            ActionButton:
-                text: "To Front"
-                on_press: app.root.goto_front()
-            ActionButton:
-                text: "Search"
-                on_press: app.root.search_popup()
-
     ScreenManager:
         id: sadpanda_screen_manager
         StartScreen:
@@ -57,9 +31,12 @@ SadpandaRoot:
         GalleryScreen:
             id: gallery_screen
             name: "gallery_screen"
-        GalleryPreviewScreen
+        GalleryPreviewScreen:
             id: gallery_preview_screen
             name: "gallery_preview_screen"
+        FavouriteScreen:
+            id: favourite_screen
+            name: "favourite_screen"
 
 
 <StartScreen>:
@@ -68,29 +45,28 @@ SadpandaRoot:
             Rectangle:
                 pos: self.pos
                 size: self.size
-                source: "img/sadpanda.jpg"
+                source: "img/main_bg.png"
         BoxLayout:
             center: self.parent.center
-            pos_hint: {"center_x": 0.8, "center_y": 0.9}
+            pos_hint: {"center_x": 0.4, "center_y": 0.5}
+            size_hint: None, None
             orientation: "vertical"
-            TextInput:
-                multiline: False
+            SingleLineTextField:
                 size_hint: None, None
-                height: "40dp"
+                height: "48dp"
                 width: "150dp"
                 id: username
                 hint_text: "Username"
-                background_color: [1, 1, 1, .5]
-            TextInput:
-                multiline: False
-                size_hint: None, None
+                _hint_txt_color: (0, 0, 0, 1)
+            SingleLineTextField:
                 id: password
                 password: True
-                height: "40dp"
+                size_hint: None, None
+                height: "48dp"
                 width: "150dp"
                 hint_text: "Password"
-                background_color: [1, 1, 1, .5]
-            Button:
+                _hint_txt_color: (0, 0, 0, 1)
+            MDRaisedButton:
                 size_hint_y: None
                 size_hint_x: None
                 id: login
@@ -98,81 +74,120 @@ SadpandaRoot:
                 width: "150dp"
                 text: "login"
                 on_release: app.root.login_exhentai(username, password)
+            MDFlatButton:
+                size_hint_y: None
+                size_hint_x: None
+                id: unrestricted
+                height: "60dp"
+                width: "150dp"
+                text: "View Unrestricted"
+                on_release: app.root.goto_front()
+
 
 
 <CaptchaPopup>:
-    BoxLayout:
-        orientation: "vertical"
-        Label:
-            text: "Login failed."
-
-        Button:
-            text: "Try again"
-            id: try_again
-            on_release: root.try_again()
-        Button:
-            text: "View Non-restricted content"
-            on_release: root.non_restricted()
-
-
-
-
+    size_hint: .8, None
+    height: dp(200)
+    title: "Login Failed"
+    MDLabel:
+        text: "You can either try again or continue to non-restricted content."
 
 
 <FrontScreen>:
     BoxLayout:
         orientation: "vertical"
-        ScrollView:
-            #size:  self.size
-            #height: self.parent.height
-            #width: self.parent.width-20
-            GridLayout:
-                id: main_layout
-                cols: 1
-                padding: root.width * .02, root.height * .02
-                spacing: "10dp"
-                height: self.minimum_height
+        Toolbar:
+            id: toolbar
+            title: root.title
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+        FloatLayout:
+            ScrollView:
+                id: galleryscroll
+                MDList:
+                    id: main_layout
+                    size_hint_x: 1
+            MDFloatingActionButton:
                 size_hint_y: None
-                row_default_height: '200dp'
-        Button:
-            size_hint_y: None
-            height: "60dp"
-            text: "Load More"
-            on_release: root.populate_front()
+                icon: "search"
+                size_hint: None, None
+                size: dp(56), dp(56)
+                opposite_colors: True
+                # background_color: (0, 1, 0, 1)
+                elevation_normal: 8
+                pos_hint: {"center_x": 0.9, "center_y": 0.1}
+                on_release: app.root.search_popup()
+
+<FavouriteScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Toolbar:
+            id: toolbar
+            title: root.title
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+        FloatLayout:
+            ScrollView:
+                id: favouritescroll
+                MDList:
+                    id: favourite_layout
+                    size_hint_x: 1
 
 <TagButton>:
     size_hint_y: None
     height: "55dp"
-    background_color: (.7, .7, .7, 0.5)
+    # background_color: (.7, .7, .7, 0.5)
     text: root.tagname
-    text_size: self.width, None
+    #text_size: self.width, None
     halign: "center"
 
 <GalleryPreviewScreen>:
     BoxLayout:
         orientation: "vertical"
+        Toolbar:
+            id: toolbar
+            title: root.title
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
         AsyncImage:
-            # This might not work with exhentai
             source: root.gallery_thumb
-            size_hint_y: .7
+            allow_stretch: True
+            size_hint_y: None
+            height: dp(200)
         BoxLayout:
             orientation: "horizontal"
-            size_hint_y: None
-            Button:
+            size_hint_y: .3
+            MDFlatButton:
                 text: "Start Reading"
-                size_hint_y: None
+                font_name: "fonts/NotoSansCJK-Regular.ttc"
                 height: dp(40)
+                size_hint_y: None
+                size_hint_x: 1
+                theme_text_color: "Primary"
                 on_release: root.view_gallery()
-            Button:
-                text: "Add to favourites"
+            MDFlatButton:
+                text: "Favourite"
                 size_hint_y: None
+                size_hint_x: 1
+                theme_text_color: "Primary"
                 height: dp(40)
+                on_release: root.add_favourite()
         BoxLayout:
             orientation: "vertical"
-            WrappedLabel:
-                size_hint_y: 1
+            MDLabel:
                 text: root.gallery_name
                 valign: "top"
+                halign: "center"
+                font_style: "Title"
+            GridLayout:
+                cols: 2
+                padding: dp(1)
+                size_hint_y: None
+                MDLabel:
+                    text: "Pagecount: " +str(root.pagecount)
+                    size_hint_y: None
+                    valign: "middle"
+                MDLabel:
+                    text: "Filesize: " + str((root.filesize/1024)/1024) + " MB"
+                    size_hint_y: None
+                    valign: "middle"
             ScrollView:
                 height: self.parent.height
                 width: self.parent.width-20
@@ -189,29 +204,19 @@ SadpandaRoot:
     size: root.width, root.height
     nocache: True
 
-<GalleryScatter>:
-    do_rotation: False
-    scale_min: 1
-    scale_max: 3
-    translation_touches: 1
-    auto_bring_to_front: False
+<GalleryCarousel>:
+    loop: True
+    on__offset: self.startmove()
 
 <GalleryScreen>:
-    canvas.before:
-        Color:
-            rgb: (1, 1, 1)
-        Rectangle:
-            size: self.size
-            pos: self.pos
     BoxLayout:
         orientation: "vertical"
-        WrappedLabel:
-            text: root.gallery_name
-            max_lines: 1
-            color: 0, 0, 0, 1
+        Toolbar:
+            id: toolbar
+            title: root.title
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
         ScreenManager:
             id: gallery_manager
-            size_hint_y: 1.7
 
 <GalleryNavButton>:
     background_color: 0, 0, 0, .2
@@ -225,62 +230,136 @@ SadpandaRoot:
 
 <FilterPopup>:
     title: "Set your filters here"
+    size_hint: .8, None
+    height: dp(500)
     BoxLayout:
         orientation: "vertical"
         GridLayout:
-            cols: 5
-            rows: 2
-            ToggleButton:
-                id: nonh
-                text: "Non-H"
-            ToggleButton:
-                id: doujinshi
-                text: "Doujinshi"
-            ToggleButton:
-                id: western
-                text: "Western"
-            ToggleButton:
-                id: artistcg
-                text: "Artist CG"
-            ToggleButton:
-                id: gamecg
-                text: "Game CG"
-            ToggleButton:
-                id: manga
-                text: "Manga"
-            ToggleButton:
-                id: cosplay
-                text: "Cosplay"
-            ToggleButton:
-                id: asianporn
-                text: "Asian Porn"
-            ToggleButton:
-                id: imageset
-                text: "Image Set"
-            ToggleButton:
-                id: misc
-                text: "Misc"
-        Button:
+            cols: 2
+            padding: dp(40), dp(1)
+            spacing: dp(15)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Non-H"
+                MDSwitch:
+                    id: nonh
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+                    text: "Non-H"
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Doujinshi"
+                MDSwitch:
+                    id: doujinshi
+                    text: "Doujinshi"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Western"
+                MDSwitch:
+                    id: western
+                    text: "Western"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Artist CG"
+                MDSwitch:
+                    id: artistcg
+                    text: "Artist CG"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Game CG"
+                MDSwitch:
+                    id: gamecg
+                    text: "Game CG"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Manga"
+                MDSwitch:
+                    id: manga
+                    text: "Manga"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Cosplay"
+                MDSwitch:
+                    id: cosplay
+                    text: "Cosplay"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Asian Porn"
+                MDSwitch:
+                    id: asianporn
+                    text: "Asian Porn"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Image Set"
+                MDSwitch:
+                    id: imageset
+                    text: "Image Set"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Misc"
+                MDSwitch:
+                    id: misc
+                    text: "Misc"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+        MDRaisedButton:
             text: "Set Filters"
+            size_hint_y: None
+            height: dp(64)
             on_release: root.dismiss()
 
 
 <SearchPopup>:
-    title: "Input Search Here"
-    BoxLayout:
-        orientation: "vertical"
-        padding: root.width * .2, root.height * .2
-        spacing: min(root.width, root.height) * .02
-        WrappedLabel:
-            text: "Search for your sadpanda here"
-        TextInput:
-            id: searchstring
-            size_hint_y: None
-            multiline: False
-            on_text_validate: root.savesearch()
-        Button:
-            text: "Start Searching"
-            on_release: root.savesearch()
-        Button:
-            text: "Filters"
-            on_release: root.open_filters()
+    title: "Search"
+    id: searchpopup
+    size_hint: .8, None
+    height: dp(200)
+    SearchArea:
+        id: searcharea
+        on_text_validate: root.savesearch()
+
+<SearchArea>:
+    size_hint: 1, None
+    height: "48dp"
+    hint_text: "Terms and tags"
+    foreground_color: (1, 1, 1, .5)
+
+<SadpandaNavdrawer>:
+    NavigationDrawerIconButton:
+        icon: "home"
+        text: "Frontpage"
+        on_release: app.root.goto_front()
+    NavigationDrawerIconButton:
+        icon: "search"
+        text: "Search"
+        on_release: app.root.search_popup()
+    NavigationDrawerIconButton:
+        icon: "star"
+        text: "Favourites"
+        on_release: app.root.next_screen("favourite_screen")

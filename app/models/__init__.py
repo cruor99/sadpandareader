@@ -48,6 +48,19 @@ class Gallery(Base):
     pagecount = Column(Integer)
     gallery_name = Column(String)
     gallery_thumb = Column(String)
+    filesize = Column(Integer)
+
+
+class Favourites(Base):
+    __tablename__ = "favourites"
+
+    id = Column(Integer, primary_key=True)
+    gallery_id = Column(String)
+    gallery_token = Column(String)
+    pagecount = Column(Integer)
+    gallery_name = Column(String)
+    gallery_thumb = Column(String)
+    filesize = Column(Integer)
 
 
 class GalleryTags(Base):
@@ -57,6 +70,7 @@ class GalleryTags(Base):
     galleryid = Column(Integer, ForeignKey("galleries.id"))
     galleries = relationship("Gallery")
     tag = Column(String)
+
 
 class Pagelink(Base):
     __tablename__ = "pagelinks"

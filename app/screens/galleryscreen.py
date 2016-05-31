@@ -1,22 +1,18 @@
 from kivy.app import App
 from kivy.uix.screenmanager import Screen
-from kivy.uix.boxlayout import BoxLayout
-from kivy.storage.jsonstore import JsonStore
-from kivy.clock import Clock
 from kivy.properties import StringProperty, ListProperty, NumericProperty
-
-from os.path import join
-from functools import partial
-from collections import deque
+from kivy.properties import BooleanProperty
+from kivy.clock import Clock
 
 from BeautifulSoup import BeautifulSoup as BS
 
 # Self made components
-from components import GalleryScatter, GalleryImage, GalleryContainerLayout
+from components import GalleryCarousel, GalleryImage, GalleryContainerLayout
 from components import GalleryImageScreen, GalleryNavButton
 
 import requests
 import re
+
 
 from models import db, Gallery, Pagelink
 
@@ -31,17 +27,16 @@ class GalleryScreen(Screen):
     gallery_name = StringProperty("")
     nextpage = NumericProperty(0)
     current_page = NumericProperty()
-
+    title = gallery_name
+    scrollstopper = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super(GalleryScreen, self).__init__(**kwargs)
         # list of previous screens
-        self.screen_list = deque()
 
     def on_enter(self):
-        self.ids.gallery_manager.clear_widgets()
-        gallery = db.query(Gallery).filter_by(gallery_id=self.gallery_id).first()
-        print gallery.gallery_id
+        gallery = db.query(Gallery).filter_by(
+            gallery_id=self.gallery_id).first()
         self.db_id = gallery.id
         self.gallery_id = gallery.gallery_id
         self.gallery_token = gallery.gallery_token
@@ -50,7 +45,6 @@ class GalleryScreen(Screen):
         self.populate_gallery()
 
     def on_leave(self):
-        self.ids.gallery_manager.clear_widgets()
         self.db_id = 0
         self.gallery_id = ""
         self.gallery_token = ""
@@ -61,7 +55,8 @@ class GalleryScreen(Screen):
     def populate_gallery(self):
         # change placehold.it with
         gallerypages = float(self.pagecount) / float(40)
-        pageregex = re.compile('http://'+App.get_running_app().root.baseurl+'.org/s/\S{10}/\d{6}-\d+')
+        pageregex = re.compile('http://' + App.get_running_app().root.baseurl +
+                               '.org/s/\S{10}/\d{6}-\d+')
 
         if gallerypages.is_integer():
             pass
@@ -71,20 +66,25 @@ class GalleryScreen(Screen):
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
         for i in range(int(gallerypages)):
-            galleryrequest = requests.get("http://"+App.get_running_app().root.baseurl+".org/g/{}/{}/?p={}\
-                                          ".format(self.gallery_id,
-                                          self.gallery_token, i),
-                                          headers=headers, cookies=cookies)
+            galleryrequest = requests.get(
+                "http://" + App.get_running_app().root.baseurl +
+                ".org/g/{}/{}/?p={}\
+                                          "
+                .format(self.gallery_id, self.gallery_token, i),
+                headers=headers,
+                cookies=cookies)
 
             soup = BS(galleryrequest.text)
 
             for a in soup.findAll(name="a", attrs={"href": pageregex}):
                 self.pagelinks.append(a["href"])
-                existpageurl = db.query(Pagelink).filter_by(pagelink=a["href"]).first()
+                existpageurl = db.query(Pagelink).filter_by(
+                    pagelink=a["href"]).first()
                 if existpageurl:
                     pass
                 else:
-                    pageurl = Pagelink(galleryid=self.db_id, pagelink=a["href"])
+                    pageurl = Pagelink(galleryid=self.db_id,
+                                       pagelink=a["href"])
                     db.add(pageurl)
                     db.commit()
 
@@ -95,26 +95,47 @@ class GalleryScreen(Screen):
 
         self.next_page = 1
 
-        currentexist = db.query(Pagelink).filter_by(galleryid=self.db_id, current=1).first()
+        currentexist = db.query(Pagelink).filter_by(galleryid=self.db_id,
+                                                    current=1).first()
         if currentexist:
             first_screen = self.construct_image(currentexist.pagelink)
-            self.ids.gallery_manager.add_widget(first_screen)
+            self.ids.gallery_manager.switch_to(first_screen)
         else:
             first_screen = self.construct_image(self.pagelinks[0])
-            self.ids.gallery_manager.add_widget(first_screen)
+            self.ids.gallery_manager.switch_to(first_screen)
             # consider adding this in its own thread
-            firstimage = db.query(Pagelink).filter_by(pagelink=self.pagelinks[0]).first()
+            firstimage = db.query(Pagelink).filter_by(
+                pagelink=self.pagelinks[0]).first()
             firstimage.current = 1
             db.commit()
 
+    def testmove(self, offset, min_move, direction):
+        if self.scrollstopper is False:
+            if offset > 1:
+                self.scrollstopper = True
+                self.ids.gallery_manager.transition.direction = "right"
+                self.previous_image(self)
+                Clock.schedule_once(self.togglestopper, 1)
+            else:
+                pass
+            if offset < -1:
+                self.scrollstopper = True
+                self.ids.gallery_manager.transition.direction = "left"
+                self.next_image(self)
+                Clock.schedule_once(self.togglestopper, 1)
+            else:
+                pass
+
+    def togglestopper(self, *args):
+        self.scrollstopper = False
+
     def next_image(self, instance):
-        screenlen = len(self.ids.gallery_manager.children)
-        print screenlen
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
 
+        self.ids.gallery_manager.transition.direction = "left"
         for page in pagelinks:
             if page.current == 1:
-                newpageindex = pagelinks.index(page) +1
+                newpageindex = pagelinks.index(page) + 1
                 try:
                     newpage = pagelinks[newpageindex]
                     newpage.current = 1
@@ -130,6 +151,7 @@ class GalleryScreen(Screen):
     def previous_image(self, instance):
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
 
+        self.ids.gallery_manager.transition.direction = "right"
         for page in pagelinks:
             if page.current == 1:
                 newpageindex = pagelinks.index(page) - 1
@@ -148,7 +170,7 @@ class GalleryScreen(Screen):
     def construct_image(self, pagelink):
         src = self.grab_image(pagelink)
         image = GalleryImage(source=src, allow_stretch=True)
-        imageroot = GalleryScatter()
+        imageroot = GalleryCarousel()
         gallerycontainer = GalleryContainerLayout()
         imageroot.add_widget(image)
         forwardsbutton = GalleryNavButton(pos_hint={"x": 0.8})
@@ -164,10 +186,6 @@ class GalleryScreen(Screen):
         return galleryscreen
 
     def grab_image(self, i):
-        #pageurls = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
-        # print pageurls, "pageurls"
-        #for page in pageurls:
-            #print page.pagelink
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
         pagerequest = requests.get(url=i, headers=headers, cookies=cookies)
