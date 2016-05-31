@@ -189,11 +189,14 @@ class GalleryScreen(Screen):
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
         pagerequest = requests.get(url=i, headers=headers, cookies=cookies)
+        ipmatch = r'^http://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
         soup = BS(pagerequest.text)
 
-        srctag = soup.findAll(name="img", attrs={"id": "img"})
+        srctag = soup.findAll(name="img")
+        
         for each in srctag:
-            src = each["src"]
+            if re.match(ipmatch, each['src']):
+                src = each['src']
 
         return src
