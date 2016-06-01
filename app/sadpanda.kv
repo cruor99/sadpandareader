@@ -37,6 +37,9 @@
         FavouriteScreen:
             id: favourite_screen
             name: "favourite_screen"
+        SettingsScreen:
+            id: settings_screen
+            name: "settings_screen"
 
 
 <StartScreen>:
@@ -116,6 +119,28 @@
                 elevation_normal: 8
                 pos_hint: {"center_x": 0.9, "center_y": 0.1}
                 on_release: app.root.search_popup()
+
+
+<SettingsScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Toolbar:
+            id: toolbar
+            title: root.title
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+        GridLayout:
+            cols: 2
+            padding: dp(40), dp(1)
+            spacing: dp(15)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Anonymous Logging"
+                MDSwitch:
+                    id: logging
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+                    text: "Logging"
 
 <FavouriteScreen>:
     BoxLayout:
@@ -363,3 +388,7 @@
         icon: "star"
         text: "Favourites"
         on_release: app.root.next_screen("favourite_screen")
+    NavigationDrawerIconButton:
+        icon: "settings"
+        text: "Settings"
+        on_release: app.root.next_screen("settings_screen")

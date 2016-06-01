@@ -1,4 +1,5 @@
 app/buildozer/*
-bin/*
+bin
 *.pyc
 .vscode
+.buildozer
