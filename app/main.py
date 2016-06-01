@@ -56,7 +56,6 @@ class SadpandaRoot(BoxLayout):
         else:
             db.add(Settings(logging=0))
             db.commit()
-            self.db_settings()
 
     def start_thread(self, *args):
         self.bind(newmessage=self.do_notify)
