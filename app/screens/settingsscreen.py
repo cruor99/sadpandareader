@@ -32,11 +32,5 @@ class SettingsScreen(Screen):
     
     def db_settings(self):
         settings = db.query(Settings).first()
-        # Set default setting values to database if not set
-        if settings != None:
-            # Set settingvals to database values
-            self.settingvals['logging'] = settings.logging
-        else:
-            db.add(Settings(logging=0))
-            db.commit()
-            self.db_settings()
+        
+        self.settingvals['logging'] = settings.logging

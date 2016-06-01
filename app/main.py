@@ -19,7 +19,7 @@ from functools import partial
 import requests
 from screens import *
 from components import *
-from models import User, Filters, Gallery, Pagelink, Search, db
+from models import User, Filters, Gallery, Pagelink, Search, Settings, db
 
 # Socket-io stuff
 from socketIO_client import SocketIO
@@ -45,8 +45,18 @@ class SadpandaRoot(BoxLayout):
         # list of previous screens
         self.screen_list = []
         Loader.loading_image = CoreImage("img/loading.gif", size=(16, 16))
+        
+        self.default_settings()
 
         Clock.schedule_once(self.start_thread)
+
+    def default_settings(self):
+        if db.query(Settings).first() != None:
+            pass
+        else:
+            db.add(Settings(logging=0))
+            db.commit()
+            self.db_settings()
 
     def start_thread(self, *args):
         self.bind(newmessage=self.do_notify)
