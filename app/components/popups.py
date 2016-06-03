@@ -1,11 +1,7 @@
-from kivy.uix.popup import Popup
-from kivy.uix.boxlayout import BoxLayout
-from kivy.storage.jsonstore import JsonStore
-from os.path import join
-from kivy.properties import StringProperty, NumericProperty
 from kivy.app import App
+from kivy.properties import StringProperty, NumericProperty
 
-from models import Search, db, Filters
+from models import Search, Filters
 
 from kivymd.dialog import MDDialog
 from kivymd.textfields import SingleLineTextField
@@ -33,7 +29,7 @@ class CaptchaPopup(MDDialog):
 class SearchPopup(MDDialog):
     def __init__(self, **kwargs):
         super(SearchPopup, self).__init__(**kwargs)
-        #self.content = SearchArea()
+        # self.content = SearchArea()
 
         self.add_action_button("Search", action=lambda *x: self.savesearch())
         self.add_action_button(
@@ -42,6 +38,7 @@ class SearchPopup(MDDialog):
 
     def savesearch(self):
         newsearch = Search(searchterm=self.ids.searcharea.text)
+        db = App.get_running_app().db
         db.add(newsearch)
         db.commit()
         self.dismiss()
@@ -58,6 +55,7 @@ class SearchPopup(MDDialog):
 class SearchArea(SingleLineTextField):
     def savesearch(self):
         newsearch = Search(searchterm=self.ids.searchstring.text)
+        db = App.get_running_app().db
         db.add(newsearch)
         db.commit()
         self.dismiss()
@@ -77,6 +75,7 @@ class FilterPopup(MDDialog):
 
     def __init__(self, **kwargs):
         super(FilterPopup, self).__init__(**kwargs)
+        db = App.get_running_app().db
         filters = db.query(Filters).order_by(Filters.id.desc()).first()
         if filters:
             self.doujinshi = filters.doujinshi

@@ -15,7 +15,7 @@ import json
 
 from BeautifulSoup import BeautifulSoup as BS
 
-from models import db, Search, Filters, Gallery, GalleryTags
+from models import Search, Filters, Gallery, GalleryTags
 
 
 class FrontScreen(Screen):
@@ -31,6 +31,7 @@ class FrontScreen(Screen):
     def on_enter(self):
 
         self.ids.galleryscroll.bind(scroll_y=self.check_scroll_y)
+        db = App.get_running_app().db
         search = db.query(Search).order_by(Search.id.desc()).first()
         if search:
             if self.newstart is True:
@@ -63,6 +64,7 @@ class FrontScreen(Screen):
         galleryinfo = [instance.gallery_id, instance.gallery_token,
                        instance.pagecount, instance.gallery_name,
                        instance.gallery_tags, instance.gallery_thumb, instance.filesize]
+        db = App.get_running_app().db
         existgallery = db.query(Gallery).filter_by(
             gallery_id=instance.gallery_id).first()
         if existgallery:
@@ -95,6 +97,7 @@ class FrontScreen(Screen):
         # filter store
         if self.has_entered == True:
             self.ids.galleryscroll.scroll_y = 0.4
+        db = App.get_running_app().db
         filters = db.query(Filters).order_by(Filters.id.desc()).first()
         #filters = filterstore.get("filters")
         #filtertemp = filters["filters"]

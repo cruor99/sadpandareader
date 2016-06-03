@@ -1,11 +1,28 @@
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
+from os.path import isfile
 
 Base = declarative_base()
-engine = create_engine('sqlite:///./database.db')
-Session = sessionmaker(bind=engine)
-db = Session()
+
+
+def check_database(data_dir):
+    print data_dir
+    print isfile(data_dir+"/database.db")
+    if isfile(data_dir+"/database.db"):
+        print "Databse exists"
+        engine = create_engine('sqlite:///'+data_dir+'/database.db')
+        Session = sessionmaker(bind=engine)
+        db = Session()
+        return db
+    else:
+        engine = create_engine('sqlite:///'+data_dir+'/database.db')
+        Session = sessionmaker(bind=engine)
+        db = Session()
+        Base.metadata.create_all(engine)
+        print isfile(data_dir+"/databse.db")
+        return db
+
 
 class Filters(Base):
     __tablename__ = "filters"
@@ -32,7 +49,7 @@ class Search(Base):
 
 class Settings(Base):
     __tablename__ = "settings"
-    
+
     id = Column(Integer, primary_key=True)
     logging = Column(Integer)
 
@@ -86,7 +103,3 @@ class Pagelink(Base):
     galleries = relationship("Gallery")
     pagelink = Column(String)
     current = Column(Integer)
-
-
-if __name__ == "__main__":
-    Base.metadata.create_all(engine)

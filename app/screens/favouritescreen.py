@@ -6,7 +6,7 @@ import requests
 import json
 from os import linesep
 
-from models import db, Favourites, Gallery
+from models import Favourites, Gallery, GalleryTags
 from components import ThumbButton, AvatarSampleWidget
 
 
@@ -17,9 +17,11 @@ class FavouriteScreen(Screen):
 
     def __init__(self, **kwargs):
         super(FavouriteScreen, self).__init__(**kwargs)
+        db = App.get_running_app().db
         self.favourites = db.query(Favourites).all()
 
     def on_enter(self):
+        db = App.get_running_app().db
         self.favourites = db.query(Favourites).all()
         for favourite in self.favourites:
             self.gallerylinks.append("http://" + App.get_running_app().root.baseurl + ".org/g/" + favourite.gallery_id + "/" + favourite.gallery_token)
@@ -72,6 +74,7 @@ class FavouriteScreen(Screen):
         galleryinfo = [instance.gallery_id, instance.gallery_token,
                        instance.pagecount, instance.gallery_name,
                        instance.gallery_tags, instance.gallery_thumb, instance.filesize]
+        db = App.get_running_app().db
         existgallery = db.query(Gallery).filter_by(
             gallery_id=instance.gallery_id).first()
         if existgallery:
@@ -83,6 +86,7 @@ class FavouriteScreen(Screen):
                               gallery_name=instance.gallery_name,
                               gallery_thumb=instance.gallery_thumb,
                               filesize=instance.filesize)
+            db = App.get_running_app().db
             db.add(gallery)
             db.commit()
             for tag in instance.gallery_tags:
@@ -93,4 +97,3 @@ class FavouriteScreen(Screen):
         ).root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
         preview_screen.gallery_id = instance.gallery_id
         App.get_running_app().root.next_screen("gallery_preview_screen")
-

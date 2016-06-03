@@ -8,23 +8,19 @@ from kivy.core.image import Image as CoreImage
 from kivy.clock import Clock
 
 from plyer import notification
-from plyer.utils import platform
-from plyer.compat import PY2
 
 from threading import Thread
-import time
-from os.path import join, dirname, realpath
-from functools import partial
 
 import requests
 from screens import *
 from components import *
-from models import User, Filters, Gallery, Pagelink, Search, Settings, db
+from models import User, Filters, Search, Settings
+from models import check_database
 
 # Socket-io stuff
 from socketIO_client import SocketIO
 
-#KivyMD stuff
+# KivyMD stuff
 from kivymd.theming import ThemeManager
 
 
@@ -45,12 +41,13 @@ class SadpandaRoot(BoxLayout):
         # list of previous screens
         self.screen_list = []
         Loader.loading_image = CoreImage("img/loading.gif", size=(16, 16))
-        
+
         self.default_settings()
 
         Clock.schedule_once(self.start_thread)
 
     def default_settings(self):
+        db = App.get_running_app().db
         if db.query(Settings).first() != None:
             pass
         else:
@@ -79,6 +76,7 @@ class SadpandaRoot(BoxLayout):
         notification.notify("Update available", self.newmessage, timeout=5000)
 
     def login_exhentai(self, username, password):
+        db = App.get_running_app().db
         self.username = username.text
         self.password = password.text
 
@@ -119,6 +117,7 @@ class SadpandaRoot(BoxLayout):
 
     def next_screen(self, neoscreen):
 
+        db = App.get_running_app().db
         self.screen_list.append(self.ids.sadpanda_screen_manager.current)
 
         if self.ids.sadpanda_screen_manager.current == neoscreen:
@@ -132,11 +131,13 @@ class SadpandaRoot(BoxLayout):
 
     def goto_front(self):
         blanksearch = Search(searchterm=" ")
+        db = App.get_running_app().db
         db.add(blanksearch)
         db.commit()
         self.next_screen("front_screen")
 
     def start_search(self, instance):
+        db = App.get_running_app().db
         front_screen = self.ids.sadpanda_screen_manager.get_screen(
             "front_screen")
         searchword = front_screen.searchword
@@ -171,6 +172,7 @@ class SadpandaRoot(BoxLayout):
         fpop.open()
 
     def set_filters(self, instance):
+        db = App.get_running_app().db
         filters = {
             "doujinshi": 0,
             "manga": 0,
@@ -226,8 +228,10 @@ class SadpandaApp(App):
     def __init__(self, **kwargs):
         super(SadpandaApp, self).__init__(**kwargs)
         Window.bind(on_keyboard=self.onBackBtn)
+        data_dir = getattr(self, "user_data_dir")
+        self.db = check_database(data_dir)
         # Makes sure only non-h is the default.
-        existfilters = db.query(Filters).order_by(Filters.id.desc()).first()
+        existfilters = self.db.query(Filters).order_by(Filters.id.desc()).first()
         if existfilters:
             pass
         else:
@@ -241,11 +245,11 @@ class SadpandaApp(App):
                                  cosplay=0,
                                  asianporn=0,
                                  misc=0)
-            db.add(clearstart)
-            db.commit()
+            self.db.add(clearstart)
+            self.db.commit()
         clearsearch = Search(searchterm=" ")
-        db.add(clearsearch)
-        db.commit()
+        self.db.add(clearsearch)
+        self.db.commit()
 
     def onBackBtn(self, window, key, *args):
         # user presses back button

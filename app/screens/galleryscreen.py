@@ -14,7 +14,7 @@ import requests
 import re
 
 
-from models import db, Gallery, Pagelink
+from models import Gallery, Pagelink
 
 
 class GalleryScreen(Screen):
@@ -35,6 +35,7 @@ class GalleryScreen(Screen):
         # list of previous screens
 
     def on_enter(self):
+        db = App.get_running_app().db
         gallery = db.query(Gallery).filter_by(
             gallery_id=self.gallery_id).first()
         self.db_id = gallery.id
@@ -78,6 +79,7 @@ class GalleryScreen(Screen):
 
             for a in soup.findAll(name="a", attrs={"href": pageregex}):
                 self.pagelinks.append(a["href"])
+                db = App.get_running_app().db
                 existpageurl = db.query(Pagelink).filter_by(
                     pagelink=a["href"]).first()
                 if existpageurl:
@@ -130,6 +132,7 @@ class GalleryScreen(Screen):
         self.scrollstopper = False
 
     def next_image(self, instance):
+        db = App.get_running_app().db
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
 
         self.ids.gallery_manager.transition.direction = "left"
@@ -149,6 +152,7 @@ class GalleryScreen(Screen):
                     pass
 
     def previous_image(self, instance):
+        db = App.get_running_app().db
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
 
         self.ids.gallery_manager.transition.direction = "right"
@@ -194,7 +198,7 @@ class GalleryScreen(Screen):
         soup = BS(pagerequest.text)
 
         srctag = soup.findAll(name="img")
-        
+
         for each in srctag:
             if re.match(ipmatch, each['src']):
                 src = each['src']
