@@ -3,10 +3,9 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
-engine = create_engine('sqlite:///./databse.db')
+engine = create_engine('sqlite:///./database.db')
 Session = sessionmaker(bind=engine)
 db = Session()
-
 
 class Filters(Base):
     __tablename__ = "filters"
@@ -29,6 +28,13 @@ class Search(Base):
 
     id = Column(Integer, primary_key=True)
     searchterm = Column(String)
+
+
+class Settings(Base):
+    __tablename__ = "settings"
+    
+    id = Column(Integer, primary_key=True)
+    logging = Column(Integer)
 
 
 class User(Base):
