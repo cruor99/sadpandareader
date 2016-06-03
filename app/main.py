@@ -6,12 +6,14 @@ from kivy.properties import DictProperty, StringProperty, ObjectProperty
 from kivy.loader import Loader
 from kivy.core.image import Image as CoreImage
 from kivy.clock import Clock
+from kivy.storage.jsonstore import JsonStore
 
 from plyer import notification
 
 from threading import Thread
 
 import requests
+import os
 from screens import *
 from components import *
 from models import User, Filters, Search, Settings
@@ -230,6 +232,13 @@ class SadpandaApp(App):
         Window.bind(on_keyboard=self.onBackBtn)
         data_dir = getattr(self, "user_data_dir")
         self.db = check_database(data_dir)
+        migrationjsonstore = JsonStore("migrate.json")
+        migration = migrationjsonstore.get("migrate")
+        if migration["migration"] == "true":
+            os.remove(data_dir+"/database.db")
+            self.db = check_database(data_dir)
+        else:
+            pass
         # Makes sure only non-h is the default.
         existfilters = self.db.query(Filters).order_by(Filters.id.desc()).first()
         if existfilters:
