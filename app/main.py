@@ -237,6 +237,7 @@ class SadpandaApp(App):
         if migration["migration"] == "true":
             os.remove(data_dir+"/database.db")
             self.db = check_database(data_dir)
+            migrationjsonstore.put("migrate", migration="false")
         else:
             pass
         # Makes sure only non-h is the default.
