@@ -13,7 +13,6 @@ from components import GalleryImageScreen, GalleryNavButton
 import requests
 import re
 
-
 from models import Gallery, Pagelink
 
 
@@ -56,7 +55,7 @@ class GalleryScreen(Screen):
     def populate_gallery(self):
         # change placehold.it with
         gallerypages = float(self.pagecount) / float(40)
-        pageregex = re.compile('http://' + App.get_running_app().root.baseurl +
+        pageregex = re.compile('http\S{1}?://' + App.get_running_app().root.baseurl +
                                '.org/s/\S{10}/\d{6}-\d+')
 
         if gallerypages.is_integer():
@@ -66,17 +65,16 @@ class GalleryScreen(Screen):
 
         headers = {'User-agent': 'Mozilla/5.0'}
         cookies = App.get_running_app().root.cookies
+        print "GALLERYPAGES", gallerypages
         for i in range(int(gallerypages)):
             galleryrequest = requests.get(
                 "http://" + App.get_running_app().root.baseurl +
-                ".org/g/{}/{}/?p={}\
-                                          "
+                ".org/g/{}/{}/?p={}\ "
                 .format(self.gallery_id, self.gallery_token, i),
                 headers=headers,
                 cookies=cookies)
 
             soup = BS(galleryrequest.text)
-
             for a in soup.findAll(name="a", attrs={"href": pageregex}):
                 self.pagelinks.append(a["href"])
                 db = App.get_running_app().db
