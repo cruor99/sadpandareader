@@ -1,8 +1,11 @@
 from kivy.uix.screenmanager import Screen
+import time
 from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from kivy.properties import NumericProperty
 from kivy.clock import Clock
 from kivy.app import App
+from kivy.network.urlrequest import UrlRequest
+import urllib
 
 from os import linesep
 from functools import partial
@@ -63,7 +66,8 @@ class FrontScreen(Screen):
     def enter_gallery(self, instance):
         galleryinfo = [instance.gallery_id, instance.gallery_token,
                        instance.pagecount, instance.gallery_name,
-                       instance.gallery_tags, instance.gallery_thumb, instance.filesize]
+                       instance.gallery_tags, instance.gallery_thumb,
+                       instance.filesize]
         db = App.get_running_app().db
         existgallery = db.query(Gallery).filter_by(
             gallery_id=instance.gallery_id).first()
@@ -102,39 +106,55 @@ class FrontScreen(Screen):
         #filters = filterstore.get("filters")
         #filtertemp = filters["filters"]
         self.gidlist = []
-        headers = {'User-agent': 'Mozilla/5.0'}
+        headers = {'User-agent': 'Mozilla/5.0', "Cookie": "", "Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
         cookies = App.get_running_app().root.cookies
+        for cookiename, cookievalue in cookies.iteritems():
+            headers["Cookie"] += cookiename + "=" + cookievalue + ";"
+        headers["Cookie"] = headers["Cookie"][:-1]
+        searchword = self.searchword
+        page0searchurl = str(
+            "http://" + App.get_running_app().root.baseurl + ".org/?" +
+            "f_doujinshi=" + str(filters.doujinshi) + "&f_manga=" + str(
+                filters.manga) + "&f_artistcg=" + str(filters.artistcg) +
+            "&f_gamecg=" + str(filters.gamecg) + "&f_western=" + str(
+                filters.western) + "&f_non-h=" + str(filters.nonh) +
+            "&f_imageset=" + str(filters.imageset) + "&f_cosplay=" + str(
+                filters.cosplay) + "&f_asianporn=" + str(
+                    filters.asianporn) + "&f_misc=" + str(filters.misc) +
+            "&f_search=" + urllib.quote_plus(self.searchword) + "&f_apply=Apply+Filter")
+        pagesearchurl = str(
+            "http://" + App.get_running_app().root.baseurl + ".org/?" +
+            "f_doujinshi=" + str(filters.doujinshi) + "&f_manga=" + str(
+                filters.manga) + "&f_artistcg=" + str(filters.artistcg) +
+            "&f_gamecg=" + str(filters.gamecg) + "&f_western=" + str(
+                filters.western) + "&f_non-h=" + str(filters.nonh) +
+            "&f_imageset=" + str(filters.imageset) + "&f_cosplay=" + str(
+                filters.cosplay) + "&f_asianporn=" + str(
+                    filters.asianporn) + "&f_misc=" + str(filters.misc) +
+            "&f_search=" + urllib.quote_plus(self.searchword)+ "&f_apply=Apply+Filter")
         if self.searchpage == 0:
-            r = requests.get(
-                "http://" + App.get_running_app().root.baseurl + ".org/?" +
-                "f_doujinshi=" + str(filters.doujinshi) + "&f_manga=" +
-                str(filters.manga) + "&f_artistcg=" + str(filters.artistcg) +
-                "&f_gamecg=" + str(filters.gamecg) + "&f_western=" +
-                str(filters.western) + "&f_non-h=" + str(filters.nonh) +
-                "&f_imageset=" + str(filters.imageset) + "&f_cosplay=" +
-                str(filters.cosplay) + "&f_asianporn=" + str(filters.asianporn)
-                + "&f_misc=" + str(filters.misc) + "&f_search=" +
-                self.searchword + "&f_apply=Apply+Filter",
-                headers=headers,
-                cookies=cookies)
+            req = UrlRequest(page0searchurl,
+                             on_success=self.got_result,
+                             on_error=self.got_failure,
+                             req_headers=headers, method="GET")
+            #r = requests.get(page0searchurl, headers=headers)
+            #self.got_result(r, r)
         else:
-            r = requests.get(
-                "http://" + App.get_running_app().root.baseurl + ".org/?" +
-                "page=" + str(self.searchpage) + "&f_doujinshi=" +
-                str(filters.doujinshi) + "&f_manga=" + str(filters.manga) +
-                "&f_artistcg=" + str(filters.artistcg) + "&f_gamecg=" +
-                str(filters.gamecg) + "&f_western=" + str(filters.western) +
-                "&f_non-h=" + str(filters.nonh) + "&f_imageset=" +
-                str(filters.imageset) + "&f_cosplay=" + str(filters.cosplay) +
-                "&f_asianporn=" + str(filters.asianporn) + "&f_misc=" +
-                str(filters.misc) + "&f_search=" + self.searchword +
-                "&f_apply=Apply+Filter",
-                headers=headers,
-                cookies=cookies)
+            req = UrlRequest(pagesearchurl,
+                             self.got_result,
+                             req_headers=headers)
+
 
         self.searchpage += 1
         # pure html of ehentai link
-        data = r.text
+
+    def got_failure(self, req, r):
+        print req
+        print r
+
+    def got_result(self, req, r):
+        print "Entered got_result"
+        data = r
 
         soup = BS(data, fromEncoding='utf8')
         gallerylinks = []
