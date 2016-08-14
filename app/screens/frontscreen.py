@@ -13,7 +13,6 @@ from functools import partial
 # Self created components
 from components import ThumbButton, AvatarSampleWidget
 
-import requests
 import json
 
 from BeautifulSoup import BeautifulSoup as BS
@@ -30,6 +29,7 @@ class FrontScreen(Screen):
     newstart = BooleanProperty(True)
     title = StringProperty("Front page")
     has_entered = False
+    has_refreshed = True
 
     def on_enter(self):
 
@@ -92,25 +92,26 @@ class FrontScreen(Screen):
         App.get_running_app().root.next_screen("gallery_preview_screen")
 
     def check_scroll_y(self, instance, somethingelse):
-        if self.ids.galleryscroll.scroll_y <= -0.02:
-            self.populate_front()
-        else:
-            pass
+        if self.has_refreshed == True:
+            if self.ids.galleryscroll.scroll_y <= -0.02:
+                self.populate_front()
+                self.has_refreshed = False
+            else:
+                pass
 
     def populate_front(self, *largs):
         # filter store
-        if self.has_entered == True:
-            self.ids.galleryscroll.scroll_y = 0.4
         db = App.get_running_app().db
         filters = db.query(Filters).order_by(Filters.id.desc()).first()
         #filters = filterstore.get("filters")
         #filtertemp = filters["filters"]
         self.gidlist = []
-        headers = {'User-agent': 'Mozilla/5.0', "Cookie": "", "Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+        headers = {'User-agent': 'Mozilla/5.0',
+                   "Cookie": "",
+                   "Content-type": "application/x-www-form-urlencoded",
+                   "Accept": "text/plain"}
         cookies = App.get_running_app().root.cookies
-        for cookiename, cookievalue in cookies.iteritems():
-            headers["Cookie"] += cookiename + "=" + cookievalue + ";"
-        headers["Cookie"] = headers["Cookie"][:-1]
+        headers["Cookie"] = cookies
         searchword = self.searchword
         page0searchurl = str(
             "http://" + App.get_running_app().root.baseurl + ".org/?" +
@@ -119,31 +120,30 @@ class FrontScreen(Screen):
             "&f_gamecg=" + str(filters.gamecg) + "&f_western=" + str(
                 filters.western) + "&f_non-h=" + str(filters.nonh) +
             "&f_imageset=" + str(filters.imageset) + "&f_cosplay=" + str(
-                filters.cosplay) + "&f_asianporn=" + str(
-                    filters.asianporn) + "&f_misc=" + str(filters.misc) +
-            "&f_search=" + urllib.quote_plus(self.searchword) + "&f_apply=Apply+Filter")
+                filters.cosplay) + "&f_asianporn=" + str(filters.asianporn) +
+            "&f_misc=" + str(filters.misc) + "&f_search=" + urllib.quote_plus(
+                self.searchword) + "&f_apply=Apply+Filter")
         pagesearchurl = str(
-            "http://" + App.get_running_app().root.baseurl + ".org/?" +
-            "f_doujinshi=" + str(filters.doujinshi) + "&f_manga=" + str(
-                filters.manga) + "&f_artistcg=" + str(filters.artistcg) +
-            "&f_gamecg=" + str(filters.gamecg) + "&f_western=" + str(
-                filters.western) + "&f_non-h=" + str(filters.nonh) +
-            "&f_imageset=" + str(filters.imageset) + "&f_cosplay=" + str(
-                filters.cosplay) + "&f_asianporn=" + str(
-                    filters.asianporn) + "&f_misc=" + str(filters.misc) +
-            "&f_search=" + urllib.quote_plus(self.searchword)+ "&f_apply=Apply+Filter")
+            "http://" + App.get_running_app().root.baseurl + ".org/?" + "page="
+            + str(self.searchpage) + "f_doujinshi=" + str(filters.doujinshi) +
+            "&f_manga=" + str(filters.manga) + "&f_artistcg=" + str(
+                filters.artistcg) + "&f_gamecg=" + str(filters.gamecg) +
+            "&f_western=" + str(filters.western) + "&f_non-h=" + str(
+                filters.nonh) + "&f_imageset=" + str(filters.imageset) +
+            "&f_cosplay=" + str(filters.cosplay) + "&f_asianporn=" + str(
+                filters.asianporn) + "&f_misc=" + str(
+                    filters.misc) + "&f_search=" + urllib.quote_plus(
+                        self.searchword) + "&f_apply=Apply+Filter")
         if self.searchpage == 0:
             req = UrlRequest(page0searchurl,
                              on_success=self.got_result,
                              on_error=self.got_failure,
-                             req_headers=headers, method="GET")
-            #r = requests.get(page0searchurl, headers=headers)
-            #self.got_result(r, r)
+                             req_headers=headers,
+                             method="GET")
         else:
             req = UrlRequest(pagesearchurl,
                              self.got_result,
                              req_headers=headers)
-
 
         self.searchpage += 1
         # pure html of ehentai link
@@ -153,7 +153,6 @@ class FrontScreen(Screen):
         print r
 
     def got_result(self, req, r):
-        print "Entered got_result"
         data = r
 
         soup = BS(data, fromEncoding='utf8')
@@ -176,19 +175,24 @@ class FrontScreen(Screen):
 
         headers = {"Content-type": "application/json",
                    "Accept": "text/plain",
-                   'User-agent': 'Mozilla/5.0'}
+                   'User-agent': 'Mozilla/5.0',
+                   "Cookie": ""}
         payload = {"method": "gdata", "gidlist": self.gidlist}
         cookies = App.get_running_app().root.cookies
+        headers["Cookie"] = cookies
 
         self.grabthumbs(headers, payload, cookies)
 
     def grabthumbs(self, headers, payload, cookies, *largs):
-        r = requests.post(
+        params = urllib.urlencode(payload)
+        r = UrlRequest(
             "http://" + App.get_running_app().root.baseurl + ".org/api.php",
-            data=json.dumps(payload),
-            headers=headers,
-            cookies=cookies)
-        requestdump = r.text
+            on_success=self.thumbgrab,
+            req_body=json.dumps(payload),
+            req_headers=headers)
+
+    def thumbgrab(self, req, r):
+        requestdump = r
         requestdump.rstrip(linesep)
         requestjson = json.loads(requestdump)
         i = 0
@@ -213,3 +217,4 @@ class FrontScreen(Screen):
         gallerybutton.bind(on_release=self.enter_gallery)
         gallerybutton.add_widget(AvatarSampleWidget(source=gallery["thumb"]))
         self.ids.main_layout.add_widget(gallerybutton)
+        self.has_refreshed = True

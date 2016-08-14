@@ -1,8 +1,10 @@
 from kivy.app import App
 from kivy.uix.screenmanager import Screen
-from kivy.properties import StringProperty, ListProperty, NumericProperty
+from kivy.properties import StringProperty, ListProperty, NumericProperty, ObjectProperty
 from kivy.properties import BooleanProperty
 from kivy.clock import Clock
+import urllib
+from kivy.network.urlrequest import UrlRequest
 
 from BeautifulSoup import BeautifulSoup as BS
 
@@ -10,7 +12,6 @@ from BeautifulSoup import BeautifulSoup as BS
 from components import GalleryCarousel, GalleryImage, GalleryContainerLayout
 from components import GalleryImageScreen, GalleryNavButton
 
-import requests
 import re
 
 from models import Gallery, Pagelink
@@ -28,10 +29,15 @@ class GalleryScreen(Screen):
     current_page = NumericProperty()
     title = gallery_name
     scrollstopper = BooleanProperty(False)
+    galleryscreen = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(GalleryScreen, self).__init__(**kwargs)
         # list of previous screens
+        self.bind(galleryscreen=self.on_galleryscreen)
+
+    def on_galleryscreen(self, instance, value):
+        self.ids.gallery_manager.switch_to(value)
 
     def on_enter(self):
         db = App.get_running_app().db
@@ -54,60 +60,63 @@ class GalleryScreen(Screen):
 
     def populate_gallery(self):
         # change placehold.it with
+
+        db = App.get_running_app().db
         gallerypages = float(self.pagecount) / float(40)
-        pageregex = re.compile('http\S{1}?://' + App.get_running_app().root.baseurl +
-                               '.org/s/\S{10}/\d{6}-\d+')
+        pageregex = re.compile('http\S{1}?://' + App.get_running_app(
+        ).root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
 
         if gallerypages.is_integer():
             pass
         else:
             gallerypages += 1
 
-        headers = {'User-agent': 'Mozilla/5.0'}
+        headers = {'User-agent': 'Mozilla/5.0',
+                   "Cookie": "",
+                   "Content-type": "application/x-www-form-urlencoded",
+                   "Accept": "text/plain"}
         cookies = App.get_running_app().root.cookies
-        print "GALLERYPAGES", gallerypages
+        headers["Cookie"] = cookies
         for i in range(int(gallerypages)):
-            galleryrequest = requests.get(
-                "http://" + App.get_running_app().root.baseurl +
-                ".org/g/{}/{}/?p={}\ "
-                .format(self.gallery_id, self.gallery_token, i),
-                headers=headers,
-                cookies=cookies)
-
-            soup = BS(galleryrequest.text)
-            for a in soup.findAll(name="a", attrs={"href": pageregex}):
-                self.pagelinks.append(a["href"])
-                db = App.get_running_app().db
-                existpageurl = db.query(Pagelink).filter_by(
-                    pagelink=a["href"]).first()
-                if existpageurl:
-                    pass
-                else:
-                    pageurl = Pagelink(galleryid=self.db_id,
-                                       pagelink=a["href"])
-                    db.add(pageurl)
-                    db.commit()
-
-        # pagetimer = 0
-        # for page in self.pagelinks:
-        #   Clock.schedule_once(partial(self.grab_image, page), 2*pagetimer)
-        #    pagetimer += 1
+            url = str("http://" + App.get_running_app(
+            ).root.baseurl + ".org/g/{}/{}/?p={}\ "
+                      .format(self.gallery_id, self.gallery_token, i))
+            galleryrequest = UrlRequest(url,
+                                        on_success=self.got_result,
+                                        req_headers=headers)
 
         self.next_page = 1
+
+        galleryrequest.wait()
+
 
         currentexist = db.query(Pagelink).filter_by(galleryid=self.db_id,
                                                     current=1).first()
         if currentexist:
-            first_screen = self.construct_image(currentexist.pagelink)
-            self.ids.gallery_manager.switch_to(first_screen)
+            self.construct_image(currentexist.pagelink)
         else:
-            first_screen = self.construct_image(self.pagelinks[0])
-            self.ids.gallery_manager.switch_to(first_screen)
-            # consider adding this in its own thread
+            self.construct_image(self.pagelinks[0])
             firstimage = db.query(Pagelink).filter_by(
                 pagelink=self.pagelinks[0]).first()
             firstimage.current = 1
             db.commit()
+
+    def got_result(self, req, r):
+
+        pageregex = re.compile('http\S{1}?://' + App.get_running_app(
+        ).root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
+        soup = BS(r)
+        for a in soup.findAll(name="a", attrs={"href": pageregex}):
+            self.pagelinks.append(a["href"])
+            db = App.get_running_app().db
+            existpageurl = db.query(Pagelink).filter_by(
+                pagelink=a["href"]).first()
+            if existpageurl:
+                pass
+            else:
+                pageurl = Pagelink(galleryid=self.db_id, pagelink=a["href"])
+                db.add(pageurl)
+                db.commit()
 
     def testmove(self, offset, min_move, direction):
         if self.scrollstopper is False:
@@ -144,10 +153,10 @@ class GalleryScreen(Screen):
                     db.commit()
                     newscreen = self.construct_image(newpage.pagelink)
                     self.ids.gallery_manager.switch_to(newscreen)
-                    break
                 except:
                     # Create a end of gallery popup
                     pass
+                break
 
     def previous_image(self, instance):
         db = App.get_running_app().db
@@ -171,6 +180,9 @@ class GalleryScreen(Screen):
 
     def construct_image(self, pagelink):
         src = self.grab_image(pagelink)
+        self.temppagelink = pagelink
+
+    def push_image(self, src):
         image = GalleryImage(source=src, allow_stretch=True)
         imageroot = GalleryCarousel()
         gallerycontainer = GalleryContainerLayout()
@@ -182,18 +194,26 @@ class GalleryScreen(Screen):
         gallerycontainer.add_widget(imageroot)
         gallerycontainer.add_widget(backwardsbutton)
         gallerycontainer.add_widget(forwardsbutton)
-        galleryscreen = GalleryImageScreen(id=pagelink)
+        galleryscreen = GalleryImageScreen(id=self.temppagelink)
         galleryscreen.add_widget(gallerycontainer)
 
-        return galleryscreen
+        self.galleryscreen = galleryscreen
 
     def grab_image(self, i):
-        headers = {'User-agent': 'Mozilla/5.0'}
+        headers = {'User-agent': 'Mozilla/5.0',
+                   "Cookie": "",
+                   "Content-type": "application/x-www-form-urlencoded",
+                   "Accept": "text/plain"}
         cookies = App.get_running_app().root.cookies
-        pagerequest = requests.get(url=i, headers=headers, cookies=cookies)
+        headers["Cookie"] = cookies
+        pagerequest = UrlRequest(url=i,
+                                 on_success=self.got_image,
+                                 req_headers=headers)
+
+    def got_image(self, req, r):
         ipmatch = r'^http://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
-        soup = BS(pagerequest.text)
+        soup = BS(r)
 
         srctag = soup.findAll(name="img")
 
@@ -201,4 +221,4 @@ class GalleryScreen(Screen):
             if re.match(ipmatch, each['src']):
                 src = each['src']
 
-        return src
+        self.push_image(src)

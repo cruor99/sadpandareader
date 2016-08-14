@@ -1,8 +1,8 @@
 from kivy.app import App
 from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty, ListProperty
+from kivy.network.urlrequest import UrlRequest
 
-import requests
 import json
 from os import linesep
 
@@ -35,16 +35,20 @@ class FavouriteScreen(Screen):
 
         headers = {"Content-type": "application/json",
                    "Accept": "text/plain",
-                   'User-agent': 'Mozilla/5.0'}
+                   'User-agent': 'Mozilla/5.0',
+                   "Cookie": ""}
         payload = {"method": "gdata", "gidlist": self.gidlist}
         cookies = App.get_running_app().root.cookies
+        headers["Cookie"] = cookies
 
-        r = requests.post(
+        r = UrlRequest(
             "http://" + App.get_running_app().root.baseurl + ".org/api.php",
-            data=json.dumps(payload),
-            headers=headers,
-            cookies=cookies)
-        requestdump = r.text
+            on_success=self.populate_success,
+            req_body=json.dumps(payload),
+            req_headers=headers)
+
+    def populate_success(self, req, r):
+        requestdump = r
         requestdump.rstrip(linesep)
         requestjson = json.loads(requestdump)
         i = 0

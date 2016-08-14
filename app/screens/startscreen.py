@@ -18,7 +18,7 @@ class StartScreen(Screen):
         db = App.get_running_app().db
         user = db.query(User).first()
         if user:
-            cookies = ast.literal_eval(user.cookies)
+            cookies = user.cookies
             App.get_running_app().root.cookies = cookies
             App.get_running_app().root.baseurl = "exhentai"
             App.get_running_app().root.next_screen("front_screen")

@@ -7,13 +7,15 @@ from kivy.loader import Loader
 from kivy.core.image import Image as CoreImage
 from kivy.clock import Clock
 from kivy.storage.jsonstore import JsonStore
+import urllib
+from kivy.network.urlrequest import UrlRequest
 
 from plyer import notification
 
 from threading import Thread
 
-import requests
 import os
+import json
 from screens import *
 from components import *
 from models import User, Filters, Search, Settings
@@ -28,7 +30,7 @@ from kivymd.theming import ThemeManager
 
 class SadpandaRoot(BoxLayout):
 
-    cookies = DictProperty({})
+    cookies = StringProperty()
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("g.e-hentai")
@@ -90,25 +92,59 @@ class SadpandaRoot(BoxLayout):
             "b": "d",
             "bt": "pone"
         }
-        headers = {'User-Agent': 'Mozilla/5.0'}
+        headers = {'User-Agent': 'Mozilla/5.0',
+                   "Content-type": "application/x-www-form-urlencoded"}
 
-        r = requests.post(
+        params = urllib.urlencode(payload)
+
+        req = UrlRequest(
             "https://forums.e-hentai.org/index.php?act=Login&CODE=01",
-            data=payload,
-            headers=headers)
+            on_success=self.login_attempt,
+            on_failure=self.login_failure,
+            on_error=self.login_error,
+            req_body=params,
+            req_headers=headers)
 
-        if len(r.cookies) <= 1:
-            captchapopup = CaptchaPopup()
-            captchapopup.bind(on_dismiss=self.login_captcha)
-            captchapopup.open()
+        print params
 
-        else:
-            self.cookies = r.cookies
+        print payload
+
+    def login_failure(self, req, r):
+        print "failure"
+        print req.resp_headers
+        print req
+        print r
+
+    def login_error(self, req, error):
+        print "error"
+        print req.resp_headers
+        print req
+        print error
+
+    def login_attempt(self, req, r):
+        db = App.get_running_app().db
+        finalcookies = ""
+        if "ipb_pass_hash" in req.resp_headers["set-cookie"]:
+            cookies = req.resp_headers["set-cookie"].split(";")
+            for cookie in cookies:
+                if "ipb" in cookie:
+                    splitcookie = cookie.split(",")
+                    try:
+                        finalcookies += splitcookie[1] + ";"
+                    except:
+                        finalcookies += splitcookie[0] + ";"
+
+
+            self.cookies = finalcookies[:-1]
             cookies = User(cookies=str(self.cookies))
             db.add(cookies)
             db.commit()
             self.baseurl = "exhentai"
             self.next_screen("front_screen")
+        else:
+            captchapopup = CaptchaPopup()
+            captchapopup.bind(on_dismiss=self.login_captcha)
+            captchapopup.open()
 
     def login_captcha(self, instance):
         if instance.action == "try_again":
@@ -235,13 +271,14 @@ class SadpandaApp(App):
         migrationjsonstore = JsonStore("migrate.json")
         migration = migrationjsonstore.get("migrate")
         if migration["migration"] == "true":
-            os.remove(data_dir+"/database.db")
+            os.remove(data_dir + "/database.db")
             self.db = check_database(data_dir)
             migrationjsonstore.put("migrate", migration="false")
         else:
             pass
         # Makes sure only non-h is the default.
-        existfilters = self.db.query(Filters).order_by(Filters.id.desc()).first()
+        existfilters = self.db.query(Filters).order_by(Filters.id.desc(
+        )).first()
         if existfilters:
             pass
         else:

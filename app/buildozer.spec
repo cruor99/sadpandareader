@@ -33,7 +33,7 @@ version = 2.0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, requests, beautifulsoup, openssl, sqlalchemy, sqlite3, plyer, socketio-client, git+https://github.com/cruor99/KivyMD.git
+requirements = kivy, beautifulsoup, openssl, sqlalchemy, sqlite3, plyer, socketio-client, git+https://github.com/cruor99/KivyMD.git
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
