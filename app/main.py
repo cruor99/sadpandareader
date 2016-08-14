@@ -21,9 +21,6 @@ from components import *
 from models import User, Filters, Search, Settings
 from models import check_database
 
-# Socket-io stuff
-from socketIO_client import SocketIO
-
 # KivyMD stuff
 from kivymd.theming import ThemeManager
 
@@ -48,8 +45,6 @@ class SadpandaRoot(BoxLayout):
 
         self.default_settings()
 
-        Clock.schedule_once(self.start_thread)
-
     def default_settings(self):
         db = App.get_running_app().db
         if db.query(Settings).first() != None:
@@ -57,27 +52,6 @@ class SadpandaRoot(BoxLayout):
         else:
             db.add(Settings(logging=0))
             db.commit()
-
-    def start_thread(self, *args):
-        self.bind(newmessage=self.do_notify)
-        pushthread = Thread(target=self.check_pushould)
-        pushthread.daemon = True
-        pushthread.start()
-
-    def check_pushould(self):
-        socketio = SocketIO(self.pushurl,
-                            params={"transports": ["polling", "websocket"],
-                                    "client_token": str(self.client_token)},
-                            verify=False)
-        socketio.on('send', self.add_message)
-        socketio.emit("subscribe", {"room": "sadpandapush"})
-        socketio.wait()
-
-    def add_message(self, response):
-        self.newmessage = response["message"]
-
-    def do_notify(self, *args):
-        notification.notify("Update available", self.newmessage, timeout=5000)
 
     def login_exhentai(self, username, password):
         db = App.get_running_app().db

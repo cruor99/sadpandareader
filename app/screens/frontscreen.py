@@ -146,6 +146,7 @@ class FrontScreen(Screen):
                              req_headers=headers)
 
         self.searchpage += 1
+        print cookies
         # pure html of ehentai link
 
     def got_failure(self, req, r):
