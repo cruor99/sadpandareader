@@ -5,6 +5,7 @@ from kivy.properties import BooleanProperty
 from kivy.clock import Clock
 import urllib
 from kivy.network.urlrequest import UrlRequest
+import kivymd.snackbar as Snackbar
 
 from BeautifulSoup import BeautifulSoup as BS
 
@@ -93,6 +94,9 @@ class GalleryScreen(Screen):
         currentexist = db.query(Pagelink).filter_by(galleryid=self.db_id,
                                                     current=1).first()
         if currentexist:
+            for page in self.pagelinks:
+                if page == currentexist.pagelink:
+                    self.current_page = self.pagelinks.index(page)
             self.construct_image(currentexist.pagelink)
         else:
             self.construct_image(self.pagelinks[0])
@@ -146,17 +150,26 @@ class GalleryScreen(Screen):
         for page in pagelinks:
             if page.current == 1:
                 newpageindex = pagelinks.index(page) + 1
+                if newpageindex == len(pagelinks):
+                    self.current_page = 0
+                else:
+                    self.current_page = newpageindex
                 try:
                     newpage = pagelinks[newpageindex]
                     newpage.current = 1
                     page.current = 0
                     db.commit()
                     newscreen = self.construct_image(newpage.pagelink)
-                    self.ids.gallery_manager.switch_to(newscreen)
+                    break
                 except:
                     # Create a end of gallery popup
-                    pass
-                break
+                    Snackbar.make("End of Gallery")
+                    newpage = pagelinks[0]
+                    newpage.current = 1
+                    page.current = 0
+                    db.commit()
+                    newscreen = self.construct_image(newpage.pagelink)
+                    break
 
     def previous_image(self, instance):
         db = App.get_running_app().db
@@ -166,14 +179,15 @@ class GalleryScreen(Screen):
         for page in pagelinks:
             if page.current == 1:
                 newpageindex = pagelinks.index(page) - 1
+                if newpageindex == -1:
+                    newpageindex = len(pagelinks) -1
+                self.current_page = newpageindex
                 try:
                     newpage = pagelinks[newpageindex]
                     newpage.current = 1
                     page.current = 0
                     db.commit()
                     newscreen = self.construct_image(newpage.pagelink)
-                    self.ids.gallery_manager.switch_to(newscreen)
-                    break
                 except:
                     # Create start of gallery popup
                     pass

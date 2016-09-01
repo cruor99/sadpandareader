@@ -29,18 +29,18 @@ source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf,db,gif,json
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 2.1
+version = 2.4
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, beautifulsoup, openssl, sqlalchemy, plyer, git+https://github.com/cruor99/KivyMD.git
+requirements = kivy, beautifulsoup, openssl, sqlalchemy, sqlite3, plyer, git+https://gitlab.com/kivymd/kivymd.git
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
 # requirements.source.kivy = ../../kivy
 
 # (list) Garden requirements
-#garden_requirements =
+garden_requirements = recycleview
 
 # (str) Presplash of the application
 presplash.filename = img/sadpanda.jpg

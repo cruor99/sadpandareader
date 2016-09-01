@@ -81,8 +81,8 @@
                 size_hint_y: None
                 size_hint_x: None
                 id: unrestricted
-                height: "60dp"
-                width: "150dp"
+                height: dp(60)
+                width: dp(150)
                 text: "View Unrestricted"
                 on_release: app.root.goto_front()
 
@@ -238,7 +238,7 @@
         orientation: "vertical"
         Toolbar:
             id: toolbar
-            title: root.title
+            title: "{}/{} - {}".format(root.current_page +1, len(root.pagelinks), root.title)
             left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
         ScreenManager:
             id: gallery_manager

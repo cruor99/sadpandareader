@@ -240,6 +240,7 @@ class SadpandaApp(App):
     def __init__(self, **kwargs):
         super(SadpandaApp, self).__init__(**kwargs)
         Window.bind(on_keyboard=self.onBackBtn)
+        Window.softinput_mode = "below_target"
         data_dir = getattr(self, "user_data_dir")
         self.db = check_database(data_dir)
         migrationjsonstore = JsonStore("migrate.json")
