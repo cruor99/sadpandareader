@@ -39,6 +39,9 @@ class GalleryPreviewScreen(Screen):
 
         Clock.schedule_once(self.populate_tags)
 
+    def new_search(self, *args):
+        pass
+
     def add_favourite(self, *args):
         db = App.get_running_app().db
         existfavourite = db.query(Favourites).filter_by(gallery_id=self.gallery_id).first()

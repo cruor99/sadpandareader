@@ -64,7 +64,7 @@ class GalleryScreen(Screen):
 
         db = App.get_running_app().db
         gallerypages = float(self.pagecount) / float(40)
-        pageregex = re.compile('http\S{1}?://' + App.get_running_app(
+        pageregex = re.compile('http\S{0,1}?://' + App.get_running_app(
         ).root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
 
         if gallerypages.is_integer():
