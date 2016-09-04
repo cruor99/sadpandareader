@@ -15,6 +15,9 @@ source.dir = .
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf,db,gif,json
 
+# (list) List of inclusions using pattern matching
+#source.include_patterns = assets/*,images/*.png
+
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
 
@@ -25,15 +28,15 @@ source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf,db,gif,json
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-#version.regex = __version__ = ['"](.*)['"]
-#version.filename = %(source.dir)s/main.py
+version = 2.3
 
 # (str) Application versioning (method 2)
-version = 2.2
+# version.regex = __version__ = ['"](.*)['"]
+# version.filename = %(source.dir)s/main.py
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, beautifulsoup, openssl, sqlalchemy, sqlite3, plyer, git+https://gitlab.com/kivymd/kivymd.git
+requirements = kivy==master, beautifulsoup, openssl, sqlalchemy, sqlite3, plyer, git+https://github.com/cruor99/kivymd.git
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -43,33 +46,44 @@ requirements = kivy, beautifulsoup, openssl, sqlalchemy, sqlite3, plyer, git+htt
 garden_requirements = recycleview
 
 # (str) Presplash of the application
+#presplash.filename = %(source.dir)s/data/presplash.png
 presplash.filename = img/sadpanda.jpg
 
 # (str) Icon of the application
+#icon.filename = %(source.dir)s/data/icon.png
 icon.filename = img/icon_round.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
 
-# (bool) Indicate if the application should be fullscreen or not
-fullscreen = 0
+# (list) List of service to declare
+#services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
 
+#
+# OSX Specific
+#
+
+#
+# author = © Copyright Info
 
 #
 # Android specific
 #
 
+# (bool) Indicate if the application should be fullscreen or not
+fullscreen = 0
+
 # (list) Permissions
 android.permissions = INTERNET
 
 # (int) Android API to use
-#android.api = 14
+#android.api = 19
 
-# (int) Minimum API required (8 = Android 2.2 devices)
-#android.minapi = 8
+# (int) Minimum API required
+#android.minapi = 9
 
 # (int) Android SDK version to use
-#android.sdk = 21
+#android.sdk = 20
 
 # (str) Android NDK version to use
 #android.ndk = 9c
@@ -83,11 +97,19 @@ android.permissions = INTERNET
 # (str) Android SDK directory (if empty, it will be automatically downloaded.)
 #android.sdk_path =
 
+# (str) ANT directory (if empty, it will be automatically downloaded.)
+#android.ant_path =
+
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
 #android.p4a_dir =
 
 # (list) python-for-android whitelist
 #android.p4a_whitelist =
+
+# (bool) If True, then skip trying to update the Android sdk
+# This can be useful to avoid excess Internet downloads or save time
+# when an update is due and you just want to test/build your package
+# android.skip_update = False
 
 # (str) Android entry point, default is ok for Kivy-based app
 #android.entrypoint = org.renpy.android.PythonActivity
@@ -133,13 +155,22 @@ android.permissions = INTERNET
 # project.properties automatically.)
 #android.library_references =
 
+# (str) Android logcat filters to use
+android.logcat_filters = *:S python:D
+
+# (bool) Copy library instead of making a libpymodules.so
+#android.copy_libs = 1
+
 #
 # iOS specific
 #
 
+# (str) Path to a custom kivy-ios folder
+#ios.kivy_ios_dir = ../kivy-ios
+
 # (str) Name of the certificate to use for signing the debug version
 # Get a list of available identities: buildozer ios list_identities
-ios.codesign.debug = "iPhone Developer: Kjetil Andre Liknes (YE9GH35KK6)"
+#ios.codesign.debug = "iPhone Developer: <lastname> <firstname> (<hexstring>)"
 
 # (str) Name of the certificate to use for signing the release version
 #ios.codesign.release = %(ios.codesign.debug)s
@@ -153,6 +184,11 @@ log_level = 2
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
 warn_on_root = 1
 
+# (str) Path to build artifact storage, absolute or relative to spec file
+# build_dir = ./.buildozer
+
+# (str) Path to build output (i.e. .apk, .ipa) storage
+# bin_dir = ./bin
 
 #    -----------------------------------------------------------------------------
 #    List as sections

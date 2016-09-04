@@ -78,6 +78,7 @@ class GalleryScreen(Screen):
                    "Accept": "text/plain"}
         cookies = App.get_running_app().root.cookies
         headers["Cookie"] = cookies
+        print gallerypages
         for i in range(int(gallerypages)):
             url = str("http://" + App.get_running_app(
             ).root.baseurl + ".org/g/{}/{}/?p={}\ "
@@ -107,7 +108,7 @@ class GalleryScreen(Screen):
 
     def got_result(self, req, r):
 
-        pageregex = re.compile('http\S{1}?://' + App.get_running_app(
+        pageregex = re.compile('http\S{0,1}?://' + App.get_running_app(
         ).root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
         soup = BS(r)
         for a in soup.findAll(name="a", attrs={"href": pageregex}):

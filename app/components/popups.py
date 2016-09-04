@@ -29,8 +29,6 @@ class CaptchaPopup(MDDialog):
 class SearchPopup(MDDialog):
     def __init__(self, **kwargs):
         super(SearchPopup, self).__init__(**kwargs)
-        # self.content = SearchArea()
-
         self.add_action_button("Search", action=lambda *x: self.savesearch())
         self.add_action_button(
             "Filters",
