@@ -2,6 +2,8 @@ from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 from kivy.app import App
 from kivy.properties import ListProperty, StringProperty, NumericProperty
+from kivy.properties import ObjectProperty
+from threading import Thread
 
 # Self made components
 from components import TagButton
@@ -21,14 +23,15 @@ class GalleryPreviewScreen(Screen):
     gallery_thumb = StringProperty("")
     filesize = NumericProperty(0)
     title = StringProperty("Preview and Tags")
+    galleryinstance = ObjectProperty()
 
     def on_enter(self):
-        db = App.get_running_app().db
-        gallerydata = db.query(Gallery).filter_by(gallery_id=self.gallery_id).first()
-        tags = db.query(GalleryTags).filter_by(galleryid=gallerydata.id).all()
+               ####
         taglist = []
-        for tag in tags:
-            taglist.append(tag.tag)
+        Clock.schedule_once(self.store_gallery)
+        gallerydata = self.galleryinstance
+        for tag in gallerydata.gallery_tags:
+            taglist.append(tag)
         self.gallery_id = gallerydata.gallery_id
         self.gallery_token = gallerydata.gallery_token
         self.pagecount = gallerydata.pagecount
@@ -38,6 +41,28 @@ class GalleryPreviewScreen(Screen):
         self.filesize = gallerydata.filesize
 
         Clock.schedule_once(self.populate_tags)
+
+    def store_gallery(self, *args):
+        instance = self.galleryinstance
+        db = App.get_running_app().db
+        existgallery = db.query(Gallery).filter_by(
+            gallery_id=instance.gallery_id).first()
+        if existgallery:
+            pass
+        else:
+            gallery = Gallery(gallery_id=instance.gallery_id,
+                              gallery_token=instance.gallery_token,
+                              pagecount=instance.pagecount,
+                              gallery_name=instance.gallery_name,
+                              gallery_thumb=instance.gallery_thumb,
+                              filesize=instance.filesize)
+            db.add(gallery)
+            db.commit()
+            for tag in instance.gallery_tags:
+                gallerytag = GalleryTags(galleryid=gallery.id, tag=tag)
+                db.add(gallerytag)
+                db.commit()
+
 
     def new_search(self, *args):
         pass

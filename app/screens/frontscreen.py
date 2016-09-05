@@ -64,31 +64,11 @@ class FrontScreen(Screen):
         self.has_entered = True
 
     def enter_gallery(self, instance):
-        galleryinfo = [instance.gallery_id, instance.gallery_token,
-                       instance.pagecount, instance.gallery_name,
-                       instance.gallery_tags, instance.gallery_thumb,
-                       instance.filesize]
-        db = App.get_running_app().db
-        existgallery = db.query(Gallery).filter_by(
-            gallery_id=instance.gallery_id).first()
-        if existgallery:
-            pass
-        else:
-            gallery = Gallery(gallery_id=instance.gallery_id,
-                              gallery_token=instance.gallery_token,
-                              pagecount=instance.pagecount,
-                              gallery_name=instance.gallery_name,
-                              gallery_thumb=instance.gallery_thumb,
-                              filesize=instance.filesize)
-            db.add(gallery)
-            db.commit()
-            for tag in instance.gallery_tags:
-                gallerytag = GalleryTags(galleryid=gallery.id, tag=tag)
-                db.add(gallerytag)
-                db.commit()
+        print type(instance)
+
         preview_screen = App.get_running_app(
         ).root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
-        preview_screen.gallery_id = instance.gallery_id
+        preview_screen.galleryinstance = instance
         App.get_running_app().root.next_screen("gallery_preview_screen")
 
     def check_scroll_y(self, instance, somethingelse):
