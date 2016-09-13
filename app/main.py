@@ -9,6 +9,7 @@ from kivy.clock import Clock
 from kivy.storage.jsonstore import JsonStore
 import urllib
 from kivy.network.urlrequest import UrlRequest
+from kivy.config import Config
 
 from plyer import notification
 
@@ -242,6 +243,15 @@ class SadpandaApp(App):
         Window.bind(on_keyboard=self.onBackBtn)
         Window.softinput_mode = "below_target"
         data_dir = getattr(self, "user_data_dir")
+        self.data_dir = data_dir
+        defaultdir = Config.getdefault("kivy", "log_dir", data_dir)
+        if defaultdir == data_dir:
+            pass
+        else:
+            Config.set("kivy", "log_dir", data_dir)
+            Config.set("kivy", "log_enable", 1)
+            Config.set("kivy", "log_level", "debug")
+            Config.write()
         self.db = check_database(data_dir)
         migrationjsonstore = JsonStore("migrate.json")
         migration = migrationjsonstore.get("migrate")
