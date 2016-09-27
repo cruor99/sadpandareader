@@ -1,0 +1,133 @@
+
+<CaptchaPopup>:
+    size_hint: .8, None
+    height: dp(200)
+    title: "Login Failed"
+    MDLabel:
+        font_name: "fonts/NotoSansCJK-Regular.ttc"
+        text: "You can either try again or continue to non-restricted content."
+
+
+
+
+<FilterPopup>:
+    title: "Set your filters here"
+    size_hint: .8, None
+    height: dp(500)
+    BoxLayout:
+        orientation: "vertical"
+        GridLayout:
+            cols: 2
+            padding: dp(40), dp(1)
+            spacing: dp(15)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Non-H"
+                MDSwitch:
+                    id: nonh
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+                    text: "Non-H"
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Doujinshi"
+                MDSwitch:
+                    id: doujinshi
+                    text: "Doujinshi"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Western"
+                MDSwitch:
+                    id: western
+                    text: "Western"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Artist CG"
+                MDSwitch:
+                    id: artistcg
+                    text: "Artist CG"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Game CG"
+                MDSwitch:
+                    id: gamecg
+                    text: "Game CG"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Manga"
+                MDSwitch:
+                    id: manga
+                    text: "Manga"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Cosplay"
+                MDSwitch:
+                    id: cosplay
+                    text: "Cosplay"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Asian Porn"
+                MDSwitch:
+                    id: asianporn
+                    text: "Asian Porn"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Image Set"
+                MDSwitch:
+                    id: imageset
+                    text: "Image Set"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Misc"
+                MDSwitch:
+                    id: misc
+                    text: "Misc"
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+        MDRaisedButton:
+            text: "Set Filters"
+            size_hint_y: None
+            height: dp(64)
+            on_release: root.dismiss()
+
+
+<SearchPopup>:
+    title: "Search"
+    id: searchpopup
+    size_hint: .8, None
+    height: dp(200)
+    SearchArea:
+        id: searcharea
+        on_text_validate: root.savesearch()
+
+<SearchArea>:
+    size_hint: 1, None
+    height: "48dp"
+    hint_text: "Terms and tags"
+    foreground_color: (1, 1, 1, .5)

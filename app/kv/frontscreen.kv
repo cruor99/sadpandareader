@@ -1,0 +1,24 @@
+
+<FrontScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Toolbar:
+            id: toolbar
+            title: root.title
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+        FloatLayout:
+            RecycleView:
+                id: galleryscroll
+                MDList:
+                    id: main_layout
+                    size_hint_x: 1
+            MDFloatingActionButton:
+                size_hint_y: None
+                icon: "search"
+                size_hint: None, None
+                size: dp(56), dp(56)
+                opposite_colors: True
+                # background_color: (0, 1, 0, 1)
+                elevation_normal: 8
+                pos_hint: {"center_x": 0.9, "center_y": 0.1}
+                on_release: app.root.search_popup()

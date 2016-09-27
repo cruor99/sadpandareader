@@ -1,0 +1,13 @@
+<FavouriteScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Toolbar:
+            id: toolbar
+            title: root.title
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+        FloatLayout:
+            RecycleView:
+                id: favouritescroll
+                MDList:
+                    id: favourite_layout
+                    size_hint_x: 1

@@ -1,0 +1,12 @@
+
+<GalleryScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Toolbar:
+            id: toolbar
+            background_color: app.theme_cls.primary_color
+            font_name: "fonts/NotoSansCJK-Regular.ttc"
+            title: "{}/{} - {}".format(root.current_page +1, len(root.pagelinks), root.title.encode("utf-8"))
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+        ScreenManager:
+            id: gallery_manager

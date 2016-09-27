@@ -1,0 +1,21 @@
+
+<SettingsScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Toolbar:
+            id: toolbar
+            title: root.title
+            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+        GridLayout:
+            cols: 2
+            padding: dp(40), dp(1)
+            spacing: dp(15)
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Anonymous Logging"
+                MDSwitch:
+                    id: logging
+                    size_hint: None, None
+                    size: dp(36), dp(48)
+                    text: "Logging"

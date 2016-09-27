@@ -1,0 +1,44 @@
+
+<StartScreen>:
+    RelativeLayout:
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: "img/main_bg.png"
+        BoxLayout:
+            center: self.parent.center
+            pos_hint: {"center_x": 0.4, "center_y": 0.5}
+            size_hint: None, None
+            orientation: "vertical"
+            SingleLineTextField:
+                size_hint: None, None
+                height: "48dp"
+                width: "150dp"
+                id: username
+                hint_text: "Username"
+                _hint_txt_color: (0, 0, 0, 1)
+            SingleLineTextField:
+                id: password
+                password: True
+                size_hint: None, None
+                height: "48dp"
+                width: "150dp"
+                hint_text: "Password"
+                _hint_txt_color: (0, 0, 0, 1)
+            MDRaisedButton:
+                size_hint_y: None
+                size_hint_x: None
+                id: login
+                height: "60dp"
+                width: "150dp"
+                text: "login"
+                on_release: app.root.login_exhentai(username, password)
+            MDFlatButton:
+                size_hint_y: None
+                size_hint_x: None
+                id: unrestricted
+                height: dp(60)
+                width: dp(150)
+                text: "View Unrestricted"
+                on_release: app.root.goto_front()

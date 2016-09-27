@@ -1,0 +1,18 @@
+
+<SadpandaNavdrawer>:
+    NavigationDrawerIconButton:
+        icon: "home"
+        text: "Frontpage"
+        on_release: app.root.goto_front()
+    NavigationDrawerIconButton:
+        icon: "search"
+        text: "Search"
+        on_release: app.root.search_popup()
+    NavigationDrawerIconButton:
+        icon: "star"
+        text: "Favourites"
+        on_release: app.root.next_screen("favourite_screen")
+    NavigationDrawerIconButton:
+        icon: "settings"
+        text: "Settings"
+        on_release: app.root.next_screen("settings_screen")
