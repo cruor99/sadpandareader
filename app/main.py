@@ -17,8 +17,8 @@ from threading import Thread
 
 import os
 import json
-from screens import *
-from components import *
+from components.navdrawer import SadpandaNavdrawer
+from screens.startscreen import StartScreen
 from models import User, Filters, Search, Settings
 from models import check_database
 
@@ -42,9 +42,6 @@ class SadpandaRoot(BoxLayout):
         super(SadpandaRoot, self).__init__(**kwargs)
         # list of previous screens
         self.screen_list = []
-        Loader.loading_image = CoreImage("img/loading.gif", size=(16, 16))
-
-        self.default_settings()
 
     def default_settings(self):
         db = App.get_running_app().db
@@ -143,6 +140,9 @@ class SadpandaRoot(BoxLayout):
             self.ids.sadpanda_screen_manager.current = neoscreen
 
     def goto_front(self):
+        if not self.ids.sadpanda_screen_manager.has_screen("front_screen"):
+            from screens.frontscreen import FrontScreen
+            self.ids.sadpanda_screen_manager.add_widget(FrontScreen(name="front_screen"))
         blanksearch = Search(searchterm=" ")
         db = App.get_running_app().db
         db.add(blanksearch)

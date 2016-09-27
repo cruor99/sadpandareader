@@ -1,6 +1,9 @@
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 from kivy.app import App
+from kivy.lang import Builder
+
+Builder.load_file("kv/startscreen.kv")
 
 
 from models import User
@@ -21,6 +24,7 @@ class StartScreen(Screen):
             cookies = user.cookies
             App.get_running_app().root.cookies = cookies
             App.get_running_app().root.baseurl = "exhentai"
-            App.get_running_app().root.next_screen("front_screen")
+            App.get_running_app().root.goto_front()
+            #App.get_running_app().root.next_screen("front_screen")
         else:
             pass

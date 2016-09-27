@@ -6,12 +6,15 @@ from kivy.clock import Clock
 import urllib
 from kivy.network.urlrequest import UrlRequest
 import kivymd.snackbar as Snackbar
+from kivy.lang import Builder
+
+Builder.load_file("kv/galleryscreen.kv")
 
 from BeautifulSoup import BeautifulSoup as BS
 
 # Self made components
-from components import GalleryCarousel, GalleryImage, GalleryContainerLayout
-from components import GalleryImageScreen, GalleryNavButton
+from components.images import GalleryCarousel, GalleryImage, GalleryContainerLayout, GalleryImageScreen
+from components.buttons import GalleryNavButton
 
 import re
 
@@ -35,6 +38,7 @@ class GalleryScreen(Screen):
     def __init__(self, **kwargs):
         super(GalleryScreen, self).__init__(**kwargs)
         # list of previous screens
+        print "initiated"
         self.bind(galleryscreen=self.on_galleryscreen)
 
     def on_galleryscreen(self, instance, value):
@@ -64,8 +68,8 @@ class GalleryScreen(Screen):
 
         db = App.get_running_app().db
         gallerypages = float(self.pagecount) / float(40)
-        pageregex = re.compile('http\S{0,1}?://' + App.get_running_app(
-        ).root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
+        pageregex = re.compile('http\S{0,1}?://' + App.get_running_app()
+                               .root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
 
         if gallerypages.is_integer():
             pass
@@ -78,28 +82,32 @@ class GalleryScreen(Screen):
                    "Accept": "text/plain"}
         cookies = App.get_running_app().root.cookies
         headers["Cookie"] = cookies
-        print gallerypages
         for i in range(int(gallerypages)):
             url = str("http://" + App.get_running_app(
             ).root.baseurl + ".org/g/{}/{}/?p={}\ "
                       .format(self.gallery_id, self.gallery_token, i))
-            galleryrequest = UrlRequest(url,
-                                        on_success=self.got_result,
-                                        req_headers=headers)
+            galleryrequest = UrlRequest(
+                url, on_success=self.got_result, req_headers=headers)
 
         self.next_page = 1
 
         galleryrequest.wait()
 
-
-        currentexist = db.query(Pagelink).filter_by(galleryid=self.db_id,
-                                                    current=1).first()
+        currentexist = db.query(Pagelink).filter_by(
+            galleryid=self.db_id, current=1).first()
         if currentexist:
             for page in self.pagelinks:
                 if page == currentexist.pagelink:
                     self.current_page = self.pagelinks.index(page)
             self.construct_image(currentexist.pagelink)
         else:
+            spliturl = self.pagelinks[0].split("-")
+            print spliturl
+            if App.get_running_app().root.baseurl == "g.e-hentai":
+                pageurl = "".join(spliturl[0]) + "-" + spliturl[1] + "-" + "1"
+            else:
+                pass
+
             self.construct_image(self.pagelinks[0])
             firstimage = db.query(Pagelink).filter_by(
                 pagelink=self.pagelinks[0]).first()
@@ -108,8 +116,8 @@ class GalleryScreen(Screen):
 
     def got_result(self, req, r):
 
-        pageregex = re.compile('http\S{0,1}?://' + App.get_running_app(
-        ).root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
+        pageregex = re.compile('http\S{0,1}?://' + App.get_running_app()
+                               .root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
         soup = BS(r)
         for a in soup.findAll(name="a", attrs={"href": pageregex}):
             self.pagelinks.append(a["href"])
@@ -181,7 +189,7 @@ class GalleryScreen(Screen):
             if page.current == 1:
                 newpageindex = pagelinks.index(page) - 1
                 if newpageindex == -1:
-                    newpageindex = len(pagelinks) -1
+                    newpageindex = len(pagelinks) - 1
                 self.current_page = newpageindex
                 try:
                     newpage = pagelinks[newpageindex]
@@ -221,9 +229,8 @@ class GalleryScreen(Screen):
                    "Accept": "text/plain"}
         cookies = App.get_running_app().root.cookies
         headers["Cookie"] = cookies
-        pagerequest = UrlRequest(url=i,
-                                 on_success=self.got_image,
-                                 req_headers=headers)
+        pagerequest = UrlRequest(
+            url=i, on_success=self.got_image, req_headers=headers)
 
     def got_image(self, req, r):
         ipmatch = r'^http://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'

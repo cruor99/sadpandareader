@@ -2,6 +2,8 @@ from kivy.app import App
 from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty, ListProperty
 from kivy.network.urlrequest import UrlRequest
+from kivy.lang import Builder
+Builder.load_file("kv/favouritescreen.kv")
 
 import json
 from os import linesep

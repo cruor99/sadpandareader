@@ -5,19 +5,22 @@ from kivy.properties import NumericProperty
 from kivy.clock import Clock
 from kivy.app import App
 from kivy.network.urlrequest import UrlRequest
+from kivy.lang import Builder
 import urllib
 
 from os import linesep
 from functools import partial
 
 # Self created components
-from components import ThumbButton, AvatarSampleWidget
+from components.buttons import ThumbButton, AvatarSampleWidget
 
 import json
 
 from BeautifulSoup import BeautifulSoup as BS
 
 from models import Search, Filters, Gallery, GalleryTags
+
+Builder.load_file("kv/frontscreen.kv")
 
 
 class FrontScreen(Screen):
@@ -30,6 +33,10 @@ class FrontScreen(Screen):
     title = StringProperty("Front page")
     has_entered = False
     has_refreshed = True
+
+    def __init__(self, **kwargs):
+        super(FrontScreen, self).__init__(**kwargs)
+        print "was initiated"
 
     def on_enter(self):
 
@@ -66,9 +73,18 @@ class FrontScreen(Screen):
     def enter_gallery(self, instance):
         print type(instance)
 
-        preview_screen = App.get_running_app(
-        ).root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
-        preview_screen.galleryinstance = instance
+        if not App.get_running_app(
+        ).root.ids.sadpanda_screen_manager.has_screen(
+                "gallery_preview_screen"):
+            from screens.gallerypreviewscreen import GalleryPreviewScreen
+            preview_screen = GalleryPreviewScreen(
+                name="gallery_preview_screen")
+            preview_screen.galleryinstance = instance
+            App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
+                preview_screen)
+        else:
+            preview_screen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
+            preview_screen.galleryinstance = instance
         App.get_running_app().root.next_screen("gallery_preview_screen")
 
     def check_scroll_y(self, instance, somethingelse):
@@ -115,15 +131,15 @@ class FrontScreen(Screen):
                     filters.misc) + "&f_search=" + urllib.quote_plus(
                         self.searchword) + "&f_apply=Apply+Filter")
         if self.searchpage == 0:
-            req = UrlRequest(page0searchurl,
-                             on_success=self.got_result,
-                             on_error=self.got_failure,
-                             req_headers=headers,
-                             method="GET")
+            req = UrlRequest(
+                page0searchurl,
+                on_success=self.got_result,
+                on_error=self.got_failure,
+                req_headers=headers,
+                method="GET")
         else:
-            req = UrlRequest(pagesearchurl,
-                             self.got_result,
-                             req_headers=headers)
+            req = UrlRequest(
+                pagesearchurl, self.got_result, req_headers=headers)
 
         self.searchpage += 1
         print cookies

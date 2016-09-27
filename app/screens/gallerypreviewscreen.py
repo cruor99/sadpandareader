@@ -4,9 +4,12 @@ from kivy.app import App
 from kivy.properties import ListProperty, StringProperty, NumericProperty
 from kivy.properties import ObjectProperty
 from threading import Thread
+from kivy.lang import Builder
+
+Builder.load_file("kv/gallerypreviewscreen.kv")
 
 # Self made components
-from components import TagButton
+from components.buttons import TagButton
 
 from models import Gallery, GalleryTags, Search, Favourites
 
@@ -71,6 +74,7 @@ class GalleryPreviewScreen(Screen):
         db = App.get_running_app().db
         existfavourite = db.query(Favourites).filter_by(gallery_id=self.gallery_id).first()
         if existfavourite:
+            Snackbar.make("Already favourited!")
             return
         else:
             newfav = Favourites()
@@ -92,8 +96,16 @@ class GalleryPreviewScreen(Screen):
             self.ids.tag_layout.add_widget(taglabel)
 
     def view_gallery(self):
-        galleryscreen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("gallery_screen")
-        galleryscreen.gallery_id = self.gallery_id
+        if not App.get_running_app(
+        ).root.ids.sadpanda_screen_manager.has_screen(
+                "gallery_screen"):
+            from screens.galleryscreen import GalleryScreen
+            galleryscreen = GalleryScreen(name="gallery_screen")
+            galleryscreen.gallery_id = self.gallery_id
+            App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(galleryscreen)
+        else:
+            galleryscreen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("gallery_screen")
+            galleryscreen.gallery_id = self.gallery_id
         App.get_running_app().root.next_screen("gallery_screen")
 
     def search_tag(self, instance):

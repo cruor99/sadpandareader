@@ -3,6 +3,9 @@ from kivy.uix.carousel import Carousel
 from kivy.uix.stencilview import StencilView
 from kivy.uix.image import AsyncImage as Image
 from kivy.uix.screenmanager import Screen
+from kivy.lang import Builder
+
+Builder.load_file("kv/images.kv")
 
 
 class GalleryImageScreen(Screen):

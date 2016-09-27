@@ -1,10 +1,13 @@
 from kivy.app import App
 from kivy.properties import StringProperty, NumericProperty
+from kivy.lang import Builder
 
 from models import Search, Filters
 
 from kivymd.dialog import MDDialog
 from kivymd.textfields import SingleLineTextField
+
+Builder.load_file("kv/popups.kv")
 
 
 class CaptchaPopup(MDDialog):

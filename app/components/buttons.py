@@ -6,6 +6,9 @@ from kivy.uix.stencilview import StencilView
 from kivy.uix.button import Button
 from kivymd.button import MDFlatButton, MDRaisedButton
 from kivymd.list import TwoLineAvatarListItem, ILeftBodyTouch
+from kivy.lang import Builder
+
+Builder.load_file("kv/buttons.kv")
 
 
 class ThumbButton(TwoLineAvatarListItem):
