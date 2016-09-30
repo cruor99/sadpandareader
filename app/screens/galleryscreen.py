@@ -17,6 +17,7 @@ from components.images import GalleryCarousel, GalleryImage, GalleryContainerLay
 from components.buttons import GalleryNavButton
 
 import re
+import time
 
 from models import Gallery, Pagelink
 
@@ -34,11 +35,11 @@ class GalleryScreen(Screen):
     title = gallery_name
     scrollstopper = BooleanProperty(False)
     galleryscreen = ObjectProperty()
+    gotpageresultcounter = NumericProperty(99)
 
     def __init__(self, **kwargs):
         super(GalleryScreen, self).__init__(**kwargs)
         # list of previous screens
-        print "initiated"
         self.bind(galleryscreen=self.on_galleryscreen)
 
     def on_galleryscreen(self, instance, value):
@@ -62,6 +63,7 @@ class GalleryScreen(Screen):
         self.pagelinks = []
         self.pagecount = 0
         self.gallery_name = ""
+        self.current_page = 0
 
     def populate_gallery(self):
         # change placehold.it with
@@ -91,30 +93,50 @@ class GalleryScreen(Screen):
 
         self.next_page = 1
 
-        galleryrequest.wait()
-
-        currentexist = db.query(Pagelink).filter_by(
-            galleryid=self.db_id, current=1).first()
-        if currentexist:
-            for page in self.pagelinks:
-                if page == currentexist.pagelink:
-                    self.current_page = self.pagelinks.index(page)
-            self.construct_image(currentexist.pagelink)
-        else:
-            spliturl = self.pagelinks[0].split("-")
-            print spliturl
-            if App.get_running_app().root.baseurl == "g.e-hentai":
-                pageurl = "".join(spliturl[0]) + "-" + spliturl[1] + "-" + "1"
+    def on_gotpageresultcounter(self, result, something):
+        db = App.get_running_app().db
+        if int(something) == 0:
+            currentexist = db.query(Pagelink).filter_by(
+                galleryid=self.db_id, current=1).first()
+            pagelinkmodels = db.query(Pagelink).filter_by(
+                galleryid=self.db_id).order_by(Pagelink.mainpage).all()
+            if currentexist:
+                for page in pagelinkmodels:
+                    if page.pagelink == currentexist.pagelink:
+                        self.current_page = pagelinkmodels.index(page)
+                self.construct_image(currentexist.pagelink)
             else:
-                pass
 
-            self.construct_image(self.pagelinks[0])
-            firstimage = db.query(Pagelink).filter_by(
-                pagelink=self.pagelinks[0]).first()
-            firstimage.current = 1
-            db.commit()
+                Clock.schedule_once(self.load_firstpage, 1)
+
+    def load_firstpage(self, *args):
+
+        db = App.get_running_app().db
+        firstdbimage = db.query(Pagelink).filter_by(
+            galleryid=self.db_id).filter_by(mainpage=0).first()
+
+        #try:
+        self.construct_image(firstdbimage.pagelink)
+        #firstimage = db.query(Pagelink).filter_by(
+        #    pagelink=self.pagelinks[0]).first()
+        firstdbimage.current = 1
+        db.commit()
+        pagelinkmodels = db.query(Pagelink).filter_by(
+            galleryid=self.db_id).order_by(Pagelink.mainpage).all()
+        for page in pagelinkmodels:
+            self.pagelinks.append(page.pagelink)
+        print self.pagelinks
+    #    except:
+        #       print "got here"
+        #      self.construct_image(firstdbimage.pagelink)
+        self.gotpageresultcounter = 99
+        self.current_page = 1
+
+
 
     def got_result(self, req, r):
+
+        print req.url[:-2][-1:]
 
         pageregex = re.compile('http\S{0,1}?://' + App.get_running_app()
                                .root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
@@ -127,9 +149,14 @@ class GalleryScreen(Screen):
             if existpageurl:
                 pass
             else:
-                pageurl = Pagelink(galleryid=self.db_id, pagelink=a["href"])
+                pageurl = Pagelink(
+                    galleryid=self.db_id,
+                    pagelink=a["href"],
+                    mainpage=req.url[:-2][-1:])
                 db.add(pageurl)
                 db.commit()
+
+        self.gotpageresultcounter = req.url[:-2][-1:]
 
     def testmove(self, offset, min_move, direction):
         if self.scrollstopper is False:
@@ -153,7 +180,7 @@ class GalleryScreen(Screen):
 
     def next_image(self, instance):
         db = App.get_running_app().db
-        pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
+        pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).order_by(Pagelink.mainpage).all()
 
         self.ids.gallery_manager.transition.direction = "left"
         for page in pagelinks:

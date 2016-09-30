@@ -18,6 +18,7 @@ from threading import Thread
 import os
 import json
 from components.navdrawer import SadpandaNavdrawer
+from components.popups import SearchPopup
 from screens.startscreen import StartScreen
 from models import User, Filters, Search, Settings
 from models import check_database

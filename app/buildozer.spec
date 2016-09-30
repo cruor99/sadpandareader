@@ -38,6 +38,8 @@ version = 2.3
 # comma seperated e.g. requirements = sqlite3,kivy
 requirements = kivy==master, beautifulsoup, openssl, sqlalchemy, sqlite3, plyer, git+https://github.com/cruor99/kivymd.git
 
+#workaround fix
+p4a.local_recipes = %(source.dir)s/.buildozer/android/platform/python-for-android/recipes
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
 # requirements.source.kivy = ../../kivy
