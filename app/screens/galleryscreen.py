@@ -115,28 +115,20 @@ class GalleryScreen(Screen):
         firstdbimage = db.query(Pagelink).filter_by(
             galleryid=self.db_id).filter_by(mainpage=0).first()
 
-        #try:
         self.construct_image(firstdbimage.pagelink)
-        #firstimage = db.query(Pagelink).filter_by(
-        #    pagelink=self.pagelinks[0]).first()
         firstdbimage.current = 1
         db.commit()
         pagelinkmodels = db.query(Pagelink).filter_by(
             galleryid=self.db_id).order_by(Pagelink.mainpage).all()
         for page in pagelinkmodels:
             self.pagelinks.append(page.pagelink)
-        print self.pagelinks
-    #    except:
-        #       print "got here"
-        #      self.construct_image(firstdbimage.pagelink)
         self.gotpageresultcounter = 99
-        self.current_page = 1
+        self.current_page = 0
 
 
 
     def got_result(self, req, r):
 
-        print req.url[:-2][-1:]
 
         pageregex = re.compile('http\S{0,1}?://' + App.get_running_app()
                                .root.baseurl + '.org/s/\S{10}/\d{6}-\d+')

@@ -7,10 +7,7 @@ Base = declarative_base()
 
 
 def check_database(data_dir):
-    print data_dir
-    print isfile(data_dir+"/database.db")
     if isfile(data_dir+"/database.db"):
-        print "Databse exists"
         engine = create_engine('sqlite:///'+data_dir+'/database.db')
         Session = sessionmaker(bind=engine)
         db = Session()
@@ -20,7 +17,6 @@ def check_database(data_dir):
         Session = sessionmaker(bind=engine)
         db = Session()
         Base.metadata.create_all(engine)
-        print isfile(data_dir+"/databse.db")
         return db
 
 

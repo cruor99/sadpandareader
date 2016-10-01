@@ -36,7 +36,6 @@ class FrontScreen(Screen):
 
     def __init__(self, **kwargs):
         super(FrontScreen, self).__init__(**kwargs)
-        print "was initiated"
 
     def on_enter(self):
 
@@ -71,7 +70,6 @@ class FrontScreen(Screen):
         self.has_entered = True
 
     def enter_gallery(self, instance):
-        print type(instance)
 
         if not App.get_running_app(
         ).root.ids.sadpanda_screen_manager.has_screen(
@@ -142,7 +140,6 @@ class FrontScreen(Screen):
                 pagesearchurl, self.got_result, req_headers=headers)
 
         self.searchpage += 1
-        print cookies
         # pure html of ehentai link
 
     def got_failure(self, req, r):
@@ -210,6 +207,7 @@ class FrontScreen(Screen):
             gallery_tags=gallery["tags"],
             gallery_thumb=gallery["thumb"],
             filesize=gallery["filesize"],
+            category=gallery["category"],
             size_hint_x=1, )
         gallerybutton.bind(on_release=self.enter_gallery)
         gallerybutton.add_widget(AvatarSampleWidget(source=gallery["thumb"]))

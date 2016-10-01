@@ -18,7 +18,7 @@ from threading import Thread
 import os
 import json
 from components.navdrawer import SadpandaNavdrawer
-from components.popups import SearchPopup
+from components.popups import SearchPopup, FilterPopup, CaptchaPopup
 from screens.startscreen import StartScreen
 from models import User, Filters, Search, Settings
 from models import check_database
@@ -78,9 +78,6 @@ class SadpandaRoot(BoxLayout):
             req_body=params,
             req_headers=headers)
 
-        print params
-
-        print payload
 
     def login_failure(self, req, r):
         print "failure"
@@ -113,7 +110,7 @@ class SadpandaRoot(BoxLayout):
             db.add(cookies)
             db.commit()
             self.baseurl = "exhentai"
-            self.next_screen("front_screen")
+            self.goto_front()
         else:
             captchapopup = CaptchaPopup()
             captchapopup.bind(on_dismiss=self.login_captcha)
@@ -124,7 +121,7 @@ class SadpandaRoot(BoxLayout):
             pass
         else:
             self.baseurl = "g.e-hentai"
-            self.next_screen("front_screen")
+            self.goto_front()
 
     def next_screen(self, neoscreen):
 
