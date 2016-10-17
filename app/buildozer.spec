@@ -36,7 +36,7 @@ version = 2.4
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy==master, beautifulsoup, openssl, sqlalchemy, sqlite3, plyer, git+https://github.com/cruor99/kivymd.git
+requirements = kivy==master, beautifulsoup, openssl, sqlalchemy, sqlite3, git+https://github.com/cruor99/kivymd.git, pyjnius, plyer
 
 #workaround fix
 p4a.local_recipes = %(source.dir)s/.buildozer/android/platform/python-for-android/recipes
@@ -120,7 +120,7 @@ android.permissions = INTERNET
 # their classes. Don't add jars that you do not need, since extra jars can slow
 # down the build process. Allows wildcards matching, for example:
 # OUYA-ODK/libs/*.jar
-#android.add_jars = foo.jar,bar.jar,path/to/more/*.jar
+android.add_jars = libs/*.jar
 
 # (list) List of Java files to add to the android project (can be java or a
 # directory containing the files)
@@ -155,7 +155,7 @@ android.permissions = INTERNET
 
 # (list) Android library project to add (will be added in the
 # project.properties automatically.)
-#android.library_references =
+#android.library_references = libs/pusher.jar
 
 # (str) Android logcat filters to use
 android.logcat_filters = *:S python:D

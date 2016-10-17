@@ -26,6 +26,9 @@ from models import check_database
 # KivyMD stuff
 from kivymd.theming import ThemeManager
 
+#pusherstuff
+from pusherstuff import Pusher, SubscriptionEventListener
+
 
 class SadpandaRoot(BoxLayout):
 
@@ -33,16 +36,16 @@ class SadpandaRoot(BoxLayout):
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("g.e-hentai")
-    pushurl = StringProperty(
-        "https://1dvxtg49adq5f5jtzm2a04p2sr2pje3fem1x6gfu2cyhr30p.pushould.com")
-    client_token = StringProperty(
-        "6rgcw2zlr4ubpvcegjajqpnmehx5gp5zm1yigjzp1mgfvy6c")
-    newmessage = StringProperty("")
 
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)
         # list of previous screens
         self.screen_list = []
+        #self.pusher = Pusher("")
+#        self.pusher.connect()
+ #       self.pusher.bind_channel_simple("1111")
+  #      self.sel = SubscriptionEventListener()
+   #     self.pusher.bind_event("send", self.sel)
 
     def default_settings(self):
         db = App.get_running_app().db
