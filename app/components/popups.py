@@ -33,9 +33,6 @@ class SearchPopup(MDDialog):
     def __init__(self, **kwargs):
         super(SearchPopup, self).__init__(**kwargs)
         self.add_action_button("Search", action=lambda *x: self.savesearch())
-        self.add_action_button(
-            "Filters",
-            action=lambda *x: App.get_running_app().root.show_filters())
 
     def savesearch(self):
         newsearch = Search(searchterm=self.ids.searcharea.text)

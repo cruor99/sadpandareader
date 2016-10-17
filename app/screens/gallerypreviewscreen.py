@@ -74,7 +74,9 @@ class GalleryPreviewScreen(Screen):
         db = App.get_running_app().db
         existfavourite = db.query(Favourites).filter_by(gallery_id=self.gallery_id).first()
         if existfavourite:
-            Snackbar.make("Already favourited!")
+            db.delete(existfavourite)
+            db.commit()
+            Snackbar.make("Removed from Favourites!")
             return
         else:
             newfav = Favourites()

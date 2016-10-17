@@ -5,17 +5,12 @@
         Toolbar:
             id: toolbar
             title: root.title
-            left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
-        GridLayout:
-            cols: 2
-            padding: dp(40), dp(1)
-            spacing: dp(15)
-            BoxLayout:
-                orientation: "vertical"
-                MDLabel:
-                    text: "Anonymous Logging"
-                MDSwitch:
-                    id: logging
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-                    text: "Logging"
+            #left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+            left_action_items: [["chevron-left", lambda x: app.root.goto_front(), False]]
+            right_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
+        RecycleView:
+            MDList:
+                id: settingslist
+                OneLineListItem:
+                    text: "Filters"
+                    on_release: app.root.show_filters()

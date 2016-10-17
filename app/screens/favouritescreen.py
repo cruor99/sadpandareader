@@ -9,7 +9,7 @@ import json
 from os import linesep
 
 from models import Favourites, Gallery, GalleryTags
-from components import ThumbButton, AvatarSampleWidget
+from components.buttons import ThumbButton, AvatarSampleWidget
 
 
 class FavouriteScreen(Screen):
@@ -22,16 +22,24 @@ class FavouriteScreen(Screen):
         db = App.get_running_app().db
         self.favourites = db.query(Favourites).all()
 
+    def new_search(self):
+        pass
+
     def on_enter(self):
         db = App.get_running_app().db
         self.favourites = db.query(Favourites).all()
         for favourite in self.favourites:
-            self.gallerylinks.append("http://" + App.get_running_app().root.baseurl + ".org/g/" + favourite.gallery_id + "/" + favourite.gallery_token)
-            self.gidlist.append([favourite.gallery_id, favourite.gallery_token])
+            self.gallerylinks.append("http://" + App.get_running_app(
+            ).root.baseurl + ".org/g/" + favourite.gallery_id + "/" +
+                                     favourite.gallery_token)
+            self.gidlist.append(
+                [favourite.gallery_id, favourite.gallery_token])
         self.populate_favs()
 
     def on_leave(self):
         self.ids.favourite_layout.clear_widgets()
+        self.gidlist = []
+        self.gallerylinks = []
 
     def populate_favs(self):
 
@@ -79,19 +87,21 @@ class FavouriteScreen(Screen):
     def enter_gallery(self, instance):
         galleryinfo = [instance.gallery_id, instance.gallery_token,
                        instance.pagecount, instance.gallery_name,
-                       instance.gallery_tags, instance.gallery_thumb, instance.filesize]
+                       instance.gallery_tags, instance.gallery_thumb,
+                       instance.filesize]
         db = App.get_running_app().db
         existgallery = db.query(Gallery).filter_by(
             gallery_id=instance.gallery_id).first()
         if existgallery:
             pass
         else:
-            gallery = Gallery(gallery_id=instance.gallery_id,
-                              gallery_token=instance.gallery_token,
-                              pagecount=instance.pagecount,
-                              gallery_name=instance.gallery_name,
-                              gallery_thumb=instance.gallery_thumb,
-                              filesize=instance.filesize)
+            gallery = Gallery(
+                gallery_id=instance.gallery_id,
+                gallery_token=instance.gallery_token,
+                pagecount=instance.pagecount,
+                gallery_name=instance.gallery_name,
+                gallery_thumb=instance.gallery_thumb,
+                filesize=instance.filesize)
             db = App.get_running_app().db
             db.add(gallery)
             db.commit()
@@ -99,7 +109,23 @@ class FavouriteScreen(Screen):
                 gallerytag = GalleryTags(galleryid=gallery.id, tag=tag)
                 db.add(gallerytag)
                 db.commit()
-        preview_screen = App.get_running_app(
-        ).root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
-        preview_screen.gallery_id = instance.gallery_id
+        #preview_screen = App.get_running_app(
+        #).root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
+        #preview_screen.gallery_id = instance.gallery_id
+        #App.get_running_app().root.next_screen("gallery_preview_screen")
+
+        if not App.get_running_app(
+        ).root.ids.sadpanda_screen_manager.has_screen(
+                "gallery_preview_screen"):
+            from screens.gallerypreviewscreen import GalleryPreviewScreen
+            preview_screen = GalleryPreviewScreen(
+                name="gallery_preview_screen")
+            preview_screen.galleryinstance = instance
+            App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
+                preview_screen)
+        else:
+            preview_screen = App.get_running_app(
+            ).root.ids.sadpanda_screen_manager.get_screen(
+                "gallery_preview_screen")
+            preview_screen.galleryinstance = instance
         App.get_running_app().root.next_screen("gallery_preview_screen")

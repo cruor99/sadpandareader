@@ -15,6 +15,8 @@ from functools import partial
 from components.buttons import ThumbButton, AvatarSampleWidget
 
 import json
+from favouritescreen import FavouriteScreen
+from settingsscreen import SettingsScreen
 
 from BeautifulSoup import BeautifulSoup as BS
 
@@ -36,6 +38,8 @@ class FrontScreen(Screen):
 
     def __init__(self, **kwargs):
         super(FrontScreen, self).__init__(**kwargs)
+        App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(FavouriteScreen(name="favourite_screen"))
+        App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(SettingsScreen(name="settings_screen"))
 
     def on_enter(self):
 

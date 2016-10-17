@@ -27,7 +27,7 @@ from models import check_database
 from kivymd.theming import ThemeManager
 
 #pusherstuff
-from pusherstuff import Pusher, SubscriptionEventListener
+#from pusherstuff import Pusher, SubscriptionEventListener
 
 
 class SadpandaRoot(BoxLayout):
@@ -118,6 +118,19 @@ class SadpandaRoot(BoxLayout):
             captchapopup = CaptchaPopup()
             captchapopup.bind(on_dismiss=self.login_captcha)
             captchapopup.open()
+
+    def log_out(self):
+        try:
+            db = App.get_running_app().db
+            user = db.query(User).first()
+            db.delete(user)
+            db.commit()
+        except:
+            pass
+        self.baseurl = "g.e-hentai"
+        self.next_screen("start_screen")
+
+
 
     def login_captcha(self, instance):
         if instance.action == "try_again":
@@ -245,14 +258,14 @@ class SadpandaApp(App):
         Window.softinput_mode = "below_target"
         data_dir = getattr(self, "user_data_dir")
         self.data_dir = data_dir
-        defaultdir = Config.getdefault("kivy", "log_dir", data_dir)
-        if defaultdir == data_dir:
-            pass
-        else:
-            Config.set("kivy", "log_dir", data_dir)
-            Config.set("kivy", "log_enable", 1)
-            Config.set("kivy", "log_level", "debug")
-            Config.write()
+        #defaultdir = Config.getdefault("kivy", "log_dir", data_dir)
+        #if defaultdir == data_dir:
+        #    pass
+        #else:
+        #    Config.set("kivy", "log_dir", data_dir)
+        #    Config.set("kivy", "log_enable", 1)
+        #    Config.set("kivy", "log_level", "debug")
+        #    Config.write()
         self.db = check_database(data_dir)
         migrationjsonstore = JsonStore("migrate.json")
         migration = migrationjsonstore.get("migrate")
