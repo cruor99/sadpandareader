@@ -20,6 +20,9 @@ If you do not want access to the restricted content, just hit "To Front"
 iOS App Store:
 [Sadpanda Reader](https://itunes.apple.com/us/app/sadpanda-reader/id1166320655?ls=1&mt=8)
 
+Google Play:
+*Coming Soon*
+
 
 ## Various
 
