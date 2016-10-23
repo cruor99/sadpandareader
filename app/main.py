@@ -3,6 +3,7 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import DictProperty, StringProperty, ObjectProperty
+from kivy.properties import BooleanProperty
 from kivy.loader import Loader
 from kivy.core.image import Image as CoreImage
 from kivy.clock import Clock
@@ -10,6 +11,7 @@ from kivy.storage.jsonstore import JsonStore
 import urllib
 from kivy.network.urlrequest import UrlRequest
 from kivy.config import Config
+from kivy.metrics import dp
 
 from plyer import notification
 
@@ -36,16 +38,37 @@ class SadpandaRoot(BoxLayout):
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("g.e-hentai")
+    edgemove = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)
         # list of previous screens
         self.screen_list = []
         #self.pusher = Pusher("")
-#        self.pusher.connect()
- #       self.pusher.bind_channel_simple("1111")
-  #      self.sel = SubscriptionEventListener()
-   #     self.pusher.bind_event("send", self.sel)
+    #        self.pusher.connect()
+    #       self.pusher.bind_channel_simple("1111")
+    #      self.sel = SubscriptionEventListener()
+    #     self.pusher.bind_event("send", self.sel)
+
+    def on_touch_down(self, touch):
+        if touch.x < dp(30):
+            self.edgemove = True
+        else:
+            self.edgemove = False
+        super(SadpandaRoot, self).on_touch_down(touch)
+
+
+    def on_touch_move(self, touch):
+        if touch.x < dp(30):
+            pass
+        else:
+            if self.edgemove:
+                self.edgemove = False
+                self.onBackBtn()
+            else:
+                pass
+        super(SadpandaRoot, self).on_touch_move(touch)
+
 
     def default_settings(self):
         db = App.get_running_app().db
@@ -81,7 +104,6 @@ class SadpandaRoot(BoxLayout):
             req_body=params,
             req_headers=headers)
 
-
     def login_failure(self, req, r):
         print "failure"
         print req.resp_headers
@@ -107,7 +129,6 @@ class SadpandaRoot(BoxLayout):
                     except:
                         finalcookies += splitcookie[0] + ";"
 
-
             self.cookies = finalcookies[:-1]
             cookies = User(cookies=str(self.cookies))
             db.add(cookies)
@@ -129,8 +150,6 @@ class SadpandaRoot(BoxLayout):
             pass
         self.baseurl = "g.e-hentai"
         self.next_screen("start_screen")
-
-
 
     def login_captcha(self, instance):
         if instance.action == "try_again":
@@ -156,7 +175,8 @@ class SadpandaRoot(BoxLayout):
     def goto_front(self):
         if not self.ids.sadpanda_screen_manager.has_screen("front_screen"):
             from screens.frontscreen import FrontScreen
-            self.ids.sadpanda_screen_manager.add_widget(FrontScreen(name="front_screen"))
+            self.ids.sadpanda_screen_manager.add_widget(
+                FrontScreen(name="front_screen"))
         blanksearch = Search(searchterm=" ")
         db = App.get_running_app().db
         db.add(blanksearch)
@@ -233,16 +253,17 @@ class SadpandaRoot(BoxLayout):
         if instance.ids.misc.active == True:
             filters["misc"] = 1
 
-        newfilter = Filters(doujinshi=filters["doujinshi"],
-                            manga=filters["manga"],
-                            artistcg=filters["artistcg"],
-                            gamecg=filters["gamecg"],
-                            western=filters["western"],
-                            nonh=filters["nonh"],
-                            imageset=filters["imageset"],
-                            cosplay=filters["cosplay"],
-                            asianporn=filters["asianporn"],
-                            misc=filters["misc"])
+        newfilter = Filters(
+            doujinshi=filters["doujinshi"],
+            manga=filters["manga"],
+            artistcg=filters["artistcg"],
+            gamecg=filters["gamecg"],
+            western=filters["western"],
+            nonh=filters["nonh"],
+            imageset=filters["imageset"],
+            cosplay=filters["cosplay"],
+            asianporn=filters["asianporn"],
+            misc=filters["misc"])
         db.add(newfilter)
         db.commit()
 
@@ -281,16 +302,17 @@ class SadpandaApp(App):
         if existfilters:
             pass
         else:
-            clearstart = Filters(nonh=1,
-                                 doujinshi=0,
-                                 manga=0,
-                                 artistcg=0,
-                                 gamecg=0,
-                                 western=0,
-                                 imageset=0,
-                                 cosplay=0,
-                                 asianporn=0,
-                                 misc=0)
+            clearstart = Filters(
+                nonh=1,
+                doujinshi=0,
+                manga=0,
+                artistcg=0,
+                gamecg=0,
+                western=0,
+                imageset=0,
+                cosplay=0,
+                asianporn=0,
+                misc=0)
             self.db.add(clearstart)
             self.db.commit()
         clearsearch = Search(searchterm=" ")
