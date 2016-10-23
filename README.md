@@ -17,7 +17,9 @@ If you do not want access to the restricted content, just hit "To Front"
 
 ## Download
 
-For the android apk and other binaries, check the [releases page](https://github.com/cruor99/sadpandareader/releases)
+iOS App Store:
+[Sadpanda Reader](https://itunes.apple.com/us/app/sadpanda-reader/id1166320655?ls=1&mt=8)
+
 
 ## Various
 
