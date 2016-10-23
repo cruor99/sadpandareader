@@ -11,12 +11,16 @@ import urllib
 from os import linesep
 from functools import partial
 
+
 # Self created components
 from components.buttons import ThumbButton, AvatarSampleWidget
 
 import json
 from favouritescreen import FavouriteScreen
 from settingsscreen import SettingsScreen
+
+#to unescape gallery strings
+from HTMLParser import HTMLParser
 
 from BeautifulSoup import BeautifulSoup as BS
 
@@ -202,12 +206,15 @@ class FrontScreen(Screen):
             pass
 
     def add_button(self, gallery, *largs):
+        escapedtitle = gallery["title"]
+        unescapedtitle =  HTMLParser().unescape(escapedtitle)
+
         gallerybutton = ThumbButton(
             #gallerysource=gallery["thumb"],
             gallery_id=str(gallery["gid"]),
             gallery_token=str(gallery["token"]),
             pagecount=int(gallery["filecount"]),
-            gallery_name=gallery["title"],
+            gallery_name=unescapedtitle,
             gallery_tags=gallery["tags"],
             gallery_thumb=gallery["thumb"],
             filesize=gallery["filesize"],
