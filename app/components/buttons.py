@@ -11,10 +11,13 @@ from kivy.graphics import Color, Rectangle
 from kivy.metrics import dp
 from kivy.uix.stencilview import StencilView
 
+from kivy.uix.label import Label
+from kivymd.label import MDLabel
+
 Builder.load_file("kv/buttons.kv")
 
 
-class ThumbButton(TwoLineAvatarListItem):
+class ThumbButton(TwoLineAvatarListItem, Label):
     gallery_id = StringProperty("")
     gallery_token = StringProperty("")
     gallery_tags = ListProperty([])

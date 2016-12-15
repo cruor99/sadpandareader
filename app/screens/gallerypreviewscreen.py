@@ -47,6 +47,7 @@ class GalleryPreviewScreen(Screen):
 
     def store_gallery(self, *args):
         instance = self.galleryinstance
+        print instance.gallery_name
         db = App.get_running_app().db
         existgallery = db.query(Gallery).filter_by(
             gallery_id=instance.gallery_id).first()

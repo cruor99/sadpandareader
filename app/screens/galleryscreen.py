@@ -130,8 +130,9 @@ class GalleryScreen(Screen):
     def got_result(self, req, r):
 
 
-        pageregex = re.compile('http\S{0,1}?://' + App.get_running_app()
-                               .root.baseurl + '.org/s/\S{10}/\d{6}-\d+')
+        #pageregex = re.compile('http\S{0,1}?://' + App.get_running_app()
+        pageregex = re.compile('http\S?://' + App.get_running_app()
+                               .root.baseurl + '.org/s/\S{10}/\d{0,10}-\d+')
         soup = BS(r)
         for a in soup.findAll(name="a", attrs={"href": pageregex}):
             self.pagelinks.append(a["href"])
@@ -147,7 +148,7 @@ class GalleryScreen(Screen):
                     mainpage=req.url[:-2][-1:])
                 db.add(pageurl)
                 db.commit()
-
+        print self.pagelinks
         self.gotpageresultcounter = req.url[:-2][-1:]
 
     def testmove(self, offset, min_move, direction):

@@ -11,7 +11,6 @@ import urllib
 from os import linesep
 from functools import partial
 
-
 # Self created components
 from components.buttons import ThumbButton, AvatarSampleWidget
 
@@ -42,8 +41,10 @@ class FrontScreen(Screen):
 
     def __init__(self, **kwargs):
         super(FrontScreen, self).__init__(**kwargs)
-        App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(FavouriteScreen(name="favourite_screen"))
-        App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(SettingsScreen(name="settings_screen"))
+        App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
+            FavouriteScreen(name="favourite_screen"))
+        App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
+            SettingsScreen(name="settings_screen"))
 
     def on_enter(self):
 
@@ -89,7 +90,9 @@ class FrontScreen(Screen):
             App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
                 preview_screen)
         else:
-            preview_screen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
+            preview_screen = App.get_running_app(
+            ).root.ids.sadpanda_screen_manager.get_screen(
+                "gallery_preview_screen")
             preview_screen.galleryinstance = instance
         App.get_running_app().root.next_screen("gallery_preview_screen")
 
@@ -175,10 +178,13 @@ class FrontScreen(Screen):
             gid = splitlink[-3]
             self.gidlist.append([gid, gtoken])
 
-        headers = {"Content-type": "application/json",
-                   "Accept": "text/plain",
-                   'User-agent': 'Mozilla/5.0',
-                   "Cookie": ""}
+        headers = {
+            "Content-type": "application/json",
+            "Accept": "text/plain",
+            'User-agent':
+            'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36',
+            "Cookie": ""
+        }
         payload = {"method": "gdata", "gidlist": self.gidlist}
         cookies = App.get_running_app().root.cookies
         headers["Cookie"] = cookies
@@ -186,9 +192,10 @@ class FrontScreen(Screen):
         self.grabthumbs(headers, payload, cookies)
 
     def grabthumbs(self, headers, payload, cookies, *largs):
+        print headers["Cookie"]
         params = urllib.urlencode(payload)
         r = UrlRequest(
-            "http://" + App.get_running_app().root.baseurl + ".org/api.php",
+            "https://" + App.get_running_app().root.baseurl + ".org/api.php",
             on_success=self.thumbgrab,
             req_body=json.dumps(payload),
             req_headers=headers)
@@ -207,7 +214,7 @@ class FrontScreen(Screen):
 
     def add_button(self, gallery, *largs):
         escapedtitle = gallery["title"]
-        unescapedtitle =  HTMLParser().unescape(escapedtitle)
+        unescapedtitle = HTMLParser().unescape(escapedtitle)
 
         gallerybutton = ThumbButton(
             #gallerysource=gallery["thumb"],

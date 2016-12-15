@@ -122,6 +122,7 @@ class SadpandaRoot(BoxLayout):
         if "ipb_pass_hash" in req.resp_headers["set-cookie"]:
             cookies = req.resp_headers["set-cookie"].split(";")
             for cookie in cookies:
+                print cookie
                 if "ipb" in cookie:
                     splitcookie = cookie.split(",")
                     try:
@@ -129,6 +130,7 @@ class SadpandaRoot(BoxLayout):
                     except:
                         finalcookies += splitcookie[0] + ";"
 
+            print finalcookies
             self.cookies = finalcookies[:-1]
             cookies = User(cookies=str(self.cookies))
             db.add(cookies)

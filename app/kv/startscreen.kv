@@ -13,8 +13,8 @@
             orientation: "vertical"
             SingleLineTextField:
                 size_hint: None, None
-                height: "48dp"
-                width: "150dp"
+                height: dp(48)
+                width: dp(150)
                 id: username
                 hint_text: "Username"
                 _hint_txt_color: (0, 0, 0, 1)
@@ -22,16 +22,16 @@
                 id: password
                 password: True
                 size_hint: None, None
-                height: "48dp"
-                width: "150dp"
+                height: dp(48)
+                width: dp(150)
                 hint_text: "Password"
                 _hint_txt_color: (0, 0, 0, 1)
             MDRaisedButton:
                 size_hint_y: None
                 size_hint_x: None
                 id: login
-                height: "60dp"
-                width: "150dp"
+                height: dp(60)
+                width: dp(150)
                 text: "login"
                 on_release: app.root.login_exhentai(username, password)
             MDFlatButton:
