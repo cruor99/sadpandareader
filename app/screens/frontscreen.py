@@ -22,6 +22,7 @@ from settingsscreen import SettingsScreen
 from HTMLParser import HTMLParser
 
 from BeautifulSoup import BeautifulSoup as BS
+import urllib
 
 from models import Search, Filters, Gallery, GalleryTags
 
@@ -48,7 +49,8 @@ class FrontScreen(Screen):
 
     def on_enter(self):
 
-        App.get_running_app().root.cookies += "; uconfig=dm_t"
+        #App.get_running_app(
+        #).root.cookies += "; uconfig=xl_10x1034x2058x20x1044x2068x30x1054x2078x40x1064x2088x50x1074x2098x60x1084x2108x70x1094x2118x80x1104x2128x90x1114x2138x100x1124x2148x110x1134x2158x120x1144x2168x130x1154x2178x254x1278x2302x255x1279x2303"
         self.ids.galleryscroll.bind(scroll_y=self.check_scroll_y)
         db = App.get_running_app().db
         search = db.query(Search).order_by(Search.id.desc()).first()
@@ -144,7 +146,8 @@ class FrontScreen(Screen):
             req = UrlRequest(
                 page0searchurl,
                 on_success=self.got_result,
-                on_error=self.got_failure,
+                on_failure=self.got_failure,
+                on_error=self.got_error,
                 req_headers=headers,
                 method="GET")
         else:
@@ -155,6 +158,10 @@ class FrontScreen(Screen):
         # pure html of ehentai link
 
     def got_failure(self, req, r):
+        print req
+        print r
+
+    def got_error(self, req, r):
         print req
         print r
 
@@ -189,34 +196,49 @@ class FrontScreen(Screen):
         payload = {"method": "gdata", "gidlist": self.gidlist}
         cookies = App.get_running_app().root.cookies
         headers["Cookie"] = cookies
+        self.headers = headers
 
         self.grabthumbs(headers, payload, cookies)
 
     def grabthumbs(self, headers, payload, cookies, *largs):
-        print headers["Cookie"]
         params = urllib.urlencode(payload)
         r = UrlRequest(
-            "https://" + App.get_running_app().root.baseurl + ".org/api.php",
+            "http://g.e-hentai.org/api.php",
             on_success=self.thumbgrab,
+            on_error=self.thumb_error,
+            on_failure=self.thumb_failure,
             req_body=json.dumps(payload),
             req_headers=headers)
 
+    def thumb_error(self, req, r):
+        print req.resp_status
+        print r
+
+    def thumb_failure(self, req, r):
+        print req.resp_status
+        print r
+
     def thumbgrab(self, req, r):
+        print "got here"
         requestdump = r
         requestdump.rstrip(linesep)
         requestjson = json.loads(requestdump)
+        #print requestjson
+        print type(requestjson)
         i = 0
         try:
             for gallery in requestjson["gmetadata"]:
-                self.add_button(gallery)
+                print i
+                self.add_button(gallery, i)
                 i += 1
-        except:
-            pass
+        except Exception as e:
+            print e
 
-    def add_button(self, gallery, *largs):
+    def add_button(self, gallery, i, *largs):
         escapedtitle = gallery["title"]
         unescapedtitle = HTMLParser().unescape(escapedtitle)
 
+        print gallery["thumb"]
         gallerybutton = ThumbButton(
             #gallerysource=gallery["thumb"],
             gallery_id=str(gallery["gid"]),
