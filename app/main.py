@@ -1,3 +1,45 @@
+# -*- coding: utf-8 -*-
+from kivy.app import App
+from kivy.core.window import Window
+from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import DictProperty, StringProperty, ObjectProperty
+from kivy.properties import BooleanProperty
+from kivy.loader import Loader
+from kivy.core.image import Image as CoreImage
+from kivy.clock import Clock
+from kivy.storage.jsonstore import JsonStore
+import urllib
+from kivy.network.urlrequest import UrlRequest
+from kivy.config import Config
+from kivy.metrics import dp
+
+from plyer import notification
+
+from threading import Thread
+
+import os
+import json
+from components.navdrawer import SadpandaNavdrawer
+from components.popups import SearchPopup, FilterPopup, CaptchaPopup
+from screens.startscreen import StartScreen
+from models import User, Filters, Search, Settings
+from models import check_database
+
+# KivyMD stuff
+from kivymd.theming import ThemeManager
+
+#pusherstuff
+#from pusherstuff import Pusher, SubscriptionEventListener
+
+#EXPERIMENTAL
+from kivymd.material_resources import FONTS
+from kivy.core.text import LabelBase
+
+FONTS[0]["fn_regular"] = "fonts/NotoSansCJK-Regular.ttc"
+FONTS[0]["fn_bold"] = "fonts/NotoSansCJK-Regular.ttc"
+FONTS[0]["fn_italic"] = "fonts/NotoSansCJK-Regular.ttc"
+FONTS[0]["fn_bolditalic"] = "fonts/NotoSansCJK-Regular.ttc"
+
 FONTS[1]["fn_regular"] = "fonts/NotoSansCJK-Regular.ttc"
 FONTS[1]["fn_bold"] = "fonts/NotoSansCJK-Regular.ttc"
 FONTS[1]["fn_italic"] = "fonts/NotoSansCJK-Regular.ttc"
