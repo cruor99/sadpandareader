@@ -5,7 +5,7 @@ from kivy.uix.image import AsyncImage as Image
 from kivy.uix.stencilview import StencilView
 from kivy.uix.button import Button
 from kivymd.button import MDFlatButton, MDRaisedButton
-from kivymd.list import TwoLineAvatarListItem, ILeftBodyTouch
+from kivymd.list import TwoLineAvatarListItem, ILeftBodyTouch, OneLineAvatarListItem
 from kivy.lang import Builder
 from kivy.graphics import Color, Rectangle
 from kivy.metrics import dp
@@ -17,7 +17,7 @@ from kivymd.label import MDLabel
 Builder.load_file("kv/buttons.kv")
 
 
-class ThumbButton(TwoLineAvatarListItem, Label):
+class ThumbButton(TwoLineAvatarListItem):
     gallery_id = StringProperty("")
     gallery_token = StringProperty("")
     gallery_tags = ListProperty([])
@@ -29,10 +29,11 @@ class ThumbButton(TwoLineAvatarListItem, Label):
 
     def __init__(self, **kwargs):
         super(ThumbButton, self).__init__(**kwargs)
-        if len(self.gallery_name) > 110:
-            self.secondary_text = self.gallery_name[:110] + "..."
+        if len(self.gallery_name) > 80:
+            self.text = self.gallery_name[:80] + "..."
+            #self.text_size = self.width - self._txt_left_pad
         else:
-            self.secondary_text = self.gallery_name
+            self.text = self.gallery_name
 
         self.ids._left_container.size = (self.size[0] - dp(10), self.size[1] - dp(10))
         self.ids._left_container.x = self.x + dp(5)

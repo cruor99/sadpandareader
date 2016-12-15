@@ -42,6 +42,7 @@ class GalleryPreviewScreen(Screen):
         self.gallery_tags = taglist
         self.gallery_thumb = gallerydata.gallery_thumb
         self.filesize = gallerydata.filesize
+        print self.gallery_thumb
 
         Clock.schedule_once(self.populate_tags)
 

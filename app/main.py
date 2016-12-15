@@ -1,36 +1,20 @@
-# -*- coding: utf-8 -*-
-from kivy.app import App
-from kivy.core.window import Window
-from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import DictProperty, StringProperty, ObjectProperty
-from kivy.properties import BooleanProperty
-from kivy.loader import Loader
-from kivy.core.image import Image as CoreImage
-from kivy.clock import Clock
-from kivy.storage.jsonstore import JsonStore
-import urllib
-from kivy.network.urlrequest import UrlRequest
-from kivy.config import Config
-from kivy.metrics import dp
 
-from plyer import notification
+#EXPERIMENTAL
+from kivymd.material_resources import FONTS
+from kivy.core.text import LabelBase
 
-from threading import Thread
+FONTS[0]["fn_regular"] = "fonts/NotoSansCJK-Regular.ttc"
+FONTS[0]["fn_bold"] = "fonts/NotoSansCJK-Regular.ttc"
+FONTS[0]["fn_italic"] = "fonts/NotoSansCJK-Regular.ttc"
+FONTS[0]["fn_bolditalic"] = "fonts/NotoSansCJK-Regular.ttc"
 
-import os
-import json
-from components.navdrawer import SadpandaNavdrawer
-from components.popups import SearchPopup, FilterPopup, CaptchaPopup
-from screens.startscreen import StartScreen
-from models import User, Filters, Search, Settings
-from models import check_database
+FONTS[1]["fn_regular"] = "fonts/NotoSansCJK-Regular.ttc"
+FONTS[1]["fn_bold"] = "fonts/NotoSansCJK-Regular.ttc"
+FONTS[1]["fn_italic"] = "fonts/NotoSansCJK-Regular.ttc"
+FONTS[1]["fn_bolditalic"] = "fonts/NotoSansCJK-Regular.ttc"
 
-# KivyMD stuff
-from kivymd.theming import ThemeManager
-
-#pusherstuff
-#from pusherstuff import Pusher, SubscriptionEventListener
-
+for font in FONTS:
+    LabelBase.register(**font)
 
 class SadpandaRoot(BoxLayout):
 
@@ -329,7 +313,9 @@ class SadpandaApp(App):
     def on_pause(self):
         return True
 
+
     def build(self):
+        #print FONTS[0]
         self.nav_drawer = SadpandaNavdrawer()
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Grey"
