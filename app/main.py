@@ -1,18 +1,7 @@
-
-#EXPERIMENTAL
-from kivymd.material_resources import FONTS
-from kivy.core.text import LabelBase
-
-FONTS[0]["fn_regular"] = "fonts/NotoSansCJK-Regular.ttc"
-FONTS[0]["fn_bold"] = "fonts/NotoSansCJK-Regular.ttc"
-FONTS[0]["fn_italic"] = "fonts/NotoSansCJK-Regular.ttc"
-FONTS[0]["fn_bolditalic"] = "fonts/NotoSansCJK-Regular.ttc"
-
 FONTS[1]["fn_regular"] = "fonts/NotoSansCJK-Regular.ttc"
 FONTS[1]["fn_bold"] = "fonts/NotoSansCJK-Regular.ttc"
 FONTS[1]["fn_italic"] = "fonts/NotoSansCJK-Regular.ttc"
 FONTS[1]["fn_bolditalic"] = "fonts/NotoSansCJK-Regular.ttc"
-
 for font in FONTS:
     LabelBase.register(**font)
 

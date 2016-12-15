@@ -48,6 +48,7 @@ class FrontScreen(Screen):
 
     def on_enter(self):
 
+        App.get_running_app().root.cookies += "; uconfig=dm_t"
         self.ids.galleryscroll.bind(scroll_y=self.check_scroll_y)
         db = App.get_running_app().db
         search = db.query(Search).order_by(Search.id.desc()).first()
