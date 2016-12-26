@@ -27,6 +27,7 @@ from models import check_database
 
 # KivyMD stuff
 from kivymd.theming import ThemeManager
+import kivymd.snackbar as Snackbar
 
 #pusherstuff
 #from pusherstuff import Pusher, SubscriptionEventListener
@@ -229,9 +230,12 @@ class SadpandaRoot(BoxLayout):
         return False
 
     def show_filters(self):
-        fpop = FilterPopup()
-        fpop.bind(on_dismiss=self.set_filters)
-        fpop.open()
+        if self.username.lower() == "sadpandareader" or self.baseurl == "g.e-hentai":
+            Snackbar.make("Language filtering to come next version")
+        else:
+            fpop = FilterPopup()
+            fpop.bind(on_dismiss=self.set_filters)
+            fpop.open()
 
     def set_filters(self, instance):
         db = App.get_running_app().db
