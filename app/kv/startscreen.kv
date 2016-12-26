@@ -8,8 +8,9 @@
                 source: "img/main_bg.png"
         BoxLayout:
             center: self.parent.center
-            pos_hint: {"center_x": 0.4, "center_y": 0.5}
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint: None, None
+            width: dp(150)
             orientation: "vertical"
             SingleLineTextField:
                 size_hint: None, None
@@ -17,6 +18,8 @@
                 width: dp(150)
                 id: username
                 hint_text: "Username"
+                opposite_colors: True
+                foreground_color: (0, 0, 0, 1)
                 _hint_txt_color: (0, 0, 0, 1)
             SingleLineTextField:
                 id: password
@@ -25,13 +28,15 @@
                 height: dp(48)
                 width: dp(150)
                 hint_text: "Password"
+                theme_text_color: "Secondary"
+                foreground_color: (0, 0, 0, 1)
                 _hint_txt_color: (0, 0, 0, 1)
             MDRaisedButton:
                 size_hint_y: None
-                size_hint_x: None
+                size_hint_x: 1
                 id: login
                 height: dp(60)
-                width: dp(150)
+                width: dp(300)
                 text: "login"
                 on_release: app.root.login_exhentai(username, password)
             MDFlatButton:
@@ -40,5 +45,6 @@
                 id: unrestricted
                 height: dp(60)
                 width: dp(150)
+                opposite_colors: True
                 text: "View Unrestricted"
                 on_release: app.root.goto_front()

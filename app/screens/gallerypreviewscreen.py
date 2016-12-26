@@ -42,13 +42,11 @@ class GalleryPreviewScreen(Screen):
         self.gallery_tags = taglist
         self.gallery_thumb = gallerydata.gallery_thumb
         self.filesize = gallerydata.filesize
-        print self.gallery_thumb
 
         Clock.schedule_once(self.populate_tags)
 
     def store_gallery(self, *args):
         instance = self.galleryinstance
-        print instance.gallery_name
         db = App.get_running_app().db
         existgallery = db.query(Gallery).filter_by(
             gallery_id=instance.gallery_id).first()

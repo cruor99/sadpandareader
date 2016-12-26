@@ -121,6 +121,12 @@ class FrontScreen(Screen):
         cookies = App.get_running_app().root.cookies
         headers["Cookie"] = cookies
         searchword = self.searchword
+        if App.get_running_app().root.username.lower() == "sadpandareader":
+            self.searchword += ' touhou -lolicon -zeno -hitsuji -"females only"'
+            searchword += ' touhou -lolicon -zeno -hitsuji -"females only"'
+        elif App.get_running_app().root.baseurl == "g.e-hentai":
+            self.searchword += ' touhou -zeno -hitsuji -"females only"'
+            searchword += ' touhou -zeno -hitsuji -"females only"'
         page0searchurl = str(
             "http://" + App.get_running_app().root.baseurl + ".org/?" +
             "f_doujinshi=" + str(filters.doujinshi) + "&f_manga=" + str(
@@ -142,17 +148,18 @@ class FrontScreen(Screen):
                 filters.asianporn) + "&f_misc=" + str(
                     filters.misc) + "&f_search=" + urllib.quote_plus(
                         self.searchword) + "&f_apply=Apply+Filter")
+        print urllib.quote_plus(self.searchword)
         if self.searchpage == 0:
-            req = UrlRequest(
-                page0searchurl,
-                on_success=self.got_result,
-                on_failure=self.got_failure,
-                on_error=self.got_error,
-                req_headers=headers,
-                method="GET")
+            req = UrlRequest(page0searchurl,
+                             on_success=self.got_result,
+                             on_failure=self.got_failure,
+                             on_error=self.got_error,
+                             req_headers=headers,
+                             method="GET")
         else:
-            req = UrlRequest(
-                pagesearchurl, self.got_result, req_headers=headers)
+            req = UrlRequest(pagesearchurl,
+                             self.got_result,
+                             req_headers=headers)
 
         self.searchpage += 1
         # pure html of ehentai link
@@ -202,13 +209,12 @@ class FrontScreen(Screen):
 
     def grabthumbs(self, headers, payload, cookies, *largs):
         params = urllib.urlencode(payload)
-        r = UrlRequest(
-            "http://g.e-hentai.org/api.php",
-            on_success=self.thumbgrab,
-            on_error=self.thumb_error,
-            on_failure=self.thumb_failure,
-            req_body=json.dumps(payload),
-            req_headers=headers)
+        r = UrlRequest("http://g.e-hentai.org/api.php",
+                       on_success=self.thumbgrab,
+                       on_error=self.thumb_error,
+                       on_failure=self.thumb_failure,
+                       req_body=json.dumps(payload),
+                       req_headers=headers)
 
     def thumb_error(self, req, r):
         print req.resp_status
@@ -219,16 +225,12 @@ class FrontScreen(Screen):
         print r
 
     def thumbgrab(self, req, r):
-        print "got here"
         requestdump = r
         requestdump.rstrip(linesep)
         requestjson = json.loads(requestdump)
-        #print requestjson
-        print type(requestjson)
         i = 0
         try:
             for gallery in requestjson["gmetadata"]:
-                print i
                 self.add_button(gallery, i)
                 i += 1
         except Exception as e:
@@ -238,7 +240,6 @@ class FrontScreen(Screen):
         escapedtitle = gallery["title"]
         unescapedtitle = HTMLParser().unescape(escapedtitle)
 
-        print gallery["thumb"]
         gallerybutton = ThumbButton(
             #gallerysource=gallery["thumb"],
             gallery_id=str(gallery["gid"]),

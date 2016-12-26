@@ -148,7 +148,6 @@ class GalleryScreen(Screen):
                     mainpage=req.url[:-2][-1:])
                 db.add(pageurl)
                 db.commit()
-        print self.pagelinks
         self.gotpageresultcounter = req.url[:-2][-1:]
 
     def testmove(self, offset, min_move, direction):

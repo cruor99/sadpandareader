@@ -28,7 +28,7 @@ source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf,db,gif,json
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 2.5
+version = 2.7
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -36,7 +36,7 @@ version = 2.5
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy==master, beautifulsoup, openssl, sqlalchemy, sqlite3, git+https://github.com/cruor99/kivymd.git, pyjnius, plyer
+requirements = kivy==master, beautifulsoup, openssl, sqlalchemy, git+https://gitlab.com/kivymd/kivymd.git, plyer, pyobjus
 
 #workaround fix
 p4a.local_recipes = %(source.dir)s/.buildozer/android/platform/python-for-android/recipes
@@ -176,6 +176,12 @@ android.logcat_filters = *:S python:D
 
 # (str) Name of the certificate to use for signing the release version
 #ios.codesign.release = %(ios.codesign.debug)s
+#ios.codesign.debug = "iPhone Developer: Kjetil Andre Liknes (YE9GH35KK6)"
+ios.codesign.debug = "iPhone Distribution: Kjetil Andre Liknes (9NJ47ME5B9)"
+# (str) Name of the certificate to use for signing the release version
+#ios.codesign.release = %(ios.codesign.debug)s
+ios.codesign.release = "iPhone Distribution: Kjetil Andre Liknes (9NJ47ME5B9)"
+
 
 
 [buildozer]

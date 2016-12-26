@@ -47,6 +47,7 @@ FONTS[1]["fn_bolditalic"] = "fonts/NotoSansCJK-Regular.ttc"
 for font in FONTS:
     LabelBase.register(**font)
 
+
 class SadpandaRoot(BoxLayout):
 
     cookies = StringProperty()
@@ -60,10 +61,10 @@ class SadpandaRoot(BoxLayout):
         # list of previous screens
         self.screen_list = []
         #self.pusher = Pusher("")
-    #        self.pusher.connect()
-    #       self.pusher.bind_channel_simple("1111")
-    #      self.sel = SubscriptionEventListener()
-    #     self.pusher.bind_event("send", self.sel)
+        #        self.pusher.connect()
+        #       self.pusher.bind_channel_simple("1111")
+        #      self.sel = SubscriptionEventListener()
+        #     self.pusher.bind_event("send", self.sel)
 
     def on_touch_down(self, touch):
         if touch.x < dp(30):
@@ -71,7 +72,6 @@ class SadpandaRoot(BoxLayout):
         else:
             self.edgemove = False
         super(SadpandaRoot, self).on_touch_down(touch)
-
 
     def on_touch_move(self, touch):
         if touch.x < dp(30):
@@ -83,7 +83,6 @@ class SadpandaRoot(BoxLayout):
             else:
                 pass
         super(SadpandaRoot, self).on_touch_move(touch)
-
 
     def default_settings(self):
         db = App.get_running_app().db
@@ -145,9 +144,10 @@ class SadpandaRoot(BoxLayout):
                         finalcookies += splitcookie[0] + ";"
 
             self.cookies = finalcookies[:-1]
-            cookies = User(cookies=str(self.cookies))
-            db.add(cookies)
-            db.commit()
+            if self.username.lower() != "sadpandareader":
+                cookies = User(cookies=str(self.cookies))
+                db.add(cookies)
+                db.commit()
             self.baseurl = "exhentai"
             self.goto_front()
         else:
@@ -190,8 +190,8 @@ class SadpandaRoot(BoxLayout):
     def goto_front(self):
         if not self.ids.sadpanda_screen_manager.has_screen("front_screen"):
             from screens.frontscreen import FrontScreen
-            self.ids.sadpanda_screen_manager.add_widget(
-                FrontScreen(name="front_screen"))
+            self.ids.sadpanda_screen_manager.add_widget(FrontScreen(
+                name="front_screen"))
         blanksearch = Search(searchterm=" ")
         db = App.get_running_app().db
         db.add(blanksearch)
@@ -268,17 +268,16 @@ class SadpandaRoot(BoxLayout):
         if instance.ids.misc.active == True:
             filters["misc"] = 1
 
-        newfilter = Filters(
-            doujinshi=filters["doujinshi"],
-            manga=filters["manga"],
-            artistcg=filters["artistcg"],
-            gamecg=filters["gamecg"],
-            western=filters["western"],
-            nonh=filters["nonh"],
-            imageset=filters["imageset"],
-            cosplay=filters["cosplay"],
-            asianporn=filters["asianporn"],
-            misc=filters["misc"])
+        newfilter = Filters(doujinshi=filters["doujinshi"],
+                            manga=filters["manga"],
+                            artistcg=filters["artistcg"],
+                            gamecg=filters["gamecg"],
+                            western=filters["western"],
+                            nonh=filters["nonh"],
+                            imageset=filters["imageset"],
+                            cosplay=filters["cosplay"],
+                            asianporn=filters["asianporn"],
+                            misc=filters["misc"])
         db.add(newfilter)
         db.commit()
 
@@ -317,17 +316,16 @@ class SadpandaApp(App):
         if existfilters:
             pass
         else:
-            clearstart = Filters(
-                nonh=1,
-                doujinshi=0,
-                manga=0,
-                artistcg=0,
-                gamecg=0,
-                western=0,
-                imageset=0,
-                cosplay=0,
-                asianporn=0,
-                misc=0)
+            clearstart = Filters(nonh=1,
+                                 doujinshi=0,
+                                 manga=0,
+                                 artistcg=0,
+                                 gamecg=0,
+                                 western=0,
+                                 imageset=0,
+                                 cosplay=0,
+                                 asianporn=0,
+                                 misc=0)
             self.db.add(clearstart)
             self.db.commit()
         clearsearch = Search(searchterm=" ")
@@ -341,7 +339,6 @@ class SadpandaApp(App):
 
     def on_pause(self):
         return True
-
 
     def build(self):
         self.nav_drawer = SadpandaNavdrawer()
