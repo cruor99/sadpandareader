@@ -1,4 +1,5 @@
 from kivy.app import App
+from kivy.uix.popup import Popup
 from kivy.properties import StringProperty, NumericProperty
 from kivy.lang import Builder
 
@@ -59,7 +60,7 @@ class SearchArea(MDTextField):
         self.dismiss()
 
 
-class FilterPopup(MDDialog):
+class FilterPopup(Popup):
     doujinshi = NumericProperty(0)
     manga = NumericProperty(0)
     artistcg = NumericProperty(0)
