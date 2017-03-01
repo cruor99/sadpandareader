@@ -1,5 +1,9 @@
+#:import NavigationDrawerToolbar kivymd.navigationdrawer.NavigationDrawerToolbar
 
 <SadpandaNavdrawer>:
+    NavigationDrawerToolbar:
+        title: "Sadpanda Navigation"
+        right_action_items: [["close", lambda x: app.root.ids.nav_layout.toggle_nav_drawer()]]
     NavigationDrawerIconButton:
         icon: "home"
         text: "Frontpage"

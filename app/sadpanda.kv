@@ -1,6 +1,6 @@
 #:import win kivy.core.window
 #:import Toolbar kivymd.toolbar.Toolbar
-#:import SingleLineTextField kivymd.textfields.SingleLineTextField
+#:import MDTextField kivymd.textfields.MDTextField
 #:import MDSwitch kivymd.selectioncontrols.MDSwitch
 #:import MDList kivymd.list.MDList
 <WrappedLabel@Label>:
@@ -13,8 +13,12 @@
 
 <SadpandaRoot>:
     orientation: "vertical"
-    ScreenManager:
-        id: sadpanda_screen_manager
-        StartScreen:
-            id: start_screen
-            name: "start_screen"
+    NavigationLayout:
+        id: nav_layout
+        SadpandaNavdrawer:
+            id: nav_drawer
+        ScreenManager:
+            id: sadpanda_screen_manager
+            StartScreen:
+                id: start_screen
+                name: "start_screen"

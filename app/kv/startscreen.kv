@@ -12,25 +12,25 @@
             size_hint: None, None
             width: dp(150)
             orientation: "vertical"
-            SingleLineTextField:
+            MDTextField:
                 size_hint: None, None
                 height: dp(48)
                 width: dp(150)
                 id: username
                 hint_text: "Username"
                 opposite_colors: True
-                foreground_color: (0, 0, 0, 1)
-                _hint_txt_color: (0, 0, 0, 1)
-            SingleLineTextField:
+                color_mode: "primary"
+                _current_hint_text_color: [0.0, 0.0, 0.0, 1]
+                line_color_normal: [0, 0, 0, 1]
+            MDTextField:
                 id: password
                 password: True
                 size_hint: None, None
                 height: dp(48)
                 width: dp(150)
                 hint_text: "Password"
-                theme_text_color: "Secondary"
-                foreground_color: (0, 0, 0, 1)
-                _hint_txt_color: (0, 0, 0, 1)
+                line_color_normal: [0, 0, 0, 1]
+                _current_hint_text_color: [0.0, 0.0, 0.0, 1]
             MDRaisedButton:
                 size_hint_y: None
                 size_hint_x: 1
@@ -38,6 +38,7 @@
                 height: dp(60)
                 width: dp(300)
                 text: "login"
+                theme_text_color: "Secondary"
                 on_release: app.root.login_exhentai(username, password)
             MDFlatButton:
                 size_hint_y: None

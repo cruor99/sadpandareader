@@ -5,7 +5,7 @@ from kivy.properties import BooleanProperty
 from kivy.clock import Clock
 import urllib
 from kivy.network.urlrequest import UrlRequest
-import kivymd.snackbar as Snackbar
+from kivymd.snackbar import Snackbar
 from kivy.lang import Builder
 
 Builder.load_file("kv/galleryscreen.kv")
@@ -191,7 +191,7 @@ class GalleryScreen(Screen):
                     break
                 except:
                     # Create a end of gallery popup
-                    Snackbar.make("End of Gallery")
+                    Snackbar(text="End of Gallery").show()
                     newpage = pagelinks[0]
                     newpage.current = 1
                     page.current = 0

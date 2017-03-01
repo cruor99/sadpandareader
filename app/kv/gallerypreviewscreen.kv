@@ -7,8 +7,8 @@
             title: root.title
             #left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
             left_action_items: [["chevron-left", lambda x: app.root.onBackBtn(), False]]
-            right_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
-            background_color: app.theme_cls.primary_color
+            right_action_items: [["menu", lambda x: app.root.ids.nav_layout.toggle_nav_drawer()]]
+            md_bg_color: app.theme_cls.primary_color
             background_palette: "Red"
             background_hue: "500"
         AsyncImage:
@@ -23,13 +23,13 @@
                 text: "Start Reading"
                 font_name: "fonts/NotoSansCJK-Regular.ttc"
                 height: dp(40)
-                size_hint_y: None
+                size_hint_y: 1
                 size_hint_x: 1
                 theme_text_color: "Primary"
                 on_release: root.view_gallery()
             MDFlatButton:
                 text: "Favourite"
-                size_hint_y: None
+                size_hint_y: 1
                 size_hint_x: 1
                 theme_text_color: "Primary"
                 height: dp(40)
@@ -39,27 +39,31 @@
             WrappedLabel:
                 font_name: "fonts/NotoSansCJK-Regular.ttc"
                 text: root.gallery_name
-                valign: "top"
+                valign: "middle"
                 halign: "center"
                 font_style: "Title"
+                size_hint_y: 1
             GridLayout:
                 cols: 2
                 padding: dp(1)
-                size_hint_y: None
+                size_hint_y: 1
                 MDLabel:
                     text: "Pagecount: " +str(root.pagecount)
                     size_hint_y: None
                     valign: "middle"
+                    theme_text_color: "Secondary"
                 MDLabel:
                     text: "Filesize: " + str((root.filesize/1024)/1024) + " MB"
                     size_hint_y: None
                     valign: "middle"
-            ScrollView:
+                    theme_text_color: "Secondary"
+            RecycleView:
+                size_hint_y: 1
                 height: self.parent.height
                 width: self.parent.width-20
                 bar_inactive_color: [.7, .7, .7, .5]
                 GridLayout:
                     id: tag_layout
-                    cols: 3
+                    cols: 1
                     height: self.minimum_height
                     size_hint_y: None

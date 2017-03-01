@@ -16,6 +16,7 @@ from kivy.metrics import dp
 from plyer import notification
 
 from threading import Thread
+from screens.frontscreen import FrontScreen
 
 import os
 import json
@@ -27,7 +28,8 @@ from models import check_database
 
 # KivyMD stuff
 from kivymd.theming import ThemeManager
-import kivymd.snackbar as Snackbar
+from kivymd.snackbar import Snackbar
+from kivymd.navigationdrawer import NavigationLayout
 
 #pusherstuff
 #from pusherstuff import Pusher, SubscriptionEventListener
@@ -54,7 +56,7 @@ class SadpandaRoot(BoxLayout):
     cookies = StringProperty()
     username = StringProperty("")
     password = StringProperty("")
-    baseurl = StringProperty("g.e-hentai")
+    baseurl = StringProperty("e-hentai")
     edgemove = BooleanProperty(False)
 
     def __init__(self, **kwargs):
@@ -231,7 +233,7 @@ class SadpandaRoot(BoxLayout):
 
     def show_filters(self):
         if self.username.lower() == "sadpandareader" or self.baseurl == "g.e-hentai":
-            Snackbar.make("Language filtering to come next version")
+            Snackbar(text="Language filtering to come next version").show()
         else:
             fpop = FilterPopup()
             fpop.bind(on_dismiss=self.set_filters)
@@ -345,7 +347,6 @@ class SadpandaApp(App):
         return True
 
     def build(self):
-        self.nav_drawer = SadpandaNavdrawer()
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Grey"
         self.theme_cls.primary_hue = "900"

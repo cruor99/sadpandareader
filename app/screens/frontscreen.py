@@ -42,13 +42,12 @@ class FrontScreen(Screen):
 
     def __init__(self, **kwargs):
         super(FrontScreen, self).__init__(**kwargs)
+
+    def on_enter(self):
         App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
             FavouriteScreen(name="favourite_screen"))
         App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
             SettingsScreen(name="settings_screen"))
-
-    def on_enter(self):
-
         #App.get_running_app(
         #).root.cookies += "; uconfig=xl_10x1034x2058x20x1044x2068x30x1054x2078x40x1064x2088x50x1074x2098x60x1084x2108x70x1094x2118x80x1104x2128x90x1114x2138x100x1124x2148x110x1134x2158x120x1144x2168x130x1154x2178x254x1278x2302x255x1279x2303"
         self.ids.galleryscroll.bind(scroll_y=self.check_scroll_y)
@@ -122,10 +121,10 @@ class FrontScreen(Screen):
         headers["Cookie"] = cookies
         searchword = self.searchword
         if App.get_running_app().root.username.lower() == "sadpandareader":
-            self.searchword += ' touhou -lolicon -zeno -hitsuji -"females only"'
-            searchword += ' touhou -lolicon -zeno -hitsuji -"females only"'
-        elif App.get_running_app().root.baseurl == "g.e-hentai":
-            self.searchword += ' touhou -zeno -hitsuji -"females only"'
+            self.searchword += ' touhou -lolicon -zeno -hitsuji -uro -pixiv -"females only"'
+            searchword += ' touhou -lolicon -zeno -hitsuji -pixiv -uro -"females only"'
+        elif App.get_running_app().root.baseurl == "e-hentai":
+            self.searchword += ' touhou -zeno -hitsuji -pixiv -"females only"'
             searchword += ' touhou -zeno -hitsuji -"females only"'
         page0searchurl = str(
             "http://" + App.get_running_app().root.baseurl + ".org/?" +
@@ -148,7 +147,6 @@ class FrontScreen(Screen):
                 filters.asianporn) + "&f_misc=" + str(
                     filters.misc) + "&f_search=" + urllib.quote_plus(
                         self.searchword) + "&f_apply=Apply+Filter")
-        print urllib.quote_plus(self.searchword)
         if self.searchpage == 0:
             req = UrlRequest(page0searchurl,
                              on_success=self.got_result,
@@ -209,7 +207,7 @@ class FrontScreen(Screen):
 
     def grabthumbs(self, headers, payload, cookies, *largs):
         params = urllib.urlencode(payload)
-        r = UrlRequest("http://g.e-hentai.org/api.php",
+        r = UrlRequest("http://api.e-hentai.org/api.php",
                        on_success=self.thumbgrab,
                        on_error=self.thumb_error,
                        on_failure=self.thumb_failure,

@@ -6,12 +6,18 @@
     secondary_size_hint_y: 5
 
 <TagButton>:
-    size_hint_x: 1
-    height: "55dp"
+    #size_hint_x: 1
+    #size_hint_y: None
     # background_color: (.7, .7, .7, 0.5)
+    size_hint_x: 1
+    width: root.width
     text: root.tagname
-    #text_size: self.width, None
-    halign: "center"
+    text_size: self.width, None
+    theme_text_color: "Secondary"
+    height: dp(55)
+    shorten: True
+    shorten_from: "left"
+    split_str: ""
 
 <GalleryNavButton>:
     background_color: 0, 0, 0, .2

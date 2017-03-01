@@ -5,7 +5,7 @@ from kivy.lang import Builder
 from models import Search, Filters
 
 from kivymd.dialog import MDDialog
-from kivymd.textfields import SingleLineTextField
+from kivymd.textfields import MDTextField
 
 Builder.load_file("kv/popups.kv")
 
@@ -50,7 +50,7 @@ class SearchPopup(MDDialog):
         App.get_running_app().root.set_filters(instance)
 
 
-class SearchArea(SingleLineTextField):
+class SearchArea(MDTextField):
     def savesearch(self):
         newsearch = Search(searchterm=self.ids.searchstring.text)
         db = App.get_running_app().db

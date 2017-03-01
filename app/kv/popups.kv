@@ -14,169 +14,171 @@
     title: "Set your filters here"
     size_hint: .8, None
     height: dp(500)
-    BoxLayout:
-        orientation: "vertical"
-        GridLayout:
-            cols: 2
-            padding: dp(40), dp(1)
-            spacing: dp(15)
-            BoxLayout:
-                orientation: "vertical"
+    do_scroll_y: False
+    MDList:
+        BoxLayout:
+            orientation: "vertical"
+            GridLayout:
+                cols: 2
+                padding: dp(40), dp(1)
+                spacing: dp(15)
+                BoxLayout:
+                    orientation: "vertical"
 
-                canvas.before:
-                    Color:
-                        rgba: .89, .96, 1, .8
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Non-H"
-                MDSwitch:
-                    id: nonh
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-                    text: "Non-H"
-            BoxLayout:
-                orientation: "vertical"
-                canvas.before:
-                    Color:
-                        rgba: 0.99607843137, 0.6431372549, 0.6431372549, .8
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Doujinshi"
-                MDSwitch:
-                    id: doujinshi
-                    text: "Doujinshi"
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-            BoxLayout:
-                orientation: "vertical"
-                canvas.before:
-                    Color:
-                        rgba: 0.85098039215, 1, 0.70588235294, .8
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Western"
-                MDSwitch:
-                    id: western
-                    text: "Western"
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-            BoxLayout:
-                orientation: "vertical"
-                canvas.before:
-                    Color:
-                        rgba: 0.96862745098, 0.94901960784, 0.74117647058, .7
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Artist CG"
-                MDSwitch:
-                    id: artistcg
-                    text: "Artist CG"
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-            BoxLayout:
-                orientation: "vertical"
-                canvas.before:
-                    Color:
-                        rgba: 0.69411764705, 0.84705882352, 0.69411764705, .6
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Game CG"
-                MDSwitch:
-                    id: gamecg
-                    text: "Game CG"
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-            BoxLayout:
-                orientation: "vertical"
-                canvas.before:
-                    Color:
-                        rgba: 1, .8, 0.44705882352, .8
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Manga"
-                MDSwitch:
-                    id: manga
-                    text: "Manga"
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-            BoxLayout:
-                orientation: "vertical"
-                canvas.before:
-                    Color:
-                        rgba: 0.80392156862, 0.72549019607, 0.86274509803, .6
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Cosplay"
-                MDSwitch:
-                    id: cosplay
-                    text: "Cosplay"
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-            BoxLayout:
-                orientation: "vertical"
-                canvas.before:
-                    Color:
-                        rgba: 1, 0.89803921568, 1, .8
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Asian"
-                MDSwitch:
-                    id: asianporn
-                    text: "Asian"
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-            BoxLayout:
-                orientation: "vertical"
-                canvas.before:
-                    Color:
-                        rgba: 0.78823529411, 0.78823529411, 1, .8
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Image Set"
-                MDSwitch:
-                    id: imageset
-                    text: "Image Set"
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-            BoxLayout:
-                orientation: "vertical"
-                canvas.before:
-                    Color:
-                        rgba: 0.95294117647, 0.95294117647, 0.95294117647, .8
-                    Rectangle:
-                        size: self.size[0]*.9, self.size[1]*.7
-                        pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
-                MDLabel:
-                    text: "Misc"
-                MDSwitch:
-                    id: misc
-                    text: "Misc"
-                    size_hint: None, None
-                    size: dp(36), dp(48)
-        MDRaisedButton:
-            text: "Set Filters"
-            size_hint_y: None
-            size_hint_x: 1
-            height: dp(64)
-            on_release: root.dismiss()
+                    canvas.before:
+                        Color:
+                            rgba: .89, .96, 1, .8
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Non-H"
+                    MDSwitch:
+                        id: nonh
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+                        text: "Non-H"
+                BoxLayout:
+                    orientation: "vertical"
+                    canvas.before:
+                        Color:
+                            rgba: 0.99607843137, 0.6431372549, 0.6431372549, .8
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Doujinshi"
+                    MDSwitch:
+                        id: doujinshi
+                        text: "Doujinshi"
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+                BoxLayout:
+                    orientation: "vertical"
+                    canvas.before:
+                        Color:
+                            rgba: 0.85098039215, 1, 0.70588235294, .8
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Western"
+                    MDSwitch:
+                        id: western
+                        text: "Western"
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+                BoxLayout:
+                    orientation: "vertical"
+                    canvas.before:
+                        Color:
+                            rgba: 0.96862745098, 0.94901960784, 0.74117647058, .7
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Artist CG"
+                    MDSwitch:
+                        id: artistcg
+                        text: "Artist CG"
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+                BoxLayout:
+                    orientation: "vertical"
+                    canvas.before:
+                        Color:
+                            rgba: 0.69411764705, 0.84705882352, 0.69411764705, .6
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Game CG"
+                    MDSwitch:
+                        id: gamecg
+                        text: "Game CG"
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+                BoxLayout:
+                    orientation: "vertical"
+                    canvas.before:
+                        Color:
+                            rgba: 1, .8, 0.44705882352, .8
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Manga"
+                    MDSwitch:
+                        id: manga
+                        text: "Manga"
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+                BoxLayout:
+                    orientation: "vertical"
+                    canvas.before:
+                        Color:
+                            rgba: 0.80392156862, 0.72549019607, 0.86274509803, .6
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Cosplay"
+                    MDSwitch:
+                        id: cosplay
+                        text: "Cosplay"
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+                BoxLayout:
+                    orientation: "vertical"
+                    canvas.before:
+                        Color:
+                            rgba: 1, 0.89803921568, 1, .8
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Asian"
+                    MDSwitch:
+                        id: asianporn
+                        text: "Asian"
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+                BoxLayout:
+                    orientation: "vertical"
+                    canvas.before:
+                        Color:
+                            rgba: 0.78823529411, 0.78823529411, 1, .8
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Image Set"
+                    MDSwitch:
+                        id: imageset
+                        text: "Image Set"
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+                BoxLayout:
+                    orientation: "vertical"
+                    canvas.before:
+                        Color:
+                            rgba: 0.95294117647, 0.95294117647, 0.95294117647, .8
+                        Rectangle:
+                            size: self.size[0]*.9, self.size[1]*.7
+                            pos: self.pos[0] - dp(13), self.pos[1] + dp(5)
+                    MDLabel:
+                        text: "Misc"
+                    MDSwitch:
+                        id: misc
+                        text: "Misc"
+                        size_hint: None, None
+                        size: dp(36), dp(48)
+            MDRaisedButton:
+                text: "Set Filters"
+                size_hint_y: 1
+                size_hint_x: 1
+                height: dp(64)
+                on_release: root.dismiss()
 
 
 <SearchPopup>:

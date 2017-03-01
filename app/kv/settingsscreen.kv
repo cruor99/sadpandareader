@@ -7,8 +7,8 @@
             title: root.title
             #left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
             left_action_items: [["chevron-left", lambda x: app.root.goto_front(), False]]
-            right_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
-            background_color: app.theme_cls.primary_color
+            right_action_items: [["menu", lambda x: app.root.ids.nav_layout.toggle_nav_drawer()]]
+            md_bg_color: app.theme_cls.primary_color
             background_palette: "Red"
             background_hue: "500"
         RecycleView:

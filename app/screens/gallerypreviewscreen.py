@@ -13,8 +13,7 @@ from components.buttons import TagButton
 
 from models import Gallery, GalleryTags, Search, Favourites
 
-import kivymd.snackbar as Snackbar
-
+from kivymd.snackbar import Snackbar
 
 class GalleryPreviewScreen(Screen):
 
@@ -76,7 +75,7 @@ class GalleryPreviewScreen(Screen):
         if existfavourite:
             db.delete(existfavourite)
             db.commit()
-            Snackbar.make("Removed from Favourites!")
+            Snackbar(text="Removed from Favourites!").show()
             return
         else:
             newfav = Favourites()
@@ -88,7 +87,7 @@ class GalleryPreviewScreen(Screen):
             newfav.filesize = self.filesize
             db.add(newfav)
             db.commit()
-            Snackbar.make("Added to favourites!")
+            Snackbar(text="Added to favourites!").show()
 
     def populate_tags(self, *args):
         self.ids.tag_layout.clear_widgets()
