@@ -63,6 +63,8 @@ class SadpandaRoot(BoxLayout):
         super(SadpandaRoot, self).__init__(**kwargs)
         # list of previous screens
         self.screen_list = []
+        #import socket
+        #print socket.has_ipv6
         #self.pusher = Pusher("")
         #        self.pusher.connect()
         #       self.pusher.bind_channel_simple("1111")

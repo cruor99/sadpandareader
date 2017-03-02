@@ -36,7 +36,7 @@ version = 2.7
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = python2, kivy==master,sqlite3 , beautifulsoup, openssl, sqlalchemy, git+https://gitlab.com/kivymd/kivymd.git, plyer
+requirements = kivy==master, beautifulsoup, openssl, sqlalchemy, git+https://gitlab.com/kivymd/kivymd.git, plyer, pyobjus
 
 #workaround fix
 p4a.local_recipes = %(source.dir)s/.buildozer/android/platform/python-for-android/recipes

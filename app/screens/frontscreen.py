@@ -121,11 +121,11 @@ class FrontScreen(Screen):
         headers["Cookie"] = cookies
         searchword = self.searchword
         if App.get_running_app().root.username.lower() == "sadpandareader":
-            self.searchword += ' touhou -lolicon -zeno -hitsuji -uro -pixiv -"females only"'
-            searchword += ' touhou -lolicon -zeno -hitsuji -pixiv -uro -"females only"'
+            self.searchword += ' english -swimsuit -lolicon -hitsuji -elf -uro -pixiv -"females only"'
+            searchword += ' english -swimsuit -lolicon -hitsuji -elf -uro -pixiv -"females only"'
         elif App.get_running_app().root.baseurl == "e-hentai":
-            self.searchword += ' touhou -zeno -hitsuji -pixiv -"females only"'
-            searchword += ' touhou -zeno -hitsuji -"females only"'
+            self.searchword += ' english -swimsuit -hitsuji -elf -uro -pixiv -"females only"'
+            searchword += ' english -swimsuit -hitsuji -elf -uro -pixiv -"females only"'
         page0searchurl = str(
             "http://" + App.get_running_app().root.baseurl + ".org/?" +
             "f_doujinshi=" + str(filters.doujinshi) + "&f_manga=" + str(
