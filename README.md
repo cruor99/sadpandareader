@@ -21,7 +21,7 @@ iOS App Store:
 [Sadpanda Reader](https://itunes.apple.com/us/app/sadpanda-reader/id1166320655?ls=1&mt=8)
 
 Google Play:
-*Coming Soon*
+[Sadpandareader](https://play.google.com/store/apps/details?id=org.sadpanda.sadpandareader)
 
 
 ## Various
