@@ -70,6 +70,21 @@ class SadpandaRoot(BoxLayout):
         #       self.pusher.bind_channel_simple("1111")
         #      self.sel = SubscriptionEventListener()
         #     self.pusher.bind_event("send", self.sel)
+        Clock.schedule_once(self.check_cookies)
+
+    def check_cookies(self, *args):
+        db = App.get_running_app().db
+        user = db.query(User).first()
+        if user:
+            cookies = user.cookies
+            App.get_running_app().root.cookies = cookies
+            App.get_running_app().root.baseurl = "exhentai"
+            App.get_running_app().root.goto_front()
+            App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "logout"
+            App.get_running_app().root.ids.nav_drawer.ids.login_out_button.text = "Log out"
+            #App.get_running_app().root.next_screen("front_screen")
+        else:
+            pass
 
     def on_touch_down(self, touch):
         if touch.x < dp(30):
@@ -161,11 +176,9 @@ class SadpandaRoot(BoxLayout):
                 db.commit()
             self.baseurl = "exhentai"
             App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "logout"
-            App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "Log out"
+            App.get_running_app().root.ids.nav_drawer.ids.login_out_button.text = "Log out"
             self.goto_front()
         else:
-            print req
-            print r
             captchapopup = CaptchaPopup()
             captchapopup.bind(on_dismiss=self.login_captcha)
             captchapopup.open()
@@ -179,15 +192,15 @@ class SadpandaRoot(BoxLayout):
         except:
             pass
         App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "login"
-        App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "Login"
-        self.baseurl = "g.e-hentai"
+        App.get_running_app().root.ids.nav_drawer.ids.login_out_button.text = "Login"
+        self.baseurl = "e-hentai"
         self.next_screen("start_screen")
 
     def login_captcha(self, instance):
         if instance.action == "try_again":
             pass
         else:
-            self.baseurl = "g.e-hentai"
+            self.baseurl = "e-hentai"
             self.goto_front()
 
     def next_screen(self, neoscreen):

@@ -28,7 +28,7 @@ source.include_exts = py,png,jpg,kv,atlas,jpeg,ttc,ttf,db,gif,json
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 2.7
+version = 2.9
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -36,7 +36,7 @@ version = 2.7
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy==master, beautifulsoup, openssl, sqlalchemy, git+https://gitlab.com/kivymd/kivymd.git, plyer, pyobjus
+requirements = kivy==master, sqlite3, beautifulsoup, openssl, sqlalchemy, git+https://gitlab.com/kivymd/kivymd.git, plyer
 
 #workaround fix
 p4a.local_recipes = %(source.dir)s/.buildozer/android/platform/python-for-android/recipes

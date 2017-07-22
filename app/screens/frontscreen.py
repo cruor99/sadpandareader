@@ -113,6 +113,7 @@ class FrontScreen(Screen):
 
     def populate_front(self, *largs):
         # filter store
+        print(App.get_running_app().root.baseurl)
         db = App.get_running_app().db
         filters = db.query(Filters).order_by(Filters.id.desc()).first()
         #filters = filterstore.get("filters")
