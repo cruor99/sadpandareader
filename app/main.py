@@ -16,12 +16,12 @@ from kivy.metrics import dp
 from plyer import notification
 
 from threading import Thread
-from screens.frontscreen import FrontScreen
 
 import os
 import json
 from components.navdrawer import SadpandaNavdrawer
 from components.popups import SearchPopup, FilterPopup, CaptchaPopup
+from screens.frontscreen import FrontScreen
 from screens.startscreen import StartScreen
 from models import User, Filters, Search, Settings
 from models import check_database
@@ -53,7 +53,7 @@ for font in FONTS:
 
 class SadpandaRoot(BoxLayout):
 
-    cookies = StringProperty()
+    cookies = StringProperty("")
     username = StringProperty("")
     password = StringProperty("")
     baseurl = StringProperty("e-hentai")
@@ -96,6 +96,12 @@ class SadpandaRoot(BoxLayout):
         else:
             db.add(Settings(logging=0))
             db.commit()
+
+    def log_in_out(self):
+        if len(self.cookies) > 3:
+            self.log_out()
+        else:
+            self.next_screen("start_screen")
 
     def login_exhentai(self, username, password):
         db = App.get_running_app().db
@@ -154,8 +160,12 @@ class SadpandaRoot(BoxLayout):
                 db.add(cookies)
                 db.commit()
             self.baseurl = "exhentai"
+            App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "logout"
+            App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "Log out"
             self.goto_front()
         else:
+            print req
+            print r
             captchapopup = CaptchaPopup()
             captchapopup.bind(on_dismiss=self.login_captcha)
             captchapopup.open()
@@ -168,6 +178,8 @@ class SadpandaRoot(BoxLayout):
             db.commit()
         except:
             pass
+        App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "login"
+        App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "Login"
         self.baseurl = "g.e-hentai"
         self.next_screen("start_screen")
 

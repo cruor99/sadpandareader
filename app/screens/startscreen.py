@@ -25,6 +25,8 @@ class StartScreen(Screen):
             App.get_running_app().root.cookies = cookies
             App.get_running_app().root.baseurl = "exhentai"
             App.get_running_app().root.goto_front()
+            App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "logout"
+            App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "Log out"
             #App.get_running_app().root.next_screen("front_screen")
         else:
             pass

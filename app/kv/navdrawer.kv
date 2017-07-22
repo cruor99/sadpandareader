@@ -21,6 +21,7 @@
         text: "Settings"
         on_release: app.root.next_screen("settings_screen")
     NavigationDrawerIconButton:
-        icon: "close-circle"
-        text: "Logout"
-        on_release: app.root.log_out()
+        id: login_out_button
+        icon: "login"
+        text: "Login"
+        on_release: app.root.log_in_out()

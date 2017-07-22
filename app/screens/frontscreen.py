@@ -44,6 +44,11 @@ class FrontScreen(Screen):
         super(FrontScreen, self).__init__(**kwargs)
 
     def on_enter(self):
+        # This is required if the screen is the initial screen.
+        # Done in order to ensure that we have everythign initialized before doing stuff witht he main app
+        Clock.schedule_once(self.do_entry)
+
+    def do_entry(self, *args):
         App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
             FavouriteScreen(name="favourite_screen"))
         App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
