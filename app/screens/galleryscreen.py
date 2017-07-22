@@ -1,7 +1,7 @@
 from kivy.app import App
 from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty, ListProperty, NumericProperty, ObjectProperty
-from kivy.properties import BooleanProperty
+from kivy.properties import BooleanProperty, DictProperty
 from kivy.clock import Clock
 import urllib
 from kivy.network.urlrequest import UrlRequest
@@ -27,11 +27,11 @@ class GalleryScreen(Screen):
     db_id = NumericProperty(0)
     gallery_id = StringProperty("")
     gallery_token = StringProperty("")
-    pagelinks = ListProperty([])
+    pagelinks = DictProperty([])
     pagecount = NumericProperty(0)
     gallery_name = StringProperty("")
     nextpage = NumericProperty(0)
-    current_page = NumericProperty()
+    current_page = NumericProperty(1)
     title = gallery_name
     scrollstopper = BooleanProperty(False)
     galleryscreen = ObjectProperty()
@@ -63,7 +63,7 @@ class GalleryScreen(Screen):
         self.pagelinks = []
         self.pagecount = 0
         self.gallery_name = ""
-        self.current_page = 0
+        self.current_page = 1
 
     def populate_gallery(self):
         # change placehold.it with
@@ -103,7 +103,7 @@ class GalleryScreen(Screen):
             if currentexist:
                 for page in pagelinkmodels:
                     if page.pagelink == currentexist.pagelink:
-                        self.current_page = pagelinkmodels.index(page)
+                        self.current_page = pagelinkmodels.index(page) +1
                 self.construct_image(currentexist.pagelink)
             else:
 
@@ -121,11 +121,10 @@ class GalleryScreen(Screen):
         pagelinkmodels = db.query(Pagelink).filter_by(
             galleryid=self.db_id).order_by(Pagelink.mainpage).all()
         for page in pagelinkmodels:
-            self.pagelinks.append(page.pagelink)
+            pagenumber = page.pagelink.split("-")[-1]
+            self.pagelinks[pagenumber] = page.pagelink
         self.gotpageresultcounter = 99
-        self.current_page = 0
-
-
+        self.current_page = 1
 
     def got_result(self, req, r):
 
@@ -135,7 +134,9 @@ class GalleryScreen(Screen):
                                .root.baseurl + '.org/s/\S{10}/\d{0,10}-\d+')
         soup = BS(r)
         for a in soup.findAll(name="a", attrs={"href": pageregex}):
-            self.pagelinks.append(a["href"])
+            pagelink = a["href"]
+            pagenumber = a["href"].split("-")[-1]
+            self.pagelinks[pagenumber] = pagelink
             db = App.get_running_app().db
             existpageurl = db.query(Pagelink).filter_by(
                 pagelink=a["href"]).first()
@@ -177,13 +178,27 @@ class GalleryScreen(Screen):
         self.ids.gallery_manager.transition.direction = "left"
         for page in pagelinks:
             if page.current == 1:
-                newpageindex = pagelinks.index(page) + 1
-                if newpageindex == len(pagelinks):
-                    self.current_page = 0
+                page_number = page.pagelink.split("-")[-1]
+                print("PAGE_NUM: {}".format(page_number))
+                newpageindex = int(self.current_page) + 1
+                pages = []
+                for pagenum in self.pagelinks.keys():
+                    pages.append(int(pagenum))
+                maxpage = max(pages)
+                minpage = min(pages)
+                print("MAX PAGES: {}".format(maxpage))
+                print("MIN PAGES: {}".format(minpage))
+                if newpageindex == maxpage +1:
+                    print(maxpage)
+                    self.current_page = minpage
+                    newpageindex = self.current_page
+                    Snackbar(text="End of Gallery").show()
                 else:
+                    print("Test newpageindex: {}".format(newpageindex))
                     self.current_page = newpageindex
                 try:
-                    newpage = pagelinks[newpageindex]
+                    print("NEWPAGEINDEX: {}".format(newpageindex))
+                    newpage = pagelinks[newpageindex - 1]
                     newpage.current = 1
                     page.current = 0
                     db.commit()
@@ -192,6 +207,7 @@ class GalleryScreen(Screen):
                 except:
                     # Create a end of gallery popup
                     Snackbar(text="End of Gallery").show()
+                    self.current_page = minpage
                     newpage = pagelinks[0]
                     newpage.current = 1
                     page.current = 0
@@ -206,19 +222,35 @@ class GalleryScreen(Screen):
         self.ids.gallery_manager.transition.direction = "right"
         for page in pagelinks:
             if page.current == 1:
-                newpageindex = pagelinks.index(page) - 1
-                if newpageindex == -1:
-                    newpageindex = len(pagelinks) - 1
+                page_number = page.pagelink.split("-")[-1]
+                print("PAGENUM: {}".format(page_number))
+                print("CURRENT_PAGE: {}".format(self.current_page))
+                newpageindex = int(self.current_page) - 1
+                pages = []
+                for pagenum in self.pagelinks.keys():
+                    pages.append(int(pagenum))
+                maxpages = max(pages)
+                minpages = min(pages)
+                if newpageindex == 0:
+                    newpageindex = maxpages
+                    print("Back to last page: {}".format(newpageindex))
                 self.current_page = newpageindex
                 try:
-                    newpage = pagelinks[newpageindex]
+                    print(len(pagelinks))
+                    newpage = pagelinks[newpageindex - 1]
+                    print(pagelinks[newpageindex])
                     newpage.current = 1
                     page.current = 0
                     db.commit()
                     newscreen = self.construct_image(newpage.pagelink)
-                except:
+                except Exception as e:
                     # Create start of gallery popup
-                    pass
+                    print(e)
+                    newpage = pagelinks[len(pagelinks)-1]
+                    newpage.current = 1
+                    page.current = 0
+                    db.commit()
+                    newscreen = self.construct_image(newpage.pagelink)
 
     def construct_image(self, pagelink):
         src = self.grab_image(pagelink)
