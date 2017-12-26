@@ -217,14 +217,12 @@ class GalleryScreen(Screen):
 
     def previous_image(self, instance):
         db = App.get_running_app().db
-        pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).all()
+        pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).order_by(Pagelink.mainpage).all()
 
         self.ids.gallery_manager.transition.direction = "right"
         for page in pagelinks:
             if page.current == 1:
                 page_number = page.pagelink.split("-")[-1]
-                print("PAGENUM: {}".format(page_number))
-                print("CURRENT_PAGE: {}".format(self.current_page))
                 newpageindex = int(self.current_page) - 1
                 pages = []
                 for pagenum in self.pagelinks.keys():
@@ -233,12 +231,10 @@ class GalleryScreen(Screen):
                 minpages = min(pages)
                 if newpageindex == 0:
                     newpageindex = maxpages
-                    print("Back to last page: {}".format(newpageindex))
                 self.current_page = newpageindex
                 try:
                     print(len(pagelinks))
                     newpage = pagelinks[newpageindex - 1]
-                    print(pagelinks[newpageindex])
                     newpage.current = 1
                     page.current = 0
                     db.commit()

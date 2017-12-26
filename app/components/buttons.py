@@ -36,9 +36,9 @@ class ThumbButton(TwoLineAvatarListItem):
             self.text = self.gallery_name
 
         self.ids._left_container.size = (self.size[0] - dp(10), self.size[1] - dp(10))
-        self.ids._left_container.x = self.x + dp(5)
-        self.ids._left_container.y = self.y + dp(2)
-        self.ids._left_container.size_hint = (.145, .9)
+        self.ids._left_container.x = self.x + dp(1)
+        self.ids._left_container.y = self.y + dp(5)
+        #self.ids._left_container.size_hint = (.145, .9)
 
         #print "==============="
         #print self.gallery_name
