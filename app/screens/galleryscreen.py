@@ -7,6 +7,7 @@ import urllib
 from kivy.network.urlrequest import UrlRequest
 from kivymd.snackbar import Snackbar
 from kivy.lang import Builder
+from kivy.logger import Logger
 
 Builder.load_file("kv/galleryscreen.kv")
 
@@ -155,14 +156,14 @@ class GalleryScreen(Screen):
         if self.scrollstopper is False:
             if offset > 1:
                 self.scrollstopper = True
-                self.ids.gallery_manager.transition.direction = "right"
+                #self.ids.gallery_manager.transition.direction = "right"
                 self.previous_image(self)
                 Clock.schedule_once(self.togglestopper, 1)
             else:
                 pass
             if offset < -1:
                 self.scrollstopper = True
-                self.ids.gallery_manager.transition.direction = "left"
+                #self.ids.gallery_manager.transition.direction = "left"
                 self.next_image(self)
                 Clock.schedule_once(self.togglestopper, 1)
             else:
@@ -175,7 +176,7 @@ class GalleryScreen(Screen):
         db = App.get_running_app().db
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).order_by(Pagelink.mainpage).all()
 
-        self.ids.gallery_manager.transition.direction = "left"
+        #self.ids.gallery_manager.transition.direction = "left"
         for page in pagelinks:
             if page.current == 1:
                 page_number = page.pagelink.split("-")[-1]
@@ -219,7 +220,7 @@ class GalleryScreen(Screen):
         db = App.get_running_app().db
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).order_by(Pagelink.mainpage).all()
 
-        self.ids.gallery_manager.transition.direction = "right"
+        #self.ids.gallery_manager.transition.direction = "right"
         for page in pagelinks:
             if page.current == 1:
                 page_number = page.pagelink.split("-")[-1]
@@ -253,21 +254,7 @@ class GalleryScreen(Screen):
         self.temppagelink = pagelink
 
     def push_image(self, src):
-        image = GalleryImage(source=src, allow_stretch=True)
-        imageroot = GalleryCarousel()
-        gallerycontainer = GalleryContainerLayout()
-        imageroot.add_widget(image)
-        forwardsbutton = GalleryNavButton(pos_hint={"x": 0.8})
-        forwardsbutton.bind(on_release=self.next_image)
-        backwardsbutton = GalleryNavButton(pos_hint={"x": 0.01})
-        backwardsbutton.bind(on_release=self.previous_image)
-        gallerycontainer.add_widget(imageroot)
-        gallerycontainer.add_widget(backwardsbutton)
-        gallerycontainer.add_widget(forwardsbutton)
-        galleryscreen = GalleryImageScreen(id=self.temppagelink)
-        galleryscreen.add_widget(gallerycontainer)
-
-        self.galleryscreen = galleryscreen
+        self.ids.gal_image.source = src
 
     def grab_image(self, i):
         headers = {'User-agent': 'Mozilla/5.0',

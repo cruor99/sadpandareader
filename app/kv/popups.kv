@@ -195,10 +195,13 @@
     title: "Search"
     id: searchpopup
     size_hint: .8, None
-    height: dp(200)
-    SearchArea:
-        id: searcharea
-        on_text_validate: root.savesearch()
+    height: dp(300)
+    MDList:
+        id: searchlist
+        SearchArea:
+            id: searcharea
+            on_text: root.find_search(self.text)
+            on_text_validate: root.savesearch()
 
 <SearchArea>:
     size_hint: 1, None

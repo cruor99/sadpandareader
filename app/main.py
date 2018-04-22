@@ -12,6 +12,7 @@ import urllib
 from kivy.network.urlrequest import UrlRequest
 from kivy.config import Config
 from kivy.metrics import dp
+from kivy.logger import Logger
 
 from plyer import notification
 
@@ -37,6 +38,7 @@ from kivymd.navigationdrawer import NavigationLayout
 #EXPERIMENTAL
 from kivymd.material_resources import FONTS
 from kivy.core.text import LabelBase
+
 
 FONTS[0]["fn_regular"] = "fonts/NotoSansCJK-Regular.ttc"
 FONTS[0]["fn_bold"] = "fonts/NotoSansCJK-Regular.ttc"
@@ -179,6 +181,8 @@ class SadpandaRoot(BoxLayout):
             App.get_running_app().root.ids.nav_drawer.ids.login_out_button.text = "Log out"
             self.goto_front()
         else:
+            Logger.info("Request: {}".format(req))
+            Logger.info("Data: {}".format(r))
             captchapopup = CaptchaPopup()
             captchapopup.bind(on_dismiss=self.login_captcha)
             captchapopup.open()
@@ -222,10 +226,10 @@ class SadpandaRoot(BoxLayout):
             from screens.frontscreen import FrontScreen
             self.ids.sadpanda_screen_manager.add_widget(FrontScreen(
                 name="front_screen"))
-        blanksearch = Search(searchterm=" ")
-        db = App.get_running_app().db
-        db.add(blanksearch)
-        db.commit()
+        #blanksearch = Search(searchterm=" ")
+        #db = App.get_running_app().db
+        #db.add(blanksearch)
+        #db.commit()
         self.next_screen("front_screen")
 
     def start_search(self, instance):

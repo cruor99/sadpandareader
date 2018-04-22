@@ -9,9 +9,22 @@
             title: "{}/{} - {}".format(root.current_page, root.pagecount, root.title.encode("utf-8"))
             #left_action_items: [["menu", lambda x: app.nav_drawer.toggle(), False]]
             left_action_items: [["chevron-left", lambda x: app.root.onBackBtn(), False]]
-            right_action_items: [["menu", lambda x: app.root.ids.nav_layout.toggle_nav_drawer()]]
             md_bg_color: app.theme_cls.primary_color
             background_palette: "Red"
             background_hue: "500"
-        ScreenManager:
-            id: gallery_manager
+        GalleryContainerLayout:
+            id: container_layout
+            GalleryCarousel:
+                id: gal_carousel
+                on__offset: root.testmove(self._offset, self.min_move, self.direction)
+                GalleryImage:
+                    id: gal_image
+            GalleryNavButton:
+                pos_hint: {"center_x": .99}
+                size_hint_y: 1
+                on_release: root.next_image(self)
+            GalleryNavButton:
+                size_hint_y: 1
+                pos_hint: {"center_x": .01}
+                on_release: root.previous_image(self)
+

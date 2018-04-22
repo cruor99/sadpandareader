@@ -42,6 +42,12 @@ class Search(Base):
     id = Column(Integer, primary_key=True)
     searchterm = Column(String)
 
+    def __str__(self):
+        return "{}".format(self.searchterm)
+
+    def __repr__(self):
+        return "{}".format(self.searchterm)
+
 
 class Settings(Base):
     __tablename__ = "settings"

@@ -1,12 +1,14 @@
 from kivy.app import App
 from kivy.uix.popup import Popup
-from kivy.properties import StringProperty, NumericProperty
+from kivy.properties import StringProperty, NumericProperty, ListProperty
+from kivy.logger import Logger
 from kivy.lang import Builder
 
 from models import Search, Filters
 
 from kivymd.dialog import MDDialog
 from kivymd.textfields import MDTextField
+from kivymd.button import MDFlatButton
 
 Builder.load_file("kv/popups.kv")
 
@@ -31,17 +33,39 @@ class CaptchaPopup(MDDialog):
 
 
 class SearchPopup(MDDialog):
+    search_suggestions = ListProperty([])
+    search_buttons = ListProperty([])
     def __init__(self, **kwargs):
         super(SearchPopup, self).__init__(**kwargs)
         self.add_action_button("Search", action=lambda *x: self.savesearch())
 
     def savesearch(self):
-        newsearch = Search(searchterm=self.ids.searcharea.text)
         db = App.get_running_app().db
-        db.add(newsearch)
-        db.commit()
-        self.dismiss()
+        already_exists = db.query(Search).filter_by(searchterm=self.ids.searcharea.text).first()
+        if already_exists:
+            self.dismiss()
+        else:
+            newsearch = Search(searchterm=self.ids.searcharea.text)
+            db.add(newsearch)
+            db.commit()
+            self.dismiss()
 
+    def on_search_suggestions(self, object, value):
+        for button in self.search_buttons:
+            self.ids.searchlist.remove_widget(button)
+        self.search_buttons = []
+        for suggestion in value:
+            button = MDFlatButton(text=suggestion.searchterm)
+            self.search_buttons.append(button)
+            self.ids.searchlist.add_widget(button)
+
+
+    def find_search(self, searchterm):
+        if len(searchterm) > 0:
+            db = App.get_running_app().db
+            suggestions = db.query(Search).filter(Search.searchterm.like("{}%".format(searchterm))).all()
+            Logger.info("Suggestions: {}".format(suggestions))
+            self.search_suggestions = suggestions
     def open_filters(self):
         fpop = FilterPopup()
         fpop.bind(on_dismiss=self.set_filters)
@@ -52,6 +76,7 @@ class SearchPopup(MDDialog):
 
 
 class SearchArea(MDTextField):
+
     def savesearch(self):
         newsearch = Search(searchterm=self.ids.searchstring.text)
         db = App.get_running_app().db
