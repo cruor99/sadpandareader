@@ -55,7 +55,7 @@ class SearchPopup(MDDialog):
             self.ids.searchlist.remove_widget(button)
         self.search_buttons = []
         for suggestion in value:
-            button = MDFlatButton(text=suggestion.searchterm)
+            button = MDFlatButton(text=suggestion)
             self.search_buttons.append(button)
             self.ids.searchlist.add_widget(button)
 
@@ -65,7 +65,10 @@ class SearchPopup(MDDialog):
             db = App.get_running_app().db
             suggestions = db.query(Search).filter(Search.searchterm.like("{}%".format(searchterm))).all()
             Logger.info("Suggestions: {}".format(suggestions))
-            self.search_suggestions = suggestions
+            terms = set()
+            for suggestion in reversed(suggestions):
+                terms.add(suggestion.searchterm)
+            self.search_suggestions = list(terms)
     def open_filters(self):
         fpop = FilterPopup()
         fpop.bind(on_dismiss=self.set_filters)
