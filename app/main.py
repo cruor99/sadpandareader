@@ -249,7 +249,6 @@ class SadpandaRoot(BoxLayout):
 
     def search_popup(self):
         spopup = SearchPopup()
-        spopup.bind(on_dismiss=self.start_search)
         spopup.open()
 
     def onBackBtn(self):

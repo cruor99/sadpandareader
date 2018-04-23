@@ -42,6 +42,8 @@ class SearchPopup(MDDialog):
     def savesearch(self):
         db = App.get_running_app().db
         already_exists = db.query(Search).filter_by(searchterm=self.ids.searcharea.text).first()
+        front_screen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("front_screen")
+        front_screen.do_search(self.ids.searcharea.text)
         if already_exists:
             self.dismiss()
         else:
@@ -55,10 +57,17 @@ class SearchPopup(MDDialog):
             self.ids.searchlist.remove_widget(button)
         self.search_buttons = []
         for suggestion in value:
-            button = MDFlatButton(text=suggestion)
+            button = MDFlatButton(text=suggestion, size_hint=(1, None))
+            button.bind(on_release=self.button_search)
             self.search_buttons.append(button)
             self.ids.searchlist.add_widget(button)
 
+    def button_search(self, instance):
+        searchterm = instance.text
+        Logger.info("Button text: {}".format(searchterm))
+        front_screen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("front_screen")
+        front_screen.do_search(searchterm)
+        self.dismiss()
 
     def find_search(self, searchterm):
         if len(searchterm) > 0:

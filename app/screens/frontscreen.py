@@ -6,6 +6,7 @@ from kivy.clock import Clock
 from kivy.app import App
 from kivy.network.urlrequest import UrlRequest
 from kivy.lang import Builder
+from kivy.logger import Logger
 import urllib
 
 from os import linesep
@@ -57,17 +58,21 @@ class FrontScreen(Screen):
         #).root.cookies += "; uconfig=xl_10x1034x2058x20x1044x2068x30x1054x2078x40x1064x2088x50x1074x2098x60x1084x2108x70x1094x2118x80x1104x2128x90x1114x2138x100x1124x2148x110x1134x2158x120x1144x2168x130x1154x2178x254x1278x2302x255x1279x2303"
         self.ids.galleryscroll.bind(scroll_y=self.check_scroll_y)
         db = App.get_running_app().db
-        search = db.query(Search).order_by(Search.id.desc()).first()
-        if search:
+        self.do_search(self.searchword)
+
+
+    def do_search(self, searchterm):
+        Logger.info("Search query: {}".format(searchterm))
+        if searchterm:
             if self.newstart is True:
-                self.searchword = search.searchterm
+                self.searchword = searchterm
                 self.new_search()
                 self.newstart = False
             else:
-                if self.searchword == search.searchterm:
+                if self.searchword == searchterm:
                     pass
                 else:
-                    self.searchword = search.searchterm
+                    self.searchword = searchterm
                     self.new_search()
         else:
             self.searchword = ""
