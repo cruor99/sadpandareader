@@ -69,11 +69,8 @@ class FrontScreen(Screen):
                 self.new_search()
                 self.newstart = False
             else:
-                if self.searchword == searchterm:
-                    pass
-                else:
-                    self.searchword = searchterm
-                    self.new_search()
+                self.searchword = searchterm
+                self.new_search()
         else:
             self.searchword = ""
             self.new_search()

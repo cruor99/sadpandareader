@@ -10,11 +10,13 @@ def check_database(data_dir):
     if isfile(data_dir+"/database.db"):
         engine = create_engine('sqlite:///'+data_dir+'/database.db')
         Session = sessionmaker(bind=engine)
+        engine.raw_connection().connection.text_factory = str
         db = Session()
         return db
     else:
         engine = create_engine('sqlite:///'+data_dir+'/database.db')
         Session = sessionmaker(bind=engine)
+        engine.raw_connection().connection.text_factory = str
         db = Session()
         Base.metadata.create_all(engine)
         return db

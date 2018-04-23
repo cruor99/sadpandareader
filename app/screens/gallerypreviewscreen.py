@@ -117,4 +117,6 @@ class GalleryPreviewScreen(Screen):
         db = App.get_running_app().db
         db.add(search)
         db.commit()
+        front_screen = App.get_running_app().root.ids.sadpanda_screen_manager.get_screen("front_screen")
         App.get_running_app().root.next_screen("front_screen")
+        front_screen.do_search(tag)
