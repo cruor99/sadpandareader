@@ -153,13 +153,11 @@ class SadpandaRoot(BoxLayout):
         print "failure"
         print req.resp_headers
         print req
-        print r
 
     def login_error(self, req, error):
         print "error"
         print req.resp_headers
         print req
-        print error
 
     def login_attempt(self, req, r):
         db = App.get_running_app().db
@@ -184,8 +182,6 @@ class SadpandaRoot(BoxLayout):
             App.get_running_app().root.ids.nav_drawer.ids.login_out_button.text = "Log out"
             self.goto_front()
         else:
-            Logger.info("Request: {}".format(req))
-            Logger.info("Data: {}".format(r))
             captchapopup = CaptchaPopup()
             captchapopup.bind(on_dismiss=self.login_captcha)
             captchapopup.open()

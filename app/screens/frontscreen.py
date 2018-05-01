@@ -63,17 +63,17 @@ class FrontScreen(Screen):
 
     def do_search(self, searchterm):
         Logger.info("Search query: {}".format(searchterm))
-        if searchterm:
-            if self.newstart is True:
-                self.searchword = searchterm
-                self.new_search()
-                self.newstart = False
+        Logger.info("Previous search term: {}".format(self.searchword))
+        if self.newstart is True:
+            self.searchword = searchterm
+            self.new_search()
+            self.newstart = False
+        else:
+            if self.searchword == searchterm:
+                pass
             else:
                 self.searchword = searchterm
                 self.new_search()
-        else:
-            self.searchword = ""
-            self.new_search()
 
     def new_search(self):
         self.ids.main_layout.clear_widgets()
