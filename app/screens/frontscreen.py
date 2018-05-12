@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 import time
 from kivy.properties import ListProperty, StringProperty, BooleanProperty
-from kivy.properties import NumericProperty
+from kivy.properties import NumericProperty, ObjectProperty
 from kivy.clock import Clock
 from kivy.app import App
 from kivy.network.urlrequest import UrlRequest
@@ -38,6 +38,7 @@ class FrontScreen(Screen):
     searchpage = NumericProperty(0)
     newstart = BooleanProperty(True)
     title = StringProperty("Front page")
+    last_widget = ObjectProperty()
     has_entered = False
     has_refreshed = True
 
@@ -243,6 +244,7 @@ class FrontScreen(Screen):
             print e
 
     def add_button(self, gallery, i, *largs):
+        Logger.info("What is i?: {}".format(i))
         escapedtitle = gallery["title"]
         unescapedtitle = HTMLParser().unescape(escapedtitle)
 
@@ -259,5 +261,12 @@ class FrontScreen(Screen):
             size_hint_x=1, )
         gallerybutton.bind(on_release=self.enter_gallery)
         gallerybutton.add_widget(AvatarSampleWidget(source=gallery["thumb"]))
-        self.ids.main_layout.add_widget(gallerybutton)
+        if i == 24:
+            if self.last_widget:
+                self.ids.galleryscroll.scroll_to(self.last_widget)
+            self.last_widget = gallerybutton
+            self.ids.main_layout.add_widget(self.last_widget)
+        else:
+            self.ids.main_layout.add_widget(gallerybutton)
         self.has_refreshed = True
+
