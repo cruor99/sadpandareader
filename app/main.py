@@ -33,10 +33,6 @@ from models import check_database
 # KivyMD stuff
 from kivymd.theming import ThemeManager
 from kivymd.snackbar import Snackbar
-from kivymd.navigationdrawer import NavigationLayout
-
-#pusherstuff
-#from pusherstuff import Pusher, SubscriptionEventListener
 
 #EXPERIMENTAL
 from kivymd.material_resources import FONTS

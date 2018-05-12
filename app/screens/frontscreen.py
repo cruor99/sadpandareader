@@ -52,10 +52,18 @@ class FrontScreen(Screen):
         Clock.schedule_once(self.do_entry)
 
     def do_entry(self, *args):
-        App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
-            FavouriteScreen(name="favourite_screen"))
-        App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
-            SettingsScreen(name="settings_screen"))
+        screens = self.manager.screens
+        Logger.info("Screens: {}".format(screens))
+        screen_names = []
+        for screen in screens:
+            screen_names.append(screen.name)
+        Logger.info("Screen names: {}".format(screen_names))
+        if not "favourite_screen" in screen_names:
+            App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
+                FavouriteScreen(name="favourite_screen"))
+        if not "settings_screen" in screen_names:
+            App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
+                SettingsScreen(name="settings_screen"))
         #App.get_running_app(
         #).root.cookies += "; uconfig=xl_10x1034x2058x20x1044x2068x30x1054x2078x40x1064x2088x50x1074x2098x60x1084x2108x70x1094x2118x80x1104x2128x90x1114x2138x100x1124x2148x110x1134x2158x120x1144x2168x130x1154x2178x254x1278x2302x255x1279x2303"
         self.ids.galleryscroll.bind(scroll_y=self.check_scroll_y)
@@ -247,7 +255,6 @@ class FrontScreen(Screen):
             print e
 
     def add_button(self, gallery, i, *largs):
-        Logger.info("What is i?: {}".format(i))
         escapedtitle = gallery["title"]
         unescapedtitle = HTMLParser().unescape(escapedtitle)
 
