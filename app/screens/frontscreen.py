@@ -39,6 +39,7 @@ class FrontScreen(Screen):
     newstart = BooleanProperty(True)
     title = StringProperty("Front page")
     last_widget = ObjectProperty()
+    new_galleries_len = NumericProperty
     has_entered = False
     has_refreshed = True
 
@@ -211,6 +212,8 @@ class FrontScreen(Screen):
         cookies = App.get_running_app().root.cookies
         headers["Cookie"] = cookies
         self.headers = headers
+        Logger.info("Page length: {}".format(len(gallerylinks)))
+        self.new_galleries_len = len(gallerylinks)
 
         self.grabthumbs(headers, payload, cookies)
 
@@ -261,7 +264,7 @@ class FrontScreen(Screen):
             size_hint_x=1, )
         gallerybutton.bind(on_release=self.enter_gallery)
         gallerybutton.add_widget(AvatarSampleWidget(source=gallery["thumb"]))
-        if i == 24:
+        if i == self.new_galleries_len -1:
             if self.last_widget:
                 self.ids.galleryscroll.scroll_to(self.last_widget)
             self.last_widget = gallerybutton

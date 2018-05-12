@@ -20,6 +20,7 @@
                 color_mode: "custom"
                 foreground_color: 0, 0, 0, 1
                 hint_text: "Username"
+                write_tab: False
                 _current_hint_text_color: [0.0, 0.0, 0.0, 1]
                 line_color_normal: [0, 0, 0, 1]
             MDTextField:
@@ -28,11 +29,13 @@
                 size_hint: None, None
                 height: dp(48)
                 width: dp(150)
+                write_tab: False
                 color_mode: "custom"
                 foreground_color: 0, 0, 0, 1
                 hint_text: "Password"
                 line_color_normal: [0, 0, 0, 1]
                 _current_hint_text_color: [0.0, 0.0, 0.0, 1]
+                on_text_validate: app.root.login_exhentai(username, password)
             MDRaisedButton:
                 size_hint_y: None
                 size_hint_x: 1
