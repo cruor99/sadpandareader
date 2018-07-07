@@ -30,4 +30,4 @@ class GalleryCarousel(Carousel):
 
 class GalleryImage(Image, ScatterLayout):
     do_rotation = False
-    do_translation = False
+    scale_max = 2

@@ -153,6 +153,8 @@ class GalleryScreen(Screen):
         self.gotpageresultcounter = req.url[:-2][-1:]
 
     def testmove(self, offset, min_move, direction):
+        # This is temporary
+        return
         if self.scrollstopper is False:
             if offset > 1:
                 self.scrollstopper = True
