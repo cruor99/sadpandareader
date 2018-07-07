@@ -28,5 +28,6 @@ class GalleryCarousel(Carousel):
             Logger.debug("Not attached to parent yet")
 
 
-class GalleryImage(Image):
-    pass
+class GalleryImage(Image, ScatterLayout):
+    do_rotation = False
+    do_translation = False

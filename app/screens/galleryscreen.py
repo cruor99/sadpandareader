@@ -254,6 +254,8 @@ class GalleryScreen(Screen):
         self.temppagelink = pagelink
 
     def push_image(self, src):
+        self.ids.gal_image.scale = 1
+        self.ids.gal_image.pos = self.pos
         self.ids.gal_image.source = src
 
     def grab_image(self, i):
