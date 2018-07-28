@@ -65,6 +65,7 @@ class GalleryScreen(Screen):
         self.pagecount = 0
         self.gallery_name = ""
         self.current_page = 1
+        self.ids.gal_image.source = ""
 
     def populate_gallery(self):
         # change placehold.it with
@@ -153,17 +154,18 @@ class GalleryScreen(Screen):
         self.gotpageresultcounter = req.url[:-2][-1:]
 
     def testmove(self, offset, min_move, direction):
-        # This is temporary
-        return
+        # Logger.info("Offset: {}".format(offset))
+        if self.ids.gal_image.scale > 1:
+            return
         if self.scrollstopper is False:
-            if offset > 1:
+            if offset > 150:
                 self.scrollstopper = True
                 #self.ids.gallery_manager.transition.direction = "right"
                 self.previous_image(self)
                 Clock.schedule_once(self.togglestopper, 1)
             else:
                 pass
-            if offset < -1:
+            if offset < -140:
                 self.scrollstopper = True
                 #self.ids.gallery_manager.transition.direction = "left"
                 self.next_image(self)

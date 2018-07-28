@@ -201,11 +201,14 @@ class SadpandaRoot(BoxLayout):
         self.screen_list.append(self.ids.sadpanda_screen_manager.current)
 
         if self.ids.sadpanda_screen_manager.current == neoscreen:
-            cur_screen = self.ids.sadpanda_screen_manager.get_screen(neoscreen)
-            cur_screen.new_search()
-            search = db.query(Search).order_by(Search.id.desc()).first()
-            newsearch = search.searchterm
-            cur_screen.searchword = newsearch
+            try:
+                cur_screen = self.ids.sadpanda_screen_manager.get_screen(neoscreen)
+                cur_screen.new_search()
+                search = db.query(Search).order_by(Search.id.desc()).first()
+                newsearch = search.searchterm
+                cur_screen.searchword = newsearch
+            except Exception as e:
+                Logger.exception(e)
         else:
             self.ids.sadpanda_screen_manager.current = neoscreen
 

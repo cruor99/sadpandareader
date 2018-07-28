@@ -1,8 +1,12 @@
 
 <GalleryImage>:
-    id: "galimage"
-    size: root.width, root.height
-    nocache: True
+    size_hint: None, None
+    width: self.parent.width
+    height: self.parent.height
+    allow_stretch: True
+    keep_ratio: True
+    do_translation: False
+
 
 <GalleryCarousel>:
     id: "galcarousel"
