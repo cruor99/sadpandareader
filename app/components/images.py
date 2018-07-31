@@ -84,7 +84,7 @@ class GalleryImage(Image, Scatter):
             y_difference = abs(self.current_touch.pos[1] - touch.pos[1])
             # Logger.info("X diff: {}".format(x_difference))
             # Logger.info("Y diff: {}".format(y_difference))
-            if x_difference <= 10 and y_difference <= 10:
+            if x_difference <= 20 and y_difference <= 20:
                 Clock.unschedule(self.scheduled_func)
                 self.double_touch(touch)
         else:
