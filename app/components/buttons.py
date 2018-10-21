@@ -13,11 +13,12 @@ from kivy.uix.stencilview import StencilView
 
 from kivy.uix.label import Label
 from kivymd.label import MDLabel
+from kivymd.card import MDCard
 
 Builder.load_file("kv/buttons.kv")
 
 
-class ThumbButton(TwoLineAvatarListItem):
+class ThumbButton(ButtonBehavior, MDCard):
     gallery_id = StringProperty("")
     gallery_token = StringProperty("")
     gallery_tags = ListProperty([])
@@ -26,87 +27,21 @@ class ThumbButton(TwoLineAvatarListItem):
     gallery_thumb = StringProperty("")
     filesize = NumericProperty(0)
     category = StringProperty("")
+    category_colors = {
+        "Non-H": (.89, .96, 1, .8),
+        "Western": (0.85098039215, 1, 0.70588235294, .8),
+        "Artist CG Sets": (0.96862745098, 0.94901960784, 0.74117647058, .7),
+        "Game CG Sets": (0.69411764705, 0.84705882352, 0.69411764705, .6),
+        "Doujinshi": (0.99607843137, 0.6431372549, 0.6431372549, .8),
+        "Misc": (0.95294117647, 0.95294117647, 0.95294117647, .8),
+        "Cosplay": (0.80392156862, 0.72549019607, 0.86274509803, .6),
+        "Manga": (1, .8, 0.44705882352, .8),
+        "Image Sets": (0.78823529411, 0.78823529411, 1, .8),
+        "Asian Porn": (1, 0.89803921568, 1, .8)
+    }
 
-    def __init__(self, **kwargs):
-        super(ThumbButton, self).__init__(**kwargs)
-        if len(self.gallery_name) > 80:
-            self.text = self.gallery_name[:80] + "..."
-            #self.text_size = self.width - self._txt_left_pad
-        else:
-            self.text = self.gallery_name
-
-        self.ids._left_container.size = (self.size[0] - dp(10), self.size[1] - dp(10))
-        self.ids._left_container.x = self.x + dp(1)
-        self.ids._left_container.y = self.y + dp(5)
-        self.ids._left_container.size_hint = (.145, .9)
-
-        #print "==============="
-        #print self.gallery_name
-        #print self.category
-
-        if self.category == "Non-H":
-            with self.canvas.before:
-                Color(.89, .96, 1, .8)
-                self.rect = Rectangle(size=self.size, pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-        elif self.category == "Western":
-            with self.canvas.before:
-                Color(0.85098039215, 1, 0.70588235294, .8)
-                self.rect = Rectangle(size=self.size, pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-        elif self.category == "Artist CG Sets":
-            with self.canvas.before:
-                Color(0.96862745098, 0.94901960784, 0.74117647058, .7)
-                self.rect = Rectangle(size=self.size, pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-        elif self.category == "Game CG Sets":
-            with self.canvas.before:
-                Color(0.69411764705, 0.84705882352, 0.69411764705, .6)
-                self.rect = Rectangle(size=self.size, pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-        elif self.category == "Doujinshi":
-            with self.canvas.before:
-                Color(0.99607843137, 0.6431372549, 0.6431372549, .8)
-                self.rect = Rectangle(size=self.size, pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-        elif self.category == "Misc":
-            with self.canvas.before:
-                Color(0.95294117647, 0.95294117647, 0.95294117647, .8)
-                self.rect = Rectangle(size=self.size, pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-        elif self.category == "Cosplay":
-            with self.canvas.before:
-                Color(0.80392156862, 0.72549019607, 0.86274509803, .6)
-                self.rect = Rectangle(size=self.size, pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-        elif self.category == "Manga":
-            with self.canvas.before:
-                Color(1, .8, 0.44705882352, .8)
-                self.rect = Rectangle(
-                    size=(self.size[0] / 2, self.size[1] / 2), pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-        elif self.category == "Image Sets":
-            with self.canvas.before:
-                Color(0.78823529411, 0.78823529411, 1, .8)
-                self.rect = Rectangle(
-                    size=(self.size[0] / 2, self.size[1] / 2), pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-        elif self.category == "Asian Porn":
-            with self.canvas.before:
-                Color(1, 0.89803921568, 1, .8)
-                self.rect = Rectangle(
-                    size=(self.size[0] / 2, self.size[1] / 2), pos=self.pos)
-            self.bind(size=self._update_rect, pos=self._update_rect)
-
-    def _update_rect(self, instance, value):
-        self.rect.pos = instance.pos
-        halfsize = (dp(65), instance.size[1])
-        self.rect.size = halfsize
-
-
-class AvatarSampleWidget(ILeftBodyTouch, Image):
-    pass
-
+    def __repr__(self):
+        return "ThumbButton: gid: {} gname: {}".format(self.gallery_id, self.gallery_name)
 
 class TagButton(MDRaisedButton):
 

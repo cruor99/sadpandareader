@@ -13,7 +13,7 @@ from os import linesep
 from functools import partial
 
 # Self created components
-from components.buttons import ThumbButton, AvatarSampleWidget
+from components.buttons import ThumbButton
 
 import json
 from favouritescreen import FavouriteScreen
@@ -37,7 +37,7 @@ class FrontScreen(Screen):
     searchword = StringProperty("")
     searchpage = NumericProperty(0)
     newstart = BooleanProperty(True)
-    title = StringProperty("Front page")
+    title = StringProperty("Gallery list")
     last_widget = ObjectProperty()
     new_galleries_len = NumericProperty
     has_entered = False
@@ -98,6 +98,7 @@ class FrontScreen(Screen):
         self.has_entered = True
 
     def enter_gallery(self, instance):
+        Logger.debug("Enter gallery instance: {}".format(instance))
 
         if not App.get_running_app(
         ).root.ids.sadpanda_screen_manager.has_screen(
@@ -270,7 +271,6 @@ class FrontScreen(Screen):
             category=gallery["category"],
             size_hint_x=1, )
         gallerybutton.bind(on_release=self.enter_gallery)
-        gallerybutton.add_widget(AvatarSampleWidget(source=gallery["thumb"]))
         if i == self.new_galleries_len -1:
             if self.last_widget:
                 self.ids.galleryscroll.scroll_to(self.last_widget)

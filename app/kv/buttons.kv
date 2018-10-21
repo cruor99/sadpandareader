@@ -1,10 +1,86 @@
+#:import random random
 <ThumbButton>:
+    canvas:
+        Color:
+            rgba: 1, 1, 1, .8
+
+        Rectangle:
+            size: self.size
+            pos: self.pos
     size_hint_y: None
-    font_name: "fonts/NotoSansCJK-Regular.ttc"
-    _num_lines: 3
-    font_style: "Body1"
-    secondary_size_hint_y: 5
-    size_hint_x: 1
+    height: dp(100)
+    BoxLayout:
+        orientation: "horizontal"
+        AnchorLayout:
+            anchor_x: "left"
+            anchor_y: "center"
+            size_hint_x: .2
+            AsyncImage:
+                source: root.gallery_thumb
+                allow_stretch: True
+        FloatLayout:
+            size_hint_x: .8
+            MDLabel:
+                size_hint: 1, None
+                pos_hint: {"x": .7, "center_y": .9}
+                text: root.category
+                height: self.texture_size[1]
+                halign: "left"
+                canvas.before:
+                    Color:
+                        rgba: root.category_colors[root.category]
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos[0] - dp(10), self.pos[1]
+                        radius: [(0.0, 0.0), (10.0, 10.0), (10.0, 10.0), (10.0, 10.0)]
+            GridLayout:
+                cols: 2
+                pos_hint: {"center_x": .1, "center_y": .9}
+                MDLabel:
+                    halign: "right"
+                    font_style: "Icon"
+                    text: u'\uF4FD'
+                MDLabel:
+                    halign: "left"
+                    text: ", ".join(root.gallery_tags)
+                    font_size: dp(8)
+                    max_lines: 1
+                    shorten: True
+                    shorten_from: "right"
+            GridLayout:
+                cols: 2
+                pos_hint: {"x": .7, "center_y": .1}
+                #pos_hint: {"center_x": .9, "center_y": .1}
+                MDLabel:
+                    size_hint_x: None
+                    font_style: "Icon"
+                    text: u'\uF5DA'
+                    halign: "right"
+                MDLabel:
+                    size_hint_x: None
+                    text: str(root.pagecount)
+                    halign: "left"
+            GridLayout:
+                cols: 2
+                pos_hint: {"center_x": .1, "center_y": .1}
+                spacing: dp(2)
+                MDLabel:
+                    font_style: "Icon"
+                    text: u'\uF162'
+                    halign: "right"
+                MDLabel:
+                    font_size: dp(8)
+                    text: str((root.filesize/1024)/1024) + " MB"
+                    halign: "left"
+
+            MDLabel:
+                pos_hint: {"x": .02, "center_y": .5}
+                size_hint_x: .8
+                font_size: dp(12)
+                markup: True
+                text: "[b]{}[/b]".format(root.gallery_name)
+
+
 
 <TagButton>:
     #size_hint_x: 1

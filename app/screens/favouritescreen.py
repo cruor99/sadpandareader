@@ -3,13 +3,15 @@ from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty, ListProperty
 from kivy.network.urlrequest import UrlRequest
 from kivy.lang import Builder
+from kivy.logger import Logger
+
 Builder.load_file("kv/favouritescreen.kv")
 
 import json
 from os import linesep
 
 from models import Favourites, Gallery, GalleryTags
-from components.buttons import ThumbButton, AvatarSampleWidget
+from components.buttons import ThumbButton
 
 
 class FavouriteScreen(Screen):
@@ -42,6 +44,7 @@ class FavouriteScreen(Screen):
         self.gallerylinks = []
 
     def populate_favs(self):
+        print(self.gidlist)
 
         headers = {"Content-type": "application/json",
                    "Accept": "text/plain",
@@ -51,13 +54,24 @@ class FavouriteScreen(Screen):
         cookies = App.get_running_app().root.cookies
         headers["Cookie"] = cookies
 
-        r = UrlRequest(
-            "http://" + App.get_running_app().root.baseurl + ".org/api.php",
-            on_success=self.populate_success,
-            req_body=json.dumps(payload),
-            req_headers=headers)
+        r = UrlRequest("http://api.e-hentai.org/api.php",
+                       on_success=self.populate_success,
+                       on_failure=self.populate_failure,
+                       on_error=self.populate_error,
+                       req_body=json.dumps(payload),
+                       req_headers=headers)
+
+    def populate_error(self, req, r):
+        Logger.debug("Error req: {}".format(req))
+        Logger.debug("Error r: {}".format(r))
+
+    def populate_failure(self, req, r):
+        Logger.debug("Failure req: {}".format(req))
+        Logger.debug("Failure r: {}".format(r))
 
     def populate_success(self, req, r):
+        Logger.debug("Success req: {}".format(req))
+        Logger.debug("Success r: {}".format(r))
         requestdump = r
         requestdump.rstrip(linesep)
         requestjson = json.loads(requestdump)
@@ -66,8 +80,8 @@ class FavouriteScreen(Screen):
             for gallery in requestjson["gmetadata"]:
                 self.add_button(gallery)
                 i += 1
-        except:
-            pass
+        except Exception as e:
+            Logger.exception(e)
 
     def add_button(self, gallery, *largs):
         gallerybutton = ThumbButton(
@@ -79,9 +93,9 @@ class FavouriteScreen(Screen):
             gallery_tags=gallery["tags"],
             gallery_thumb=gallery["thumb"],
             filesize=gallery["filesize"],
+            category=gallery["category"],
             size_hint_x=1, )
         gallerybutton.bind(on_release=self.enter_gallery)
-        gallerybutton.add_widget(AvatarSampleWidget(source=gallery["thumb"]))
         self.ids.favourite_layout.add_widget(gallerybutton)
 
     def enter_gallery(self, instance):
@@ -109,14 +123,14 @@ class FavouriteScreen(Screen):
                 gallerytag = GalleryTags(galleryid=gallery.id, tag=tag)
                 db.add(gallerytag)
                 db.commit()
-        #preview_screen = App.get_running_app(
-        #).root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
-        #preview_screen.gallery_id = instance.gallery_id
-        #App.get_running_app().root.next_screen("gallery_preview_screen")
+        # preview_screen = App.get_running_app(
+        # ).root.ids.sadpanda_screen_manager.get_screen("gallery_preview_screen")
+        # preview_screen.gallery_id = instance.gallery_id
+        # App.get_running_app().root.next_screen("gallery_preview_screen")
 
         if not App.get_running_app(
         ).root.ids.sadpanda_screen_manager.has_screen(
-                "gallery_preview_screen"):
+            "gallery_preview_screen"):
             from screens.gallerypreviewscreen import GalleryPreviewScreen
             preview_screen = GalleryPreviewScreen(
                 name="gallery_preview_screen")
