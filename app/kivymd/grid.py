@@ -5,8 +5,8 @@ from kivy.properties import StringProperty, BooleanProperty, ObjectProperty, \
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
-from kivymd.ripplebehavior import RectangularRippleBehavior
-from kivymd.theming import ThemableBehavior
+from YourApp.kivymd.ripplebehavior import RectangularRippleBehavior
+from YourApp.kivymd.theming import ThemableBehavior
 
 Builder.load_string("""
 <SmartTile>

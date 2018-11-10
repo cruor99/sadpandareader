@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
+
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
@@ -17,27 +16,24 @@ from kivy.config import Config
 from kivy.metrics import dp
 from kivy.logger import Logger
 
-from plyer import notification
-
 from threading import Thread
 
 import os
 import json
-from components.navdrawer import SadpandaNavdrawer
-from components.popups import SearchPopup, FilterPopup, CaptchaPopup
-from screens.frontscreen import FrontScreen
-from screens.startscreen import StartScreen
-from models import User, Filters, Search, Settings
-from models import check_database
+from YourApp.components.navdrawer import SadpandaNavdrawer
+from YourApp.components.popups import SearchPopup, FilterPopup, CaptchaPopup
+from YourApp.screens.frontscreen import FrontScreen
+from YourApp.screens.startscreen import StartScreen
+from YourApp.models import User, Filters, Search, Settings
+from YourApp.models import check_database
 
 # KivyMD stuff
-from kivymd.theming import ThemeManager
-from kivymd.snackbar import Snackbar
+from YourApp.kivymd.theming import ThemeManager
+from YourApp.kivymd.snackbar import Snackbar
 
-#EXPERIMENTAL
-from kivymd.material_resources import FONTS
+# EXPERIMENTAL
+from YourApp.kivymd.material_resources import FONTS
 from kivy.core.text import LabelBase
-
 
 FONTS[0]["fn_regular"] = "fonts/NotoSansCJK-Regular.ttc"
 FONTS[0]["fn_bold"] = "fonts/NotoSansCJK-Bold.ttc"
@@ -53,7 +49,6 @@ for font in FONTS:
 
 
 class SadpandaRoot(BoxLayout):
-
     cookies = StringProperty("")
     username = StringProperty("")
     password = StringProperty("")
@@ -76,7 +71,7 @@ class SadpandaRoot(BoxLayout):
             App.get_running_app().root.goto_front()
             App.get_running_app().root.ids.nav_drawer.ids.login_out_button.icon = "logout"
             App.get_running_app().root.ids.nav_drawer.ids.login_out_button.text = "Log out"
-            #App.get_running_app().root.next_screen("front_screen")
+            # App.get_running_app().root.next_screen("front_screen")
         else:
             pass
 
@@ -139,14 +134,14 @@ class SadpandaRoot(BoxLayout):
             req_headers=headers)
 
     def login_failure(self, req, r):
-        print "failure"
-        print req.resp_headers
-        print req
+        print("failure")
+        print(req.resp_headers)
+        print(req)
 
     def login_error(self, req, error):
-        print "error"
-        print req.resp_headers
-        print req
+        print("error")
+        print(req.resp_headers)
+        print(req)
 
     def login_attempt(self, req, r):
         db = App.get_running_app().db
@@ -217,10 +212,10 @@ class SadpandaRoot(BoxLayout):
             from screens.frontscreen import FrontScreen
             self.ids.sadpanda_screen_manager.add_widget(FrontScreen(
                 name="front_screen"))
-        #blanksearch = Search(searchterm=" ")
-        #db = App.get_running_app().db
-        #db.add(blanksearch)
-        #db.commit()
+        # blanksearch = Search(searchterm=" ")
+        # db = App.get_running_app().db
+        # db.add(blanksearch)
+        # db.commit()
         self.next_screen("front_screen")
 
     def start_search(self, instance):
@@ -310,7 +305,6 @@ class SadpandaRoot(BoxLayout):
 
 
 class SadpandaApp(App):
-
     theme_cls = ThemeManager()
     nav_drawer = ObjectProperty()
 
@@ -320,10 +314,10 @@ class SadpandaApp(App):
         Window.softinput_mode = "below_target"
         data_dir = getattr(self, "user_data_dir")
         self.data_dir = data_dir
-        #defaultdir = Config.getdefault("kivy", "log_dir", data_dir)
-        #if defaultdir == data_dir:
+        # defaultdir = Config.getdefault("kivy", "log_dir", data_dir)
+        # if defaultdir == data_dir:
         #    pass
-        #else:
+        # else:
         #    Config.set("kivy", "log_dir", data_dir)
         #    Config.set("kivy", "log_enable", 1)
         #    Config.set("kivy", "log_level", "debug")

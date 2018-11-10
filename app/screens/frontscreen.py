@@ -16,13 +16,13 @@ from functools import partial
 from components.buttons import ThumbButton
 
 import json
-from favouritescreen import FavouriteScreen
-from settingsscreen import SettingsScreen
+from .favouritescreen import FavouriteScreen
+from .settingsscreen import SettingsScreen
 
 #to unescape gallery strings
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
-from BeautifulSoup import BeautifulSoup as BS
+from bs4 import BeautifulSoup as BS
 import urllib
 
 from models import Search, Filters, Gallery, GalleryTags
@@ -153,7 +153,7 @@ class FrontScreen(Screen):
                 filters.western) + "&f_non-h=" + str(filters.nonh) +
             "&f_imageset=" + str(filters.imageset) + "&f_cosplay=" + str(
                 filters.cosplay) + "&f_asianporn=" + str(filters.asianporn) +
-            "&f_misc=" + str(filters.misc) + "&f_search=" + urllib.quote_plus(
+            "&f_misc=" + str(filters.misc) + "&f_search=" + urllib.parse.quote_plus(
                 self.searchword) + "&f_apply=Apply+Filter")
         pagesearchurl = str(
             "http://" + App.get_running_app().root.baseurl + ".org/?" + "page="
@@ -164,7 +164,7 @@ class FrontScreen(Screen):
                 filters.nonh) + "&f_imageset=" + str(filters.imageset) +
             "&f_cosplay=" + str(filters.cosplay) + "&f_asianporn=" + str(
                 filters.asianporn) + "&f_misc=" + str(
-                    filters.misc) + "&f_search=" + urllib.quote_plus(
+                    filters.misc) + "&f_search=" + urllib.parse.quote_plus(
                         self.searchword) + "&f_apply=Apply+Filter")
         if self.searchpage == 0:
             req = UrlRequest(page0searchurl,
@@ -182,12 +182,12 @@ class FrontScreen(Screen):
         # pure html of ehentai link
 
     def got_failure(self, req, r):
-        print req
-        print r
+        print(req)
+        print(r)
 
     def got_error(self, req, r):
-        print req
-        print r
+        print(req)
+        print(r)
 
     def got_result(self, req, r):
         data = r
@@ -227,7 +227,7 @@ class FrontScreen(Screen):
         self.grabthumbs(headers, payload, cookies)
 
     def grabthumbs(self, headers, payload, cookies, *largs):
-        params = urllib.urlencode(payload)
+        params = urllib.parse.urlencode(payload)
         r = UrlRequest("http://api.e-hentai.org/api.php",
                        on_success=self.thumbgrab,
                        on_error=self.thumb_error,
@@ -236,12 +236,12 @@ class FrontScreen(Screen):
                        req_headers=headers)
 
     def thumb_error(self, req, r):
-        print req.resp_status
-        print r
+        print(req.resp_status)
+        print(r)
 
     def thumb_failure(self, req, r):
-        print req.resp_status
-        print r
+        print(req.resp_status)
+        print(r)
 
     def thumbgrab(self, req, r):
         requestdump = r
@@ -253,7 +253,7 @@ class FrontScreen(Screen):
                 self.add_button(gallery, i)
                 i += 1
         except Exception as e:
-            print e
+            print(e)
 
     def add_button(self, gallery, i, *largs):
         escapedtitle = gallery["title"]

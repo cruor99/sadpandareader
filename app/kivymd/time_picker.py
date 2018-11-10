@@ -3,13 +3,13 @@
 from kivy.lang import Builder
 from kivy.uix.modalview import ModalView
 from kivy.uix.floatlayout import FloatLayout
-from kivymd.theming import ThemableBehavior
-from kivymd.elevationbehavior import RectangularElevationBehavior
+from YourApp.kivymd.theming import ThemableBehavior
+from YourApp.kivymd.elevationbehavior import RectangularElevationBehavior
 from kivy.properties import ObjectProperty, ListProperty
 
 Builder.load_string("""
-#:import MDFlatButton kivymd.button.MDFlatButton
-#:import CircularTimePicker kivymd.vendor.circularTimePicker.CircularTimePicker
+#:import MDFlatButton YourApp.kivymd.button.MDFlatButton
+#:import CircularTimePicker YourApp.kivymd.vendor.circularTimePicker.CircularTimePicker
 #:import dp kivy.metrics.dp
 <MDTimePicker>:
     size_hint: (None, None)

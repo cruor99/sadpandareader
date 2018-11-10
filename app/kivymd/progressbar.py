@@ -3,8 +3,8 @@
 from kivy.lang import Builder
 from kivy.properties import ListProperty, OptionProperty, BooleanProperty
 from kivy.utils import get_color_from_hex
-from kivymd.color_definitions import colors
-from kivymd.theming import ThemableBehavior
+from YourApp.kivymd.color_definitions import colors
+from YourApp.kivymd.theming import ThemableBehavior
 from kivy.uix.progressbar import ProgressBar
 
 
@@ -42,13 +42,13 @@ class MDProgressBar(ThemableBehavior, ProgressBar):
     
 if __name__ == '__main__':
     from kivy.app import App
-    from kivymd.theming import ThemeManager
+    from YourApp.kivymd.theming import ThemeManager
     
     class ProgressBarApp(App):
         theme_cls = ThemeManager()
 
         def build(self):
-            return Builder.load_string("""#:import MDSlider kivymd.slider.MDSlider
+            return Builder.load_string("""#:import MDSlider YourApp.kivymd.slider.MDSlider
 BoxLayout:
     orientation:'vertical'
     padding: '8dp'

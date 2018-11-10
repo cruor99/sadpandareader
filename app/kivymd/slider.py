@@ -4,13 +4,13 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty, ListProperty, NumericProperty,AliasProperty, BooleanProperty
 from kivy.utils import get_color_from_hex
 from kivy.metrics import dp, sp
-from kivymd.color_definitions import colors
-from kivymd.theming import ThemableBehavior
+from YourApp.kivymd.color_definitions import colors
+from YourApp.kivymd.theming import ThemableBehavior
 from kivy.uix.slider import Slider
 
 
 Builder.load_string('''
-#:import Thumb kivymd.selectioncontrols.Thumb
+#:import Thumb YourApp.kivymd.selectioncontrols.Thumb
 
 <MDSlider>:
     id: slider
@@ -192,7 +192,7 @@ class MDSlider(ThemableBehavior, Slider):
 
 if __name__ == '__main__':
     from kivy.app import App
-    from kivymd.theming import ThemeManager
+    from YourApp.kivymd.theming import ThemeManager
     
     class SliderApp(App):
         theme_cls = ThemeManager()

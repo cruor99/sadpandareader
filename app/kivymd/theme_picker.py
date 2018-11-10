@@ -5,15 +5,15 @@ from kivy.properties import OptionProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.modalview import ModalView
 from kivy.utils import get_color_from_hex
-from kivymd.backgroundcolorbehavior import SpecificBackgroundColorBehavior
-from kivymd.button import MDIconButton
-from kivymd.color_definitions import colors
-from kivymd.elevationbehavior import RectangularElevationBehavior
-from kivymd.theming import ThemableBehavior
+from YourApp.kivymd.backgroundcolorbehavior import SpecificBackgroundColorBehavior
+from YourApp.kivymd.button import MDIconButton
+from YourApp.kivymd.color_definitions import colors
+from YourApp.kivymd.elevationbehavior import RectangularElevationBehavior
+from YourApp.kivymd.theming import ThemableBehavior
 
 Builder.load_string("""
-#:import MDTabbedPanel kivymd.tabs.MDTabbedPanel
-#:import MDTab kivymd.tabs.MDTab
+#:import MDTabbedPanel YourApp.kivymd.tabs.MDTabbedPanel
+#:import MDTab YourApp.kivymd.tabs.MDTab
 <ColorSelector>:
     size: dp(40), dp(40)
     pos: self.pos
@@ -359,15 +359,15 @@ class MDThemePicker(ThemableBehavior, FloatLayout, ModalView,
 
 if __name__ == "__main__":
     from kivy.app import App
-    from kivymd.theming import ThemeManager
+    from YourApp.kivymd.theming import ThemeManager
 
     class ThemePickerApp(App):
         theme_cls = ThemeManager()
 
         def build(self):
             main_widget = Builder.load_string("""
-#:import MDRaisedButton kivymd.button.MDRaisedButton
-#:import MDThemePicker kivymd.theme_picker.MDThemePicker
+#:import MDRaisedButton YourApp.kivymd.button.MDRaisedButton
+#:import MDThemePicker YourApp.kivymd.theme_picker.MDThemePicker
 FloatLayout:
     MDRaisedButton:
         size_hint: None, None

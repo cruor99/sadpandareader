@@ -4,8 +4,8 @@ from kivy.properties import BoundedNumericProperty, ReferenceListProperty
 from kivy.properties import OptionProperty, ListProperty
 from kivy.uix.widget import Widget
 from kivy.utils import get_color_from_hex
-from kivymd.color_definitions import text_colors
-from kivymd.theming import ThemableBehavior
+from YourApp.kivymd.color_definitions import text_colors
+from YourApp.kivymd.theming import ThemableBehavior
 
 Builder.load_string('''
 <BackgroundColorBehavior>

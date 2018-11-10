@@ -20,18 +20,18 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.animation import Animation
-from kivymd.backgroundcolorbehavior import SpecificBackgroundColorBehavior
-from kivymd.ripplebehavior import CircularRippleBehavior, \
+from YourApp.kivymd.backgroundcolorbehavior import SpecificBackgroundColorBehavior
+from YourApp.kivymd.ripplebehavior import CircularRippleBehavior, \
     RectangularRippleBehavior
-from kivymd.elevationbehavior import CommonElevationBehavior, \
+from YourApp.kivymd.elevationbehavior import CommonElevationBehavior, \
     RectangularElevationBehavior, CircularElevationBehavior
-from kivymd.theming import ThemableBehavior
-from kivymd.color_definitions import colors
+from YourApp.kivymd.theming import ThemableBehavior
+from YourApp.kivymd.color_definitions import colors
 
 Builder.load_string('''
-#:import md_icons kivymd.icon_definitions.md_icons
-#:import colors kivymd.color_definitions.colors
-#:import MDLabel kivymd.label.MDLabel
+#:import md_icons YourApp.kivymd.icon_definitions.md_icons
+#:import colors YourApp.kivymd.color_definitions.colors
+#:import MDLabel YourApp.kivymd.label.MDLabel
 <BaseButton>:
     size_hint: (None, None)
     anchor_x: 'center'

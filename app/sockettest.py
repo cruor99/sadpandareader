@@ -6,7 +6,7 @@ client_token = "6rgcw2zlr4ubpvcegjajqpnmehx5gp5zm1yigjzp1mgfvy6c"
 
 
 def do_notify(response):
-    print response["message"]
+    print(response["message"])
 
 socketio = SocketIO(url, params={"transports": ["polling", "websocket"]})
 socketio.on('send', do_notify)

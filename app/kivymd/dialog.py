@@ -5,9 +5,9 @@ from kivy.properties import StringProperty, ObjectProperty, ListProperty
 from kivy.metrics import dp
 from kivy.uix.modalview import ModalView
 from kivy.animation import Animation
-from kivymd.theming import ThemableBehavior
-from kivymd.elevationbehavior import RectangularElevationBehavior
-from kivymd.button import MDFlatButton
+from YourApp.kivymd.theming import ThemableBehavior
+from YourApp.kivymd.elevationbehavior import RectangularElevationBehavior
+from YourApp.kivymd.button import MDFlatButton
 
 Builder.load_string('''
 <MDDialog>:

@@ -147,12 +147,12 @@ from kivy.properties import ObjectProperty, StringProperty, NumericProperty, \
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
-import kivymd.material_resources as m_res
-from kivymd.ripplebehavior import RectangularRippleBehavior
-from kivymd.theming import ThemableBehavior
+import YourApp.kivymd.material_resources as m_res
+from YourApp.kivymd.ripplebehavior import RectangularRippleBehavior
+from YourApp.kivymd.theming import ThemableBehavior
 
 Builder.load_string('''
-#:import m_res kivymd.material_resources
+#:import m_res YourApp.kivymd.material_resources
 <MDList>
     cols: 1
     size_hint_y: None

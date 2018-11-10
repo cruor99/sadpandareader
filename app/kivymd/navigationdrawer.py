@@ -14,20 +14,20 @@ from kivy.properties import StringProperty, ObjectProperty, NumericProperty, Lis
     OptionProperty, Clock
 from kivy.uix.boxlayout import BoxLayout
 
-from kivymd import images_path
-from kivymd.elevationbehavior import RectangularElevationBehavior
-from kivymd.icon_definitions import md_icons
-from kivymd.label import MDLabel
-from kivymd.list import BaseListItem, ILeftBody, OneLineListItem, OneLineIconListItem, IRightBody
-from kivymd.theming import ThemableBehavior
-from kivymd.toolbar import Toolbar
-from kivymd.vendor.navigationdrawer import (NavigationDrawer as VendorNavigationDrawer)
+from YourApp.kivymd import images_path
+from YourApp.kivymd.elevationbehavior import RectangularElevationBehavior
+from YourApp.kivymd.icon_definitions import md_icons
+from YourApp.kivymd.label import MDLabel
+from YourApp.kivymd.list import BaseListItem, ILeftBody, OneLineListItem, OneLineIconListItem, IRightBody
+from YourApp.kivymd.theming import ThemableBehavior
+from YourApp.kivymd.toolbar import Toolbar
+from YourApp.kivymd.vendor.navigationdrawer import (NavigationDrawer as VendorNavigationDrawer)
 
 Builder.load_string("""
-#:import Toolbar kivymd.toolbar.Toolbar
-#:import MDList kivymd.list.MDList
-#:import OneLineIconListItem kivymd.list.OneLineIconListItem
-#:import colors kivymd.color_definitions.colors
+#:import Toolbar YourApp.kivymd.toolbar.Toolbar
+#:import MDList YourApp.kivymd.list.MDList
+#:import OneLineIconListItem YourApp.kivymd.list.OneLineIconListItem
+#:import colors YourApp.kivymd.color_definitions.colors
 #:import get_color_from_hex kivy.utils.get_color_from_hex
 #:import ScrollView kivy.uix.scrollview.ScrollView
 #:import Window kivy.core.window.Window

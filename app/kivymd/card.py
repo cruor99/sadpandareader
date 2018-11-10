@@ -2,8 +2,8 @@
 from kivy.lang import Builder
 from kivy.properties import BoundedNumericProperty, ReferenceListProperty, ListProperty,BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivymd.elevationbehavior import RectangularElevationBehavior
-from kivymd.theming import ThemableBehavior
+from YourApp.kivymd.elevationbehavior import RectangularElevationBehavior
+from YourApp.kivymd.theming import ThemableBehavior
 from kivy.metrics import dp
 from kivy.uix.widget import Widget
 

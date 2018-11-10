@@ -16,11 +16,11 @@ from kivy.properties import StringProperty, DictProperty, ListProperty, \
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
-from kivymd.backgroundcolorbehavior import (BackgroundColorBehavior,
+from YourApp.kivymd.backgroundcolorbehavior import (BackgroundColorBehavior,
                                             SpecificBackgroundColorBehavior)
-from kivymd.button import MDFlatButton, BaseFlatButton, BasePressedButton
-from kivymd.elevationbehavior import RectangularElevationBehavior
-from kivymd.theming import ThemableBehavior
+from YourApp.kivymd.button import MDFlatButton, BaseFlatButton, BasePressedButton
+from YourApp.kivymd.elevationbehavior import RectangularElevationBehavior
+from YourApp.kivymd.theming import ThemableBehavior
 
 Builder.load_string("""
 #:import sm kivy.uix.screenmanager
@@ -492,7 +492,7 @@ class MDBottomNavigation(TabbedPanelBase):
 
 if __name__ == '__main__':
     from kivy.app import App
-    from kivymd.theming import ThemeManager
+    from YourApp.kivymd.theming import ThemeManager
     
     class TabsApp(App):
         theme_cls = ThemeManager()
@@ -503,9 +503,9 @@ if __name__ == '__main__':
             # self.theme_cls.theme_style = 'Dark'
 
             return Builder.load_string("""
-#:import Toolbar kivymd.toolbar.Toolbar
-#:import Snackbar kivymd.snackbar.make
-#:import MDRaisedButton kivymd.button.MDRaisedButton
+#:import Toolbar YourApp.kivymd.toolbar.Toolbar
+#:import Snackbar YourApp.kivymd.snackbar.make
+#:import MDRaisedButton YourApp.kivymd.button.MDRaisedButton
 BoxLayout:
     orientation:'vertical'
     Toolbar:

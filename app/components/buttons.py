@@ -4,16 +4,16 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import AsyncImage as Image
 from kivy.uix.stencilview import StencilView
 from kivy.uix.button import Button
-from kivymd.button import MDFlatButton, MDRaisedButton
-from kivymd.list import TwoLineAvatarListItem, ILeftBodyTouch, OneLineAvatarListItem
+from YourApp.kivymd.button import MDFlatButton, MDRaisedButton
+from YourApp.kivymd.list import TwoLineAvatarListItem, ILeftBodyTouch, OneLineAvatarListItem
 from kivy.lang import Builder
 from kivy.graphics import Color, Rectangle
 from kivy.metrics import dp
 from kivy.uix.stencilview import StencilView
 
 from kivy.uix.label import Label
-from kivymd.label import MDLabel
-from kivymd.card import MDCard
+from YourApp.kivymd.label import MDLabel
+from YourApp.kivymd.card import MDCard
 
 Builder.load_file("kv/buttons.kv")
 

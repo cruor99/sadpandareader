@@ -3,9 +3,9 @@ from kivy.lang import Builder
 from kivy.metrics import sp
 from kivy.properties import OptionProperty, DictProperty, ListProperty
 from kivy.uix.label import Label
-from kivymd.material_resources import DEVICE_TYPE
-from kivymd.theming import ThemableBehavior
-from kivymd.theming_dynamic_text import get_contrast_text_color
+from YourApp.kivymd.material_resources import DEVICE_TYPE
+from YourApp.kivymd.theming import ThemableBehavior
+from YourApp.kivymd.theming_dynamic_text import get_contrast_text_color
 
 Builder.load_string('''
 <MDLabel>

@@ -9,9 +9,9 @@ from kivy.properties import OptionProperty, AliasProperty, ObjectProperty, \
 from kivy.uix.widget import Widget
 from kivy.utils import get_color_from_hex
 from kivy.atlas import Atlas
-from kivymd.color_definitions import colors, text_colors
-from kivymd.material_resources import FONTS, DEVICE_TYPE
-from kivymd import images_path
+from YourApp.kivymd.color_definitions import colors, text_colors
+from YourApp.kivymd.material_resources import FONTS, DEVICE_TYPE
+from YourApp.kivymd import images_path
 
 for font in FONTS:
     LabelBase.register(**font)

@@ -18,14 +18,14 @@ from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.uix.relativelayout import RelativeLayout
-from kivymd.material_resources import DEVICE_TYPE
+from YourApp.kivymd.material_resources import DEVICE_TYPE
 
 Builder.load_string('''
 #:import Window kivy.core.window.Window
 #:import get_color_from_hex kivy.utils.get_color_from_hex
-#:import MDFlatButton kivymd.button.MDFlatButton
-#:import MDLabel kivymd.label.MDLabel
-#:import DEVICE_TYPE kivymd.material_resources.DEVICE_TYPE
+#:import MDFlatButton YourApp.kivymd.button.MDFlatButton
+#:import MDLabel YourApp.kivymd.label.MDLabel
+#:import DEVICE_TYPE YourApp.kivymd.material_resources.DEVICE_TYPE
 <_SnackbarWidget>
     canvas:
         Color:

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from kivy.lang import Builder
 from kivy.uix.modalview import ModalView
-from kivymd.label import MDLabel
-from kivymd.theming import ThemableBehavior
-from kivymd.backgroundcolorbehavior import SpecificBackgroundColorBehavior
+from YourApp.kivymd.label import MDLabel
+from YourApp.kivymd.theming import ThemableBehavior
+from YourApp.kivymd.backgroundcolorbehavior import SpecificBackgroundColorBehavior
 from kivy.uix.floatlayout import FloatLayout
-from kivymd.elevationbehavior import RectangularElevationBehavior
+from YourApp.kivymd.elevationbehavior import RectangularElevationBehavior
 import calendar
 from datetime import date
 import datetime
@@ -13,7 +13,7 @@ from kivy.properties import StringProperty, NumericProperty, ObjectProperty, \
     BooleanProperty, ListProperty
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.behaviors import ButtonBehavior
-from kivymd.ripplebehavior import CircularRippleBehavior
+from YourApp.kivymd.ripplebehavior import CircularRippleBehavior
 from kivy.clock import Clock
 from kivy.core.window import Window
 

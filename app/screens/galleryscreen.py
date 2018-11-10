@@ -5,13 +5,13 @@ from kivy.properties import BooleanProperty, DictProperty
 from kivy.clock import Clock
 import urllib
 from kivy.network.urlrequest import UrlRequest
-from kivymd.snackbar import Snackbar
+from YourApp.kivymd.snackbar import Snackbar
 from kivy.lang import Builder
 from kivy.logger import Logger
 
 Builder.load_file("kv/galleryscreen.kv")
 
-from BeautifulSoup import BeautifulSoup as BS
+from bs4 import BeautifulSoup as BS
 
 # Self made components
 from components.images import GalleryCarousel, GalleryImage, GalleryContainerLayout, GalleryImageScreen

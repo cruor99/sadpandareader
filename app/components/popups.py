@@ -4,11 +4,11 @@ from kivy.properties import StringProperty, NumericProperty, ListProperty
 from kivy.logger import Logger
 from kivy.lang import Builder
 
-from models import Search, Filters
+from YourApp.models import Search, Filters
 
-from kivymd.dialog import MDDialog
-from kivymd.textfields import MDTextField
-from kivymd.button import MDFlatButton
+from YourApp.kivymd.dialog import MDDialog
+from YourApp.kivymd.textfields import MDTextField
+from YourApp.kivymd.button import MDFlatButton
 
 Builder.load_file("kv/popups.kv")
 

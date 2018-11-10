@@ -5,13 +5,13 @@ from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import ListProperty, StringProperty, OptionProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivymd.backgroundcolorbehavior import SpecificBackgroundColorBehavior
-from kivymd.button import MDIconButton
-from kivymd.theming import ThemableBehavior
-from kivymd.elevationbehavior import RectangularElevationBehavior
+from YourApp.kivymd.backgroundcolorbehavior import SpecificBackgroundColorBehavior
+from YourApp.kivymd.button import MDIconButton
+from YourApp.kivymd.theming import ThemableBehavior
+from YourApp.kivymd.elevationbehavior import RectangularElevationBehavior
 
 Builder.load_string('''
-#:import m_res kivymd.material_resources
+#:import m_res YourApp.kivymd.material_resources
 <Toolbar>
     size_hint_y: None
     height: root.theme_cls.standard_increment
