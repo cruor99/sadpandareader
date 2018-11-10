@@ -36,7 +36,7 @@ version = 2.93
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, sqlite3, beautifulsoup, openssl, sqlalchemy, git+https://github.com/andremiras/kivymd.git@develop, plyer
+requirements = python3, kivy, bs4, sqlalchemy, git+https://github.com/andremiras/kivymd.git@develop, openssl
 
 #workaround fix
 p4a.local_recipes = %(source.dir)s/.buildozer/android/platform/python-for-android/recipes
@@ -176,12 +176,12 @@ android.logcat_filters = *:S python:D
 
 # (str) Name of the certificate to use for signing the release version
 #ios.codesign.release = %(ios.codesign.debug)s
-#ios.codesign.debug = "iPhone Developer: Kjetil Andre Liknes (YE9GH35KK6)"
-ios.codesign.debug = "iPhone Distribution: Kjetil Andre Liknes (9NJ47ME5B9)"
+ios.codesign.debug = "iPhone Developer: Kjetil Andre Liknes (YE9GH35KK6)"
+#ios.codesign.debug = "iPhone Distribution: Kjetil Andre Liknes (9NJ47ME5B9)"
 # (str) Name of the certificate to use for signing the release version
 #ios.codesign.release = %(ios.codesign.debug)s
-ios.codesign.release = "iPhone Distribution: Kjetil Andre Liknes (9NJ47ME5B9)"
-
+#ios.codesign.release = "iPhone Distribution: Kjetil Andre Liknes (9NJ47ME5B9)"
+ios.codesign.release = "iPhone Developer: Kjetil Andre Liknes (YE9GH35KK6)"
 
 
 [buildozer]
