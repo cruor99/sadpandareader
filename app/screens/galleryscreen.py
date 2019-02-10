@@ -5,7 +5,7 @@ from kivy.properties import BooleanProperty, DictProperty
 from kivy.clock import Clock
 import urllib
 from kivy.network.urlrequest import UrlRequest
-from YourApp.kivymd.snackbar import Snackbar
+from kivymd.snackbar import Snackbar
 from kivy.lang import Builder
 from kivy.logger import Logger
 
@@ -275,7 +275,7 @@ class GalleryScreen(Screen):
     def got_image(self, req, r):
         ipmatch = r'^http://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
-        soup = BS(r)
+        soup = BS(r, features="html.parser")
 
         srctag = soup.findAll(name="img")
 

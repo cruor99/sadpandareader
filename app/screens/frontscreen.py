@@ -192,7 +192,7 @@ class FrontScreen(Screen):
     def got_result(self, req, r):
         data = r
 
-        soup = BS(data, fromEncoding='utf8')
+        soup = BS(data, fromEncoding='utf8', features='html.parser')
         gallerylinks = []
 
         # grabs all the divs with class it5 which denotes the gallery on the

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import sys
+from pprint import pprint
 
+sys.path.append("_applibs")
+sys.path.append(".")
+pprint(sys.path)
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
@@ -20,19 +24,19 @@ from threading import Thread
 
 import os
 import json
-from YourApp.components.navdrawer import SadpandaNavdrawer
-from YourApp.components.popups import SearchPopup, FilterPopup, CaptchaPopup
-from YourApp.screens.frontscreen import FrontScreen
-from YourApp.screens.startscreen import StartScreen
-from YourApp.models import User, Filters, Search, Settings
-from YourApp.models import check_database
+from components.navdrawer import SadpandaNavdrawer
+from components.popups import SearchPopup, FilterPopup, CaptchaPopup
+from screens.frontscreen import FrontScreen
+from screens.startscreen import StartScreen
+from models import User, Filters, Search, Settings
+from models import check_database
 
 # KivyMD stuff
-from YourApp.kivymd.theming import ThemeManager
-from YourApp.kivymd.snackbar import Snackbar
+from kivymd.theming import ThemeManager
+from kivymd.snackbar import Snackbar
 
 # EXPERIMENTAL
-from YourApp.kivymd.material_resources import FONTS
+from kivymd.material_resources import FONTS
 from kivy.core.text import LabelBase
 
 FONTS[0]["fn_regular"] = "fonts/NotoSansCJK-Regular.ttc"
@@ -310,6 +314,7 @@ class SadpandaApp(App):
 
     def __init__(self, **kwargs):
         super(SadpandaApp, self).__init__(**kwargs)
+        Logger.info(sys.path)
         Window.bind(on_keyboard=self.onBackBtn)
         Window.softinput_mode = "below_target"
         data_dir = getattr(self, "user_data_dir")

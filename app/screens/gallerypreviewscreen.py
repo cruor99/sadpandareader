@@ -13,7 +13,7 @@ from components.buttons import TagButton
 
 from models import Gallery, GalleryTags, Search, Favourites
 
-from YourApp.kivymd.snackbar import Snackbar
+from kivymd.snackbar import Snackbar
 
 class GalleryPreviewScreen(Screen):
 
