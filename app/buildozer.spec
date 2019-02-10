@@ -36,7 +36,7 @@ version = 2.93
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy, bs4, sqlalchemy, git+https://github.com/andremiras/kivymd.git@develop, openssl
+requirements = python2, kivy, bs4, sqlalchemy, git+https://github.com/andremiras/kivymd.git@develop, openssl
 
 #workaround fix
 p4a.local_recipes = %(source.dir)s/.buildozer/android/platform/python-for-android/recipes
@@ -168,7 +168,7 @@ android.logcat_filters = *:S python:D
 #
 
 # (str) Path to a custom kivy-ios folder
-ios.kivy_ios_dir = ../../kivy-ios
+#ios.kivy_ios_dir = ../../kivy-ios
 
 # (str) Name of the certificate to use for signing the debug version
 # Get a list of available identities: buildozer ios list_identities

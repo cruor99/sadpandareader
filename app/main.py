@@ -316,7 +316,7 @@ class SadpandaApp(App):
         super(SadpandaApp, self).__init__(**kwargs)
         Logger.info(sys.path)
         Window.bind(on_keyboard=self.onBackBtn)
-        Window.softinput_mode = "below_target"
+        #Window.softinput_mode = "below_target"
         data_dir = getattr(self, "user_data_dir")
         self.data_dir = data_dir
         # defaultdir = Config.getdefault("kivy", "log_dir", data_dir)
@@ -328,14 +328,20 @@ class SadpandaApp(App):
         #    Config.set("kivy", "log_level", "debug")
         #    Config.write()
         self.db = check_database(data_dir)
-        migrationjsonstore = JsonStore("migrate.json")
-        migration = migrationjsonstore.get("migrate")
-        if migration["migration"] == "true":
-            os.remove(data_dir + "/database.db")
+        try:
+            migrationjsonstore = JsonStore(data_dir + "/migrate.json")
+            migration = migrationjsonstore.get("migrate")
+            if migration["migration"] == "true":
+                os.remove(data_dir + "/database.db")
+                self.db = check_database(data_dir)
+                migrationjsonstore.put("migrate", migration="false")
+            else:
+                pass
+        except Exception as e:
+            Logger.info(e)
+            os.remove(data_dir+"/database.db")
             self.db = check_database(data_dir)
             migrationjsonstore.put("migrate", migration="false")
-        else:
-            pass
         # Makes sure only non-h is the default.
         existfilters = self.db.query(Filters).order_by(Filters.id.desc(
         )).first()
