@@ -14,20 +14,15 @@
             background_hue: "500"
         GalleryContainerLayout:
             id: container_layout
-            GalleryCarousel:
-                id: gal_carousel
-                on__offset: root.testmove(self._offset, self.min_move, self.direction)
-                scroll_timeout: 100
-                GalleryImage:
-                    id: gal_image
-            GalleryNavButton:
-                pos_hint: {"center_x": .99}
-                size_hint_y: 1
-                disabled: gal_image.hide_buttons
-                on_release: root.next_image(self)
-            GalleryNavButton:
-                size_hint_y: 1
-                pos_hint: {"center_x": .01}
-                disabled: gal_image.hide_buttons
-                on_release: root.previous_image(self)
+            RecycleView:
+                id: gal_rv
+                viewclass: 'GalleryImage'
+                data: root.gallery_images
+                RecycleBoxLayout:
+                    id: gal_layout
+                    orientation: "vertical"
+                    default_size: None, container_layout.height
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
 

@@ -8,6 +8,7 @@ from kivy.network.urlrequest import UrlRequest
 from kivymd.snackbar import Snackbar
 from kivy.lang import Builder
 from kivy.logger import Logger
+from kivy.uix.recycleview import RecycleView
 
 Builder.load_file("kv/galleryscreen.kv")
 
@@ -37,6 +38,7 @@ class GalleryScreen(Screen):
     scrollstopper = BooleanProperty(False)
     galleryscreen = ObjectProperty()
     gotpageresultcounter = NumericProperty(99)
+    gallery_images = ListProperty([])
 
     def __init__(self, **kwargs):
         super(GalleryScreen, self).__init__(**kwargs)
@@ -176,7 +178,7 @@ class GalleryScreen(Screen):
     def togglestopper(self, *args):
         self.scrollstopper = False
 
-    def next_image(self, instance):
+    def next_image(self, dt):
         db = App.get_running_app().db
         pagelinks = db.query(Pagelink).filter_by(galleryid=self.db_id).order_by(Pagelink.mainpage).all()
 
@@ -204,8 +206,6 @@ class GalleryScreen(Screen):
                 try:
                     print("NEWPAGEINDEX: {}".format(newpageindex))
                     newpage = pagelinks[newpageindex - 1]
-                    newpage.current = 1
-                    page.current = 0
                     db.commit()
                     newscreen = self.construct_image(newpage.pagelink)
                     break
@@ -214,8 +214,6 @@ class GalleryScreen(Screen):
                     Snackbar(text="End of Gallery").show()
                     self.current_page = minpage
                     newpage = pagelinks[0]
-                    newpage.current = 1
-                    page.current = 0
                     db.commit()
                     newscreen = self.construct_image(newpage.pagelink)
                     break
@@ -257,10 +255,19 @@ class GalleryScreen(Screen):
         src = self.grab_image(pagelink)
         self.temppagelink = pagelink
 
+    temp_gallery_images = ListProperty([])
     def push_image(self, src):
-        self.ids.gal_image.scale = 1
-        self.ids.gal_image.pos = self.pos
-        self.ids.gal_image.source = src
+        new_gal_img = {}
+        new_gal_img["scale"] = 1
+        new_gal_img["pos"] = self.pos
+        new_gal_img["source"] = src
+        #new_gal_img["width"] = self.ids.container_layout.width
+        #new_gal_img["height"] = self.ids.container_layout.height
+        self.gallery_images.append(new_gal_img)
+        if self.current_page < self.pagecount:
+            Clock.schedule_once(self.next_image, .1)
+        else:
+            Logger.info(self.gallery_images)
 
     def grab_image(self, i):
         headers = {'User-agent': 'Mozilla/5.0',
@@ -275,7 +282,7 @@ class GalleryScreen(Screen):
     def got_image(self, req, r):
         ipmatch = r'^http://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
-        soup = BS(r, features="html.parser")
+        soup = BS(r)
 
         srctag = soup.findAll(name="img")
 

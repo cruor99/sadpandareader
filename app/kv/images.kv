@@ -1,8 +1,12 @@
 
 <GalleryImage>:
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgb: 1, 0, 0
     size_hint: None, None
-    width: self.parent.width
-    height: self.parent.height
     allow_stretch: True
     keep_ratio: True
     do_translation: False

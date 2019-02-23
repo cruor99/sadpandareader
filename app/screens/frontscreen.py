@@ -20,7 +20,7 @@ from .favouritescreen import FavouriteScreen
 from .settingsscreen import SettingsScreen
 
 #to unescape gallery strings
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 from bs4 import BeautifulSoup as BS
 import urllib
@@ -153,7 +153,7 @@ class FrontScreen(Screen):
                 filters.western) + "&f_non-h=" + str(filters.nonh) +
             "&f_imageset=" + str(filters.imageset) + "&f_cosplay=" + str(
                 filters.cosplay) + "&f_asianporn=" + str(filters.asianporn) +
-            "&f_misc=" + str(filters.misc) + "&f_search=" + urllib.quote_plus(
+            "&f_misc=" + str(filters.misc) + "&f_search=" + urllib.parse.quote_plus(
                 self.searchword) + "&f_apply=Apply+Filter")
         pagesearchurl = str(
             "http://" + App.get_running_app().root.baseurl + ".org/?" + "page="
@@ -164,7 +164,7 @@ class FrontScreen(Screen):
                 filters.nonh) + "&f_imageset=" + str(filters.imageset) +
             "&f_cosplay=" + str(filters.cosplay) + "&f_asianporn=" + str(
                 filters.asianporn) + "&f_misc=" + str(
-                    filters.misc) + "&f_search=" + urllib.quote_plus(
+                    filters.misc) + "&f_search=" + urllib.parse.quote_plus(
                         self.searchword) + "&f_apply=Apply+Filter")
         if self.searchpage == 0:
             req = UrlRequest(page0searchurl,
@@ -192,7 +192,7 @@ class FrontScreen(Screen):
     def got_result(self, req, r):
         data = r
 
-        soup = BS(data, fromEncoding='utf8', features='html.parser')
+        soup = BS(data, fromEncoding='utf8')
         gallerylinks = []
 
         # grabs all the divs with class it5 which denotes the gallery on the
@@ -227,7 +227,7 @@ class FrontScreen(Screen):
         self.grabthumbs(headers, payload, cookies)
 
     def grabthumbs(self, headers, payload, cookies, *largs):
-        params = urllib.urlencode(payload)
+        params = urllib.parse.urlencode(payload)
         r = UrlRequest("http://api.e-hentai.org/api.php",
                        on_success=self.thumbgrab,
                        on_error=self.thumb_error,

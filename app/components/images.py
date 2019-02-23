@@ -36,7 +36,7 @@ class GalleryCarousel(Carousel):
             Logger.debug("Not attached to parent yet")
 
 
-class GalleryImage(Image, Scatter):
+class GalleryImage(Image):
     auto_bring_to_front = False
     do_rotation = False
     scale_max = 2
