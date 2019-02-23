@@ -1,8 +1,8 @@
-bs4
+beautifulsoup4
 docutils==0.12
 git+https://github.com/kivy/kivy
 Kivy-Garden==0.1.4
-git+https://gitlab.com/kivymd/kivymd
+git+https://github.com/andremiras/kivymd
 nose==1.3.7
 pexpect==4.0.1
 plyer==1.2.4
@@ -10,7 +10,6 @@ ptyprocess==0.5
 pushould-python==0.0.3
 Pygments==2.1.3
 python-gnupg==0.3.8
-PyYAML==3.11
 six==1.10.0
 socketIO-client==0.6.5
 SQLAlchemy==1.0.12
