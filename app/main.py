@@ -60,6 +60,7 @@ class SadpandaRoot(BoxLayout):
     password = StringProperty("")
     baseurl = StringProperty("e-hentai")
     edgemove = BooleanProperty(False)
+    current_gallery = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(SadpandaRoot, self).__init__(**kwargs)

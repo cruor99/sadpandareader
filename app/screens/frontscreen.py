@@ -107,6 +107,7 @@ class FrontScreen(Screen):
             preview_screen = GalleryPreviewScreen(
                 name="gallery_preview_screen")
             preview_screen.galleryinstance = instance
+            App.get_running_app().root.current_gallery = instance
             App.get_running_app().root.ids.sadpanda_screen_manager.add_widget(
                 preview_screen)
         else:
@@ -114,6 +115,7 @@ class FrontScreen(Screen):
             ).root.ids.sadpanda_screen_manager.get_screen(
                 "gallery_preview_screen")
             preview_screen.galleryinstance = instance
+            App.get_running_app().root.current_gallery = instance
         App.get_running_app().root.next_screen("gallery_preview_screen")
 
     def check_scroll_y(self, instance, somethingelse):
@@ -192,7 +194,7 @@ class FrontScreen(Screen):
     def got_result(self, req, r):
         data = r
 
-        soup = BS(data, fromEncoding='utf8')
+        soup = BS(data, features="html.parser")
         gallerylinks = []
 
         # grabs all the divs with class it5 which denotes the gallery on the
