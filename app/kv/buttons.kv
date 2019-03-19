@@ -70,7 +70,7 @@
                     halign: "right"
                 MDLabel:
                     font_size: dp(8)
-                    text: str((root.filesize/1024)/1024) + " MB"
+                    text: str(int((root.filesize/1024)/1024)) + " MB"
                     halign: "left"
 
             MDLabel:
@@ -78,7 +78,7 @@
                 size_hint_x: .8
                 font_size: dp(12)
                 markup: True
-                text: "[b]{}[/b]".format(root.gallery_name.encode("utf-8"))
+                text: "[b]{}[/b]".format(root.gallery_name)
 
 
 

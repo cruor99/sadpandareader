@@ -128,7 +128,7 @@ class FrontScreen(Screen):
 
     def populate_front(self, *largs):
         # filter store
-        print(App.get_running_app().root.baseurl)
+        Logger.info("Base URL: {}".format(App.get_running_app().root.baseurl))
         db = App.get_running_app().db
         filters = db.query(Filters).order_by(Filters.id.desc()).first()
         #filters = filterstore.get("filters")
@@ -178,28 +178,36 @@ class FrontScreen(Screen):
         else:
             req = UrlRequest(pagesearchurl,
                              self.got_result,
+                             on_failure=self.got_failure,
+                             on_error=self.got_error,
                              req_headers=headers)
 
         self.searchpage += 1
+        Clock.schedule_once(partial(print, req), 5)
         # pure html of ehentai link
 
     def got_failure(self, req, r):
-        print(req)
-        print(r)
+        Logger.info("Got Failure")
+        Logger.info(req)
+        Logger.info(r)
 
     def got_error(self, req, r):
-        print(req)
-        print(r)
+        Logger.info("Got Error")
+        Logger.info(req)
+        Logger.info(r)
 
     def got_result(self, req, r):
         data = r
 
+        Logger.info(req.resp_headers)
+        Logger.info("Search data: {}".format(data))
         soup = BS(data, features="html.parser")
         gallerylinks = []
 
         # grabs all the divs with class it5 which denotes the gallery on the
         # page
-        for link in soup.findAll('div', {'class': 'it5'}):
+        Logger.info(soup)
+        for link in soup.findAll('td', {'class': 'gl3c glname'}):
             # grabs all the links, should only be gallery links as of 29th of
             # august 2015
             gallerylinks.append(link.find('a')["href"])
@@ -238,12 +246,14 @@ class FrontScreen(Screen):
                        req_headers=headers)
 
     def thumb_error(self, req, r):
-        print(req.resp_status)
-        print(r)
+        Logger.info("Thumb Error")
+        Logger.info(req.resp_status)
+        Logger.info(r)
 
     def thumb_failure(self, req, r):
-        print(req.resp_status)
-        print(r)
+        Logger.info("Thumb Failure")
+        Logger.info(req.resp_status)
+        Logger.info(r)
 
     def thumbgrab(self, req, r):
         requestdump = r
@@ -255,7 +265,8 @@ class FrontScreen(Screen):
                 self.add_button(gallery, i)
                 i += 1
         except Exception as e:
-            print(e)
+            Logger.exception(e)
+            Logger.info("Thumbgrab Exception")
 
     def add_button(self, gallery, i, *largs):
         escapedtitle = gallery["title"]

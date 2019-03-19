@@ -114,6 +114,8 @@ class SadpandaRoot(BoxLayout):
         else:
             self.next_screen("start_screen")
 
+    import requests
+
     def login_exhentai(self, username, password):
         db = App.get_running_app().db
         self.username = username.text
@@ -124,14 +126,20 @@ class SadpandaRoot(BoxLayout):
             "PassWord": password.text,
             "returntype": "8",
             "CookieDate": "1",
-            "b": "d",
-            "bt": "pone"
+            "b": "",
+            "bt": "",
+            "referer": "https://forums.e-hentai.org/index.php?"
         }
-        headers = {'User-Agent': 'Mozilla/5.0',
-                   "Content-type": "application/x-www-form-urlencoded"}
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36',
+                   "Content-type": "application/x-www-form-urlencoded",
+                   "Origin": "https://forums.e-hentai.org",
+                   "Upgrade-Insecure-Requests": "1",
+                   "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"}
 
-        params = urllib.urlencode(payload)
+        #params = urllib.parse.urlencode(payload)
+        params = bytes(json.dumps(payload), "utf-8")
 
+        """
         req = UrlRequest(
             "https://forums.e-hentai.org/index.php?act=Login&CODE=01",
             on_success=self.login_attempt,
@@ -139,6 +147,8 @@ class SadpandaRoot(BoxLayout):
             on_error=self.login_error,
             req_body=params,
             req_headers=headers)
+        """
+        r = requests.post
 
     def login_failure(self, req, r):
         print("failure")
@@ -147,14 +157,16 @@ class SadpandaRoot(BoxLayout):
 
     def login_error(self, req, error):
         print("error")
-        print(req.resp_headers)
+        print(req.resp_status)
         print(req)
+        print(error)
 
     def login_attempt(self, req, r):
         db = App.get_running_app().db
         finalcookies = ""
-        if "ipb_pass_hash" in req.resp_headers["set-cookie"]:
-            cookies = req.resp_headers["set-cookie"].split(";")
+        Logger.info("Request headers: {}".format(req.resp_headers))
+        if "ipb_session_id" in req.resp_headers["Set-Cookie"]:
+            cookies = req.resp_headers["Set-Cookie"].split(";")
             for cookie in cookies:
                 if "ipb" in cookie:
                     splitcookie = cookie.split(",")
@@ -162,8 +174,7 @@ class SadpandaRoot(BoxLayout):
                         finalcookies += splitcookie[1] + ";"
                     except:
                         finalcookies += splitcookie[0] + ";"
-
-            self.cookies = finalcookies[:-1]
+            self.cookies = finalcookies
             if self.username.lower() != "sadpandareader":
                 cookies = User(cookies=str(self.cookies))
                 db.add(cookies)

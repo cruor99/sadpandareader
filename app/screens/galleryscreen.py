@@ -39,6 +39,8 @@ class GalleryScreen(Screen):
     scrollstopper = BooleanProperty(False)
     galleryscreen = ObjectProperty()
     gotpageresultcounter = NumericProperty(99)
+    unviewed_gallery_images = ListProperty([])
+    adding_image = BooleanProperty(False)
     gallery_images = ListProperty([])
     page_grab_schedule = ListProperty([])
 
@@ -58,6 +60,26 @@ class GalleryScreen(Screen):
         self.pagecount = gallery.pagecount
         self.gallery_name = gallery.gallery_name
         self.populate_gallery()
+        self.ids.gal_rv.bind(scroll_y=self.manage_gal_scroll)
+
+
+    def manage_gal_scroll(self, instance, scroll):
+        if scroll < 0.2/len(self.gallery_images) and not self.adding_image:
+            if len(self.ids.gal_layout.children) > 1:
+                Logger.info("Scroll at new image: {}".format(scroll))
+                self.adding_image = True
+                Clock.schedule_once(self.add_image_to_view, 1)
+
+    def add_image_to_view(self, *args):
+        try:
+            for i in range(0, 3):
+                self.gallery_images.append(self.unviewed_gallery_images.pop(0))
+            self.adding_image = False
+            Logger.info(self.ids.gal_layout.children)
+        except IndexError as e:
+            Logger.exception(e)
+            Logger.info("End of Gallery")
+            Snackbar(text="Gallery fully loaded!").show()
 
     def on_leave(self):
         self.gallery_images = []
@@ -73,6 +95,7 @@ class GalleryScreen(Screen):
         self.gallery_name = ""
         self.current_page = 1
         self.page_grab_schedule = []
+        self.unviewed_gallery_images = []
 
     def populate_gallery(self):
         gallerypages = float(self.pagecount) / float(40)
@@ -119,7 +142,10 @@ class GalleryScreen(Screen):
         new_gal_img["scale"] = 1
         new_gal_img["pos"] = self.pos
         new_gal_img["source"] = src
-        self.gallery_images.append(new_gal_img)
+        self.unviewed_gallery_images.append(new_gal_img)
+        if len(self.gallery_images) <= 3:
+            Logger.info("Adding image to view-list")
+            self.gallery_images.append(self.unviewed_gallery_images.pop(0))
 
     def grab_image(self, i):
         headers = {'User-agent': 'Mozilla/5.0',
