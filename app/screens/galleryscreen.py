@@ -174,6 +174,7 @@ class GalleryScreen(Screen):
             key, value = component.split("=")
             if key == "fileindex":
                 self.gathered_images[self.current_page].append({int(value): src})
+        # TODO: The or clause here needs to be fixed.
         if len(self.gathered_images[self.current_page]) % 40 == 0 or self.current_page == int(self.gallery_pages - 1):
             Logger.info("Fully gathered images: {}".format(self.gathered_images))
             sorted_list = sorted(self.gathered_images[self.current_page], key=lambda d: list(d.keys()))
