@@ -114,8 +114,6 @@ class SadpandaRoot(BoxLayout):
         else:
             self.next_screen("start_screen")
 
-    import requests
-
     def login_exhentai(self, username, password):
         db = App.get_running_app().db
         self.username = username.text
@@ -136,10 +134,9 @@ class SadpandaRoot(BoxLayout):
                    "Upgrade-Insecure-Requests": "1",
                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"}
 
-        #params = urllib.parse.urlencode(payload)
-        params = bytes(json.dumps(payload), "utf-8")
+        params = urllib.parse.urlencode(payload)
+        #params = bytes(json.dumps(payload), "utf-8")
 
-        """
         req = UrlRequest(
             "https://forums.e-hentai.org/index.php?act=Login&CODE=01",
             on_success=self.login_attempt,
@@ -147,8 +144,6 @@ class SadpandaRoot(BoxLayout):
             on_error=self.login_error,
             req_body=params,
             req_headers=headers)
-        """
-        r = requests.post
 
     def login_failure(self, req, r):
         print("failure")
@@ -162,12 +157,14 @@ class SadpandaRoot(BoxLayout):
         print(error)
 
     def login_attempt(self, req, r):
+        print(r)
         db = App.get_running_app().db
         finalcookies = ""
         Logger.info("Request headers: {}".format(req.resp_headers))
         if "ipb_session_id" in req.resp_headers["Set-Cookie"]:
             cookies = req.resp_headers["Set-Cookie"].split(";")
             for cookie in cookies:
+                Logger.info("Cookie: {}".format(cookie))
                 if "ipb" in cookie:
                     splitcookie = cookie.split(",")
                     try:
