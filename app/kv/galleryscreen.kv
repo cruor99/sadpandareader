@@ -14,10 +14,11 @@
             background_hue: "500"
         GalleryContainerLayout:
             id: container_layout
-            RecycleView:
+            FixedRecycleView:
                 id: gal_rv
                 viewclass: 'GalleryImage'
                 data: root.gallery_images
+                scrollable_distance: gal_layout.height - self.height
                 RecycleBoxLayout:
                     id: gal_layout
                     orientation: "vertical"

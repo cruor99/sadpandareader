@@ -9,10 +9,14 @@ from kivymd.snackbar import Snackbar
 from kivy.lang import Builder
 from kivy.logger import Logger
 from kivy.uix.recycleview import RecycleView
+from kivy.clock import mainthread
+from kivy.factory import Factory
 
 Builder.load_file("kv/galleryscreen.kv")
 
 from bs4 import BeautifulSoup as BS
+import requests
+import time
 
 # Self made components
 from components.images import GalleryCarousel, GalleryImage, GalleryContainerLayout, GalleryImageScreen
@@ -21,8 +25,21 @@ from components.buttons import GalleryNavButton
 import re
 import time
 from functools import partial
+from threading import Thread
 
 from models import Gallery, Pagelink
+
+
+class FixedRecycleView(Factory.RecycleView):
+    distance_to_top = NumericProperty()
+    scrollable_distance = NumericProperty(1)
+
+    def on_scrollable_distance(self, *args):
+        if self.scroll_y > 0 and self.scrollable_distance != 0:
+            self.scroll_y = (self.scrollable_distance - self.distance_to_top) / self.scrollable_distance
+
+    def on_scroll_y(self, *args):
+        self.distance_to_top = (1 - self.scroll_y) * self.scrollable_distance
 
 
 class GalleryScreen(Screen):
@@ -153,12 +170,21 @@ class GalleryScreen(Screen):
     }
     """
 
-
     def gather_images(self, pagelinks, *args):
         Logger.info("Amount of pages to process: {}".format(len(pagelinks)))
-        for page in pagelinks:
-            pagerequest = UrlRequest(page, on_success=self.image_loaded, req_headers=self.base_headers)
+        self.temp_pagelinks = pagelinks
+        tr = Thread(target=self.threaded_page_gatherer)
+        tr.daemon = True
+        tr.start()
 
+    def threaded_page_gatherer(self):
+        for page in self.temp_pagelinks:
+            # pagerequest = UrlRequest(page, on_success=self.image_loaded, req_headers=self.base_headers)
+            r = requests.get(page, headers=self.base_headers)
+            time.sleep(1)
+            self.image_loaded(r, r.text)
+
+    @mainthread
     def image_loaded(self, req, r):
         ipmatch = r'^http://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
@@ -175,12 +201,12 @@ class GalleryScreen(Screen):
             if key == "fileindex":
                 self.gathered_images[self.current_page].append({int(value): src})
         # TODO: The or clause here needs to be fixed.
-        if len(self.gathered_images[self.current_page]) % 40 == 0 or self.current_page == int(self.gallery_pages - 1):
-            Logger.info("Fully gathered images: {}".format(self.gathered_images))
-            sorted_list = sorted(self.gathered_images[self.current_page], key=lambda d: list(d.keys()))
-            self.gathered_images[self.current_page] = sorted_list
-            Logger.info("Sorted list: {}".format(sorted_list))
-            Clock.schedule_once(partial(self.set_new_viewdata, sorted_list))
+        # if len(self.gathered_images[self.current_page]) % 40 == 0 or self.current_page == int(self.gallery_pages - 1):
+        Logger.info("Fully gathered images: {}".format(self.gathered_images))
+        sorted_list = sorted(self.gathered_images[self.current_page], key=lambda d: list(d.keys()))
+        self.gathered_images[self.current_page] = sorted_list
+        # Logger.info("Sorted list: {}".format(sorted_list))
+        Clock.schedule_once(partial(self.set_new_viewdata, sorted_list))
 
     def set_new_viewdata(self, sorted_list, *args):
         # TODO: Remove loading spinner here
@@ -188,21 +214,23 @@ class GalleryScreen(Screen):
         for imagedict in sorted_list:
             for fileindex, imagelink in imagedict.items():
                 new_gallery_image = {}
-                new_gallery_image["scale"] = 1
-                new_gallery_image["post"] = self.pos
+                # new_gallery_image["scale"] = 1
+                # new_gallery_image["pos"] = self.pos
                 new_gallery_image["source"] = imagelink
                 new_gallery_image["fileindex"] = fileindex
-                Logger.info("Appending final image to viewdata: {}".format(new_gallery_image))
+                # Logger.info("Appending final image to viewdata: {}".format(new_gallery_image))
                 self.gallery_images.append(new_gallery_image)
+
+        Logger.info("_get_vbar: {}".format(self.ids.gal_rv.vbar))
+        Logger.info("Scroll_Y: {}".format(self.ids.gal_rv.scroll_y))
         self.loading_new_page = False
 
     def manage_gallery_scroll(self, instance, scroll):
-        Logger.info("Scroll: {}".format(scroll))
+        # Logger.info("Scroll: {}".format(scroll))
         if scroll < -0.004 and not self.loading_new_page:
-            Logger.info("Triggering new page")
-            Logger.info("Current page: {}".format(self.current_page))
+            # Logger.info("Triggering new page")
+            # Logger.info("Current page: {}".format(self.current_page))
             total_pages_comparison = self.gallery_pages - 1
-            print(int(total_pages_comparison))
             if int(total_pages_comparison) > self.current_page:
                 self.loading_new_page = True
                 self.ids.gal_rv.scroll_y = 1
@@ -210,12 +238,11 @@ class GalleryScreen(Screen):
                 Logger.info("Going to new page: {}".format(self.current_page))
                 Clock.schedule_once(partial(self.find_image_pages_for_page, self.current_page))
         elif scroll > 1.1 and not self.loading_new_page:
-            Logger.info("Triggering previous page")
-            Logger.info("Current page: {}".format(self.current_page))
+            # Logger.info("Triggering previous page")
+            # Logger.info("Current page: {}".format(self.current_page))
             if self.current_page > 0:
                 self.ids.gal_rv.scroll_y = 0
                 self.loading_new_page = True
                 self.current_page -= 1
                 Logger.info("Going to previous page: {}".format(self.current_page))
                 Clock.schedule_once(partial(self.find_image_pages_for_page, self.current_page))
-
